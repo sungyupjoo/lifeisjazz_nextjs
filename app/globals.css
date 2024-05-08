@@ -4,19 +4,22 @@
 
 @layer base {
   h1 {
-    @apply font-bold text-8xl text-black sm:text-5xl;
+    @apply font-bold text-8xl text-black;
   }
   h2 {
-    @apply font-bold text-5xl text-black sm:text-4xl;
+    @apply font-bold text-5xl text-black;
   }
   h3 {
-    @apply font-semibold text-2xl text-black sm:text-xl;
+    @apply font-semibold text-2xl text-black;
   }
   h4 {
     @apply font-medium text-xl text-black;
   }
   p {
-    @apply font-normal text-lg text-black break-keep sm:text-sm;
+    @apply font-normal text-lg text-black break-keep;
+  }
+  a {
+    @apply font-normal text-sm text-black break-keep;
   }
 }
 
