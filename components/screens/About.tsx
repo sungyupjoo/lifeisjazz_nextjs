@@ -9,7 +9,7 @@ const About = () => (
       titleText="모임 소개"
       subTitle="음악을 좋아하는 누구나 참여할 수 있는 라이재의 활동들"
     />
-    <div className="pt-12 grid grid-cols-4 gap-8 md:grid-cols-2 sm:flex sm:flex-col">
+    <div className="pt-12 grid grid-cols-4 gap-8 ">
       {about.map((item) => (
         <div
           key={item.id}

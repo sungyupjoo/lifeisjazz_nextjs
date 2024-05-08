@@ -1,8 +1,7 @@
 "use client";
 
 import { logo_white } from "../public/assets";
-import { RefObject, useState } from "react";
-// import Login from "./Login/Login";
+import { RefObject, forwardRef, useState } from "react";
 import { Hamburger } from "./common/icons/Hamburger";
 
 interface NavigationProps {
@@ -15,25 +14,23 @@ interface NavigationProps {
   activeSection: string;
 }
 
-const Anchor = ({
-  label,
-  activeSection,
-  ref,
-  scrollToRef,
-}: {
+interface AnchorProps {
   label: string;
   activeSection: string;
-  ref: RefObject<HTMLDivElement>;
   scrollToRef: (ref: RefObject<HTMLDivElement>) => void;
-}) => (
-  <a
-    className={`font-semibold text-base text-white no-underline cursor-pointer hover:text-sub focus:text-sub active:text-sub visited:text-sub ${
-      activeSection === label.toLowerCase() ? "text-sub" : ""
-    }`}
-    onClick={() => scrollToRef(ref)}
-  >
-    {label}
-  </a>
+}
+
+const Anchor = forwardRef<HTMLDivElement, AnchorProps>(
+  ({ label, activeSection, scrollToRef }, ref) => (
+    <a
+      className={`font-semibold text-white no-underline cursor-pointer hover:text-sub focus:text-sub active:text-sub visited:text-sub ${
+        activeSection === label.toLowerCase() ? "text-sub" : ""
+      }`}
+      onClick={() => scrollToRef(ref as RefObject<HTMLDivElement>)}
+    >
+      {label}
+    </a>
+  )
 );
 
 const Navigation: React.FC<NavigationProps> = ({
@@ -49,7 +46,6 @@ const Navigation: React.FC<NavigationProps> = ({
   const [isNavOpen, setIsNavOpen] = useState(false);
   const toggleNav = () => {
     setIsNavOpen((prev) => !prev);
-    console.log("open");
   };
 
   const scrollToRef = (ref: RefObject<HTMLDivElement>) => {
@@ -63,28 +59,28 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   return (
-    <section className="fixed left-0 top-0 bottom-0 w-80 bg-main flex flex-col justify-center items-stretch lg:relative lg:top-10 lg:w-full lg:h-20 lg:flex-row lg:justify-between lg:items-center">
+    <section className="left-0 lg:h-screen lg:fixed lg:top-0 lg:bottom-0 lg:w-[329px] bg-main flex lg:flex-col lg:justify-center lg:items-stretch relative w-full h-20 flex-row justify-between items-center z-10">
       <a
-        className={`flex flex-1 justify-center items-end lg:items-center lg:ml-2.5 ${
+        className={`flex bg-black justify-center ${
           activeSection === "home" ? "active" : ""
-        }`}
+        } z-30 cursor-pointer`}
         onClick={() => scrollToRef(homeRef)}
       >
         <img
           alt="logo"
           src={logo_white}
-          className="w-39 h-39 lg:w-25 lg:h-25"
+          className="lg:w-[156px] lg:h-[156px] w-[100px] h-[100px] justify-self-center"
         />
       </a>
-      <div className="flex flex-col justify-between ">
+      <div className="lg:hidden flex flex-col justify-between ">
         <Hamburger onClick={toggleNav} size={30} />
       </div>
       <section
-        className={`flex flex-col justify-between items-center transition-max-height duration-300 ease-in-out lg:absolute lg:flex-col lg:overflow-hidden lg:top-20 lg:bg-mainTint lg:w-full lg:z-30 ${
-          isNavOpen ? "lg:flex lg:max-h-125" : "lg:max-h-0"
+        className={`lg:flex lg:justify-between lg:items-center lg:absolute flex-col  overflow-hidden  top-20  lg:bg-main bg-mainTint  w-full  z-30 sm:${
+          isNavOpen ? "flex max-h-125" : "max-h-0"
         }`}
       >
-        {/* <Anchor
+        <Anchor
           label="홈"
           activeSection={activeSection}
           ref={homeRef}
@@ -119,7 +115,7 @@ const Navigation: React.FC<NavigationProps> = ({
           activeSection={activeSection}
           ref={contactRef}
           scrollToRef={scrollToRef}
-        /> */}
+        />
         {/* <Anchor
           className={activeSection === "personalInfo" ? "active" : ""}
           onClick={() => scrollToRef(personalInfoRef)}
