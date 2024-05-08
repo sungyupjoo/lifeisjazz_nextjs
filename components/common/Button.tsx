@@ -9,7 +9,6 @@ interface ButtonProps {
   href?: string;
   link?: boolean;
   onClick?: () => void;
-  margin?: number;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -20,15 +19,13 @@ export const Button: React.FC<ButtonProps> = ({
   href,
   link = false,
   onClick,
-  margin = 5,
 }) => {
-  const marginClass = `m-${margin}`;
   const hoverBgColorClass = `${
     backgroundColor === "main" ? "hover:bg-mainShade" : "hover:bg-subShade"
   }`;
   return (
     <div
-      className={`bg-${backgroundColor} marginClass inline-block cursor-pointer text-center rounded px-5 py-2 ${hoverBgColorClass}`}
+      className={`bg-${backgroundColor}  inline-block cursor-pointer text-center rounded px-5 py-2 ${hoverBgColorClass}`}
     >
       {logoUrl && (
         <img
@@ -47,7 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <a
           href={href}
-          className={`no-underline font-regular text-${fontColor} align-middle`}
+          className={`no-underline text-${fontColor} align-middle`}
           onClick={(e) => {
             if (onClick) {
               e.preventDefault();
