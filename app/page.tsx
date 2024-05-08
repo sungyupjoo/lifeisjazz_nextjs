@@ -1,9 +1,9 @@
-import Hero from "@/components/screens/Hero";
+import Display from "@/components/screens/Display";
 
 export default function App() {
   return (
     <>
-      <Hero />
+      <Display />
     </>
   );
 }

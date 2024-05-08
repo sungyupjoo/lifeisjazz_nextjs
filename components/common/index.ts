@@ -1,7 +1,6 @@
 import { Button } from "./Button";
 import { Container } from "./Container";
-// import { Title } from "./Title";
-// import { bounce, fadeIn } from "./Animations";
+import { Title } from "./Title";
 // import { FlexWrapper } from "./FlexWrapper";
 // import StyledModal from "./StyledModal";
 // import InputBox from "./InputBox";
@@ -11,9 +10,7 @@ export {
   Button,
   Container,
   // FlexWrapper,
-  // Title,
-  // bounce,
-  // fadeIn,
+  Title,
   // StyledModal,
   // InputBox,
   // Input,
