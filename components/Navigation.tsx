@@ -64,7 +64,7 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   return (
-    <section className="left-0 lg:h-screen lg:fixed lg:top-0 lg:bottom-0 lg:w-[329px] bg-main flex lg:flex-col lg:justify-center lg:items-stretch relative w-full h-20 flex-row justify-between items-center z-10">
+    <section className="h-20 flex-row justify-between items-center z-10 left-0 lg:h-screen lg:fixed lg:top-0 lg:bottom-0 bg-main flex lg:flex-col lg:justify-center lg:items-stretch relative lg:w-[329px]">
       <a
         className={`flex justify-center ${
           activeSection === "home" ? "active" : ""
@@ -81,10 +81,10 @@ const Navigation: React.FC<NavigationProps> = ({
         <Hamburger onClick={toggleNav} size={30} />
       </div>
       <section
-        className={`justify-between items-center lg:bg-main lg:p-16 p-6 flex-col gap-7 lg:flex ${
+        className={`justify-between items-center lg:bg-main lg:p-16 p-6 flex-col gap-7  ${
           isNavOpen ? "flex" : "hidden"
-        } 
-        nav-animate top-20 bg-mainTint w-full fixed z-30 `}
+        } lg:relative lg:flex
+       top-20 bg-mainTint w-full fixed z-30 `}
       >
         <Anchor
           label="홈"
