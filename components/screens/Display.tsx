@@ -14,6 +14,7 @@ const Display = () => {
   const scheduleRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState<string>("home");
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {

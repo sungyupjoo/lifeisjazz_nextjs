@@ -1,7 +1,7 @@
 "use client";
 
 import { logo_white } from "../public/assets";
-import { RefObject, forwardRef, useState } from "react";
+import React, { RefObject, forwardRef, useState } from "react";
 import { Hamburger } from "./common/icons/Hamburger";
 
 interface NavigationProps {
@@ -16,20 +16,25 @@ interface NavigationProps {
 
 interface AnchorProps {
   label: string;
+  labelEnglish: string;
   activeSection: string;
   scrollToRef: (ref: RefObject<HTMLDivElement>) => void;
 }
 
-const Anchor = forwardRef<HTMLDivElement, AnchorProps>(
-  ({ label, activeSection, scrollToRef }, ref) => (
-    <a
-      className={`font-semibold text-white no-underline cursor-pointer hover:text-sub focus:text-sub active:text-sub visited:text-sub ${
-        activeSection === label.toLowerCase() ? "text-sub" : ""
-      }`}
-      onClick={() => scrollToRef(ref as RefObject<HTMLDivElement>)}
-    >
-      {label}
-    </a>
+const Anchor = React.memo(
+  forwardRef<HTMLDivElement, AnchorProps>(
+    ({ label, labelEnglish, activeSection, scrollToRef }, ref) => {
+      return (
+        <a
+          className={`font-semibold  no-underline cursor-pointer hover:text-sub focus:text-sub active:text-sub visited:text-sub text-sub ${
+            activeSection === labelEnglish ? "text-sub" : "text-white"
+          }`}
+          onClick={() => scrollToRef(ref as RefObject<HTMLDivElement>)}
+        >
+          {label}
+        </a>
+      );
+    }
   )
 );
 
@@ -61,7 +66,7 @@ const Navigation: React.FC<NavigationProps> = ({
   return (
     <section className="left-0 lg:h-screen lg:fixed lg:top-0 lg:bottom-0 lg:w-[329px] bg-main flex lg:flex-col lg:justify-center lg:items-stretch relative w-full h-20 flex-row justify-between items-center z-10">
       <a
-        className={`flex bg-black justify-center ${
+        className={`flex justify-center ${
           activeSection === "home" ? "active" : ""
         } z-30 cursor-pointer`}
         onClick={() => scrollToRef(homeRef)}
@@ -76,42 +81,49 @@ const Navigation: React.FC<NavigationProps> = ({
         <Hamburger onClick={toggleNav} size={30} />
       </div>
       <section
-        className={`lg:flex lg:justify-between lg:items-center lg:absolute flex-col  overflow-hidden  top-20  lg:bg-main bg-mainTint  w-full  z-30 sm:${
-          isNavOpen ? "flex max-h-125" : "max-h-0"
-        }`}
+        className={`justify-between items-center lg:bg-main lg:p-16 p-6 flex-col gap-7 lg:flex ${
+          isNavOpen ? "flex" : "hidden"
+        } 
+        nav-animate top-20 bg-mainTint w-full fixed z-30 `}
       >
         <Anchor
           label="홈"
+          labelEnglish="home"
           activeSection={activeSection}
           ref={homeRef}
           scrollToRef={scrollToRef}
         />
         <Anchor
           label="소개"
+          labelEnglish="about"
           activeSection={activeSection}
           ref={aboutRef}
           scrollToRef={scrollToRef}
         />
         <Anchor
           label="운영진"
+          labelEnglish="manager"
           activeSection={activeSection}
           ref={managerRef}
           scrollToRef={scrollToRef}
         />
         <Anchor
           label="사진첩"
+          labelEnglish="gallery"
           activeSection={activeSection}
           ref={galleryRef}
           scrollToRef={scrollToRef}
         />
         <Anchor
           label="일정"
+          labelEnglish="schedule"
           activeSection={activeSection}
           ref={scheduleRef}
           scrollToRef={scrollToRef}
         />
         <Anchor
           label="연락"
+          labelEnglish="contact"
           activeSection={activeSection}
           ref={contactRef}
           scrollToRef={scrollToRef}
