@@ -5,6 +5,7 @@ import Navigation from "../Navigation";
 import Manager from "./Manager";
 import Schedule from "./Schedule";
 import Contact from "./Contact";
+import { SessionProvider } from "next-auth/react";
 
 const Display = () => {
   const homeRef = useRef<HTMLDivElement>(null);
@@ -46,33 +47,35 @@ const Display = () => {
   }, [homeRef, aboutRef, managerRef, galleryRef, scheduleRef, contactRef]);
   return (
     <>
-      <Navigation
-        homeRef={homeRef}
-        aboutRef={aboutRef}
-        managerRef={managerRef}
-        galleryRef={galleryRef}
-        scheduleRef={scheduleRef}
-        contactRef={contactRef}
-        activeSection={activeSection}
-      />
-      <div id="home" ref={homeRef}>
-        <Hero />
-      </div>
-      <div id="about" ref={aboutRef}>
-        <About />
-      </div>
-      <div id="manager" ref={managerRef}>
-        <Manager />
-      </div>
-      <div id="gallery" ref={galleryRef}>
-        <Gallery />
-      </div>
-      <div id="schedule" ref={scheduleRef}>
-        <Schedule />
-      </div>
-      <div id="contact" ref={contactRef}>
-        <Contact />
-      </div>
+      <SessionProvider>
+        <Navigation
+          homeRef={homeRef}
+          aboutRef={aboutRef}
+          managerRef={managerRef}
+          galleryRef={galleryRef}
+          scheduleRef={scheduleRef}
+          contactRef={contactRef}
+          activeSection={activeSection}
+        />
+        <div id="home" ref={homeRef}>
+          <Hero />
+        </div>
+        <div id="about" ref={aboutRef}>
+          <About />
+        </div>
+        <div id="manager" ref={managerRef}>
+          <Manager />
+        </div>
+        <div id="gallery" ref={galleryRef}>
+          <Gallery />
+        </div>
+        <div id="schedule" ref={scheduleRef}>
+          <Schedule />
+        </div>
+        <div id="contact" ref={contactRef}>
+          <Contact />
+        </div>
+      </SessionProvider>
     </>
   );
 };
