@@ -22,7 +22,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
       width="20rem"
       height="15rem"
     >
-      <h3 className="text-center mb-8 text-lg">로그인</h3>
+      <h3 className="text-center text-lg mt-10 mb-14">로그인</h3>
       <div
         className="flex justify-center cursor-pointer"
         onClick={loginHandler}

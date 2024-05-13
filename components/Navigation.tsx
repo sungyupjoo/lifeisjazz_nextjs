@@ -3,6 +3,7 @@
 import { logo_white } from "../public/assets";
 import React, { RefObject, forwardRef, useState } from "react";
 import { Hamburger } from "./common/icons/Hamburger";
+import Login from "./login/Login";
 
 interface NavigationProps {
   homeRef: RefObject<HTMLDivElement>;
@@ -135,8 +136,8 @@ const Navigation: React.FC<NavigationProps> = ({
           설정
         </Anchor> */}
       </section>
-      <div className="flex justify-center items-center w-full mb-5 lg:justify-end lg:mr-20">
-        {/* <Login /> */}
+      <div className="flex justify-center mr-20 lg:mr-0">
+        <Login />
       </div>
     </section>
   );

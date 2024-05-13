@@ -32,7 +32,7 @@ const Manager = () => {
   return (
     <Container innerPadding backgroundGray>
       <Title titleText="운영진" subTitle="2024년 라이재를 이끌어가는 운영진" />
-      <div className="grid grid-cols-2 gap-9 mt-16 md:grid-cols-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-9 mt-16 ">
         {manager.map((item, index) => (
           <div
             key={item.id}

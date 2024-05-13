@@ -71,15 +71,15 @@ const Schedule: React.FC = () => {
                     +
                   </button>
                 </div>
-                {status === "authenticated" ? (
-                  <Button backgroundColor="sub" text="잼데이" link />
-                ) : (
+                {/* {status === "authenticated" ? ( */}
+                <Button backgroundColor="sub" text="잼데이" link />
+                {/* ) : (
                   <Button
                     backgroundColor="sub"
                     text="잼데이"
                     onClick={showLoginModal}
                   />
-                )}
+                )} */}
               </div>
               <div className="p-5 rounded-lg shadow-md hover:bg-gray-300">
                 <div className="flex justify-between items-center">

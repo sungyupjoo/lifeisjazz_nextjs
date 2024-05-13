@@ -15,7 +15,7 @@ export const Container: React.FC<ContainerProps> = ({
   const backgroundColor = backgroundGray ? "bg-backgroundGray" : "bg-white";
   return (
     <section
-      className={`relative lg:left-[329px] lg:w-[calc(100%-329px)] h-screen flex-1 ${paddingClass} ${backgroundColor} border-solid border-b border-borderGray md:left-0 md:w-full md:h-auto md:border-none`}
+      className={`relative lg:left-[329px] lg:w-[calc(100%-329px)] overflow-hidden md:h-auto lg:h-screen flex-1 ${paddingClass} ${backgroundColor} border-solid border-b-[0.5px] border-borderGray`}
     >
       {children}
     </section>
