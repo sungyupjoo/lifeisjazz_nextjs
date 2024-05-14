@@ -136,7 +136,7 @@ const Navigation: React.FC<NavigationProps> = ({
           설정
         </Anchor> */}
       </section>
-      <div className="flex justify-center mr-16 lg:mr-0">
+      <div className="flex justify-center mr-16 lg:mr-0 lg:mb-16">
         <Login />
       </div>
     </section>

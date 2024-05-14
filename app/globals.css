@@ -21,11 +21,11 @@
   }
   p {
     @apply font-normal text-black break-keep;
-    @apply text-sm md:text-lg md:leading-8;
+    @apply text-sm;
   }
   a {
     @apply font-normal text-black break-keep;
-    @apply text-sm md:text-lg;
+    @apply text-sm;
   }
 }
 

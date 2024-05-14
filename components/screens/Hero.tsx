@@ -15,7 +15,7 @@ const Hero = () => {
           <h1 className="text-white mb-4">
             Life is <span className="text-sub">JAZZ</span>
           </h1>
-          <p className="text-white">
+          <p className="text-white text-sm mb-6 leading-6">
             연주자, 리스너 구분 없이 모두가
             <br /> <span className="text-sub">재즈</span>를 감상하고 연주하고
             즐기는 모임
