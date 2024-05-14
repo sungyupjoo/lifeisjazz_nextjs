@@ -65,7 +65,7 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   return (
-    <section className="h-20 flex-row justify-between items-center z-10 left-0 lg:h-screen lg:fixed lg:top-0 lg:bottom-0 bg-main flex lg:flex-col lg:justify-center lg:items-stretch relative lg:w-[329px]">
+    <section className="h-20 flex-row justify-between items-center z-10 left-0  absolute lg:fixed lg:h-screen lg:top-0 lg:bottom-0 bg-main flex w-screen lg:flex-col lg:justify-center lg:items-stretch lg:w-[329px]">
       <a
         className={`flex justify-center ${
           activeSection === "home" ? "active" : ""
@@ -136,7 +136,7 @@ const Navigation: React.FC<NavigationProps> = ({
           설정
         </Anchor> */}
       </section>
-      <div className="flex justify-center mr-20 lg:mr-0">
+      <div className="flex justify-center mr-16 lg:mr-0 lg:mb-16">
         <Login />
       </div>
     </section>

@@ -11,11 +11,11 @@ export const Container: React.FC<ContainerProps> = ({
   innerPadding = false,
   backgroundGray = false,
 }) => {
-  const paddingClass = innerPadding ? "p-16 md:p-6" : "";
+  const paddingClass = innerPadding ? "p-5 md:p-16" : "";
   const backgroundColor = backgroundGray ? "bg-backgroundGray" : "bg-white";
   return (
     <section
-      className={`relative lg:left-[329px] lg:w-[calc(100%-329px)] overflow-hidden md:h-auto lg:h-screen flex-1 ${paddingClass} ${backgroundColor} border-solid border-b-[0.5px] border-borderGray`}
+      className={`relative lg:left-[329px] lg:w-[calc(100%-329px)] overflow-hidden lg:h-screen flex-1 ${paddingClass} ${backgroundColor} border-solid border-b-[0.5px] border-borderGray`}
     >
       {children}
     </section>

@@ -32,27 +32,25 @@ const Manager = () => {
   return (
     <Container innerPadding backgroundGray>
       <Title titleText="운영진" subTitle="2024년 라이재를 이끌어가는 운영진" />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-9 mt-16 ">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6 ">
         {manager.map((item, index) => (
           <div
             key={item.id}
             ref={ref}
-            className={`flex flex-row justify-center items-center gap-4 p-5 rounded-xl ${
+            className={`flex flex-col justify-center items-center gap-4 p-5 rounded-xl ${
               isVisible ? `animate-bounce-${index}` : ""
-            } hover:bg-gray-300 md:flex-col md:text-center`}
+            } hover:bg-gray-300 md:flex-row text-center`}
           >
-            <div className="flex justify-center items-center gap-4">
+            <div className="flex justify-center items-center min-w-32 gap-4">
               <img
                 src={item.url}
                 alt=""
                 className="w-32 h-32 rounded-full shadow-md"
               />
             </div>
-            <div className="flex-grow">
-              <h4 className="text-gray-500 text-sm mb-1.5 ml-0.5">
-                {item.position}
-              </h4>
-              <h3 className="mb-4">{item.name}</h3>
+            <div>
+              <h4 className="text-sm mb-1.5 ml-0.5">{item.position}</h4>
+              <h3 className="mb-2">{item.name}</h3>
               <p className="text-sm leading-5">{item.introduction}</p>
             </div>
           </div>
