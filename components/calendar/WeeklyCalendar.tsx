@@ -33,12 +33,12 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
 
   const renderHeader = () => (
     <div className=" w-full pt-18 pb-8 flex flex-col">
-      <div className="flex flex-row p-4 items-center justify-between">
+      <div className="flex flex-row p-4 items-center justify-center">
         <button
-          className="cursor-pointer transition duration-150 ease-out hover:text-sub"
+          className="cursor-pointer mr-20 transition duration-150 ease-out hover:text-sub"
           onClick={() => changeWeekHandle("prev")}
         >
-          이전 주
+          &larr; 이전 주
         </button>
         <h3 className="text-center">
           {format(currentMonth, "yy년 MM월")}
@@ -46,10 +46,10 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
           라이재 잼데이
         </h3>
         <button
-          className="cursor-pointer transition duration-150 ease-out hover:text-sub"
+          className="cursor-pointer ml-20 transition duration-150 ease-out hover:text-sub"
           onClick={() => changeWeekHandle("next")}
         >
-          다음 주
+          다음 주 &rarr;
         </button>
       </div>
     </div>
@@ -72,7 +72,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
     const startDate = startOfWeek(currentMonth, { weekStartsOn: 0 });
     const endDate = lastDayOfWeek(currentMonth, { weekStartsOn: 0 });
 
-    let day = startDate; // Start from the beginning of the week
+    let day = startDate;
     const rows = [];
 
     while (day <= endDate) {
@@ -100,7 +100,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                 </div>
               )}
               {jamDayDate?.includes(currentDay.toDateString()) && (
-                <span className="absolute bg-red-500 w-2.5 h-2.5 rounded-full left-1/2 transform -translate-x-1/2"></span>
+                <span className="absolute bg-sub w-2.5 h-2.5 rounded-full left-1/2 transform -translate-x-1/2"></span>
               )}
             </button>
           </div>

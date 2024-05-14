@@ -69,7 +69,7 @@ const Song: React.FC<SongFCProps> = ({
           ))
       ) : (
         <div className="flex justify-center items-center h-full">
-          <h3>There is no JamDay scheduled for this date.</h3>
+          <h3>잼데이 날이 아닙니다</h3>
         </div>
       )}
     </div>

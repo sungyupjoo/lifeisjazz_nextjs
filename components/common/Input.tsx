@@ -21,7 +21,7 @@ const CustomInput: FC<InputProps> = ({
         id={id}
         type={type}
         name={name}
-        className="w-full block text-lg border-none outline-none focus:outline-none transition ease-in-out duration-300 text-gray-700 bg-transparent"
+        className="w-full block text-lg outline-none focus:outline-none transition ease-in-out min-w-64 duration-300 text-gray-700 bg-transparent border-b-2 border-borderGray"
         required={required}
         defaultValue={defaultValue || ""}
       />

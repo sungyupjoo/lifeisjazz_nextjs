@@ -7,16 +7,14 @@ interface StyledModalProps {
   isModalVisible: boolean;
   closeModal: () => void;
   children: ReactNode;
-  width?: string;
-  height?: string;
+  width?: number;
+  height?: number;
 }
 
 const StyledModal: React.FC<StyledModalProps> = ({
   isModalVisible,
   closeModal,
   children,
-  width = "20rem",
-  height = "15rem",
 }) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -35,10 +33,10 @@ const StyledModal: React.FC<StyledModalProps> = ({
   if (!isModalVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-60  overflow-y-auto z-10">
       <div className="flex items-center justify-center min-h-screen">
         <div
-          className={`relative bg-white rounded-2xl w-80 h-60 flex flex-col`}
+          className={`p-6 relative bg-white rounded-2xl w-auto h-auto flex flex-col`}
         >
           <button onClick={closeModal} className="absolute top-2 right-2">
             <IconXMark size={24} />

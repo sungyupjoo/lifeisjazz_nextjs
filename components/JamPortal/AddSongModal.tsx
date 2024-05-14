@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  StyledModal,
-  Input,
-  CheckboxInput,
-  Button as CustomButton,
-} from "../common";
+import { StyledModal, Input, CheckboxInput, Button } from "../common";
 import Select from "react-select";
 import { keyOptions, rhythmOptions } from "../common/types";
 
@@ -20,13 +15,8 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
   handleSubmit,
 }) => {
   return (
-    <StyledModal
-      closeModal={closeHandler}
-      isModalVisible={isVisible}
-      height="h-132"
-      width="w-120"
-    >
-      <form onSubmit={handleSubmit} className="font-semibold text-lg">
+    <StyledModal closeModal={closeHandler} isModalVisible={isVisible}>
+      <form onSubmit={handleSubmit} className="font-semibold text-lg mt-8">
         <div className="flex mb-6 items-center">
           <label htmlFor="title" className="w-1/3 min-w-28 text-lg">
             곡 제목
@@ -39,7 +29,7 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
           </label>
           <Select
             options={keyOptions}
-            id="key"
+            inputId="key"
             name="key"
             className="w-2/3 cursor-pointer"
           />
@@ -50,7 +40,7 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
           </label>
           <Select
             options={rhythmOptions}
-            id="rhythm"
+            inputId="rhythm"
             name="rhythm"
             className="w-2/3 cursor-pointer"
           />
