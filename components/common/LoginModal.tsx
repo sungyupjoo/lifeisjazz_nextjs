@@ -16,12 +16,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   };
 
   return (
-    <StyledModal
-      isModalVisible={isModalVisible}
-      closeModal={closeModal}
-      width="20rem"
-      height="15rem"
-    >
+    <StyledModal isModalVisible={isModalVisible} closeModal={closeModal}>
       <h3 className="text-center text-lg mt-10 mb-14">로그인</h3>
       <div
         className="flex justify-center cursor-pointer"

@@ -11,12 +11,7 @@ const CancelSongModal: React.FC<CancelSongModalProps> = ({
   closeHandler,
 }) => {
   return (
-    <StyledModal
-      isModalVisible={isVisible}
-      closeModal={closeHandler}
-      height="h-80" // Tailwind class for height: 20rem
-      width="w-120" // Tailwind class for width: 30rem
-    >
+    <StyledModal isModalVisible={isVisible} closeModal={closeHandler}>
       <div className="flex items-center justify-center h-full">
         <p className="text-center text-xl font-medium">
           Are you sure you want to cancel this song?
