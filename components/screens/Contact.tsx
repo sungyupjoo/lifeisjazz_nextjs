@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import { Button, Container, Title, FlexWrapper, StyledModal
 import { Button, Container, Title, StyledModal } from "../common";
 import KakaoMap from "../KakaoMap";
 import Rules from "../contents/Rules";
@@ -61,8 +60,6 @@ const Contact = () => {
       {ruleModalVisible && (
         <StyledModal
           isModalVisible={ruleModalVisible}
-          width="w-full md:w-96"
-          height="h-96"
           closeModal={() => setRuleModalVisible(false)}
         >
           <Rules />
