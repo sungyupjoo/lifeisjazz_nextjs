@@ -1,6 +1,5 @@
 import { grand_fest, logo_kakao, logo_somoim } from "@/public/assets";
 import { Button, Container } from "../common";
-import colors from "@/styles/theme";
 
 const Hero = () => {
   return (
@@ -16,7 +15,7 @@ const Hero = () => {
           <h1 className="text-white mb-4">
             Life is <span className="text-sub">JAZZ</span>
           </h1>
-          <p className="text-white text-lg leading-8">
+          <p className="text-white">
             연주자, 리스너 구분 없이 모두가
             <br /> <span className="text-sub">재즈</span>를 감상하고 연주하고
             즐기는 모임

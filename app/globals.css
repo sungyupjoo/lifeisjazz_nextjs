@@ -4,22 +4,28 @@
 
 @layer base {
   h1 {
-    @apply font-bold text-8xl text-black;
+    @apply font-bold text-black;
+    @apply text-6xl lg:text-8xl;
   }
   h2 {
-    @apply font-bold text-5xl text-black;
+    @apply font-bold text-black;
+    @apply text-4xl lg:text-5xl;
   }
   h3 {
-    @apply font-semibold text-2xl text-black;
+    @apply font-semibold  text-black;
+    @apply text-xl lg:text-2xl;
   }
   h4 {
     @apply font-medium text-xl text-black;
+    @apply text-sm md:text-lg break-keep;
   }
   p {
-    @apply font-normal text-lg text-black break-keep;
+    @apply font-normal text-black break-keep;
+    @apply text-sm md:text-lg md:leading-8;
   }
   a {
-    @apply font-normal text-sm text-black break-keep;
+    @apply font-normal text-black break-keep;
+    @apply text-sm md:text-lg;
   }
 }
 

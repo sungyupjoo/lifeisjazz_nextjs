@@ -25,7 +25,7 @@ export const Button: React.FC<ButtonProps> = ({
   }`;
   return (
     <div
-      className={`bg-${backgroundColor}  inline-block cursor-pointer text-center rounded-lg px-5 py-2 ${hoverBgColorClass}`}
+      className={`bg-${backgroundColor}  inline-block cursor-pointer text-center rounded-lg px-2 py-1.5 lg:px-5 ${hoverBgColorClass}`}
     >
       {logoUrl && (
         <img
