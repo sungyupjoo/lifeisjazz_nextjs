@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "../common";
 import { useState, useEffect } from "react";
-import colors from "../../styles/theme";
 import { useSession, signOut } from "next-auth/react";
 import { UserProps } from "../common/types";
 import Profile from "../common/Profile";

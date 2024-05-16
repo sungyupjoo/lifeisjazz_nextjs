@@ -34,7 +34,7 @@ export default function KakaoMap() {
 
   return (
     <div
-      className=" mt-8 w-full md:w-1/2 h-[400px] rounded-3xl flex-shrink-0 "
+      className=" mt-8 w-full md:w-1/2 h-[380px] rounded-3xl flex-shrink-0 "
       id="map"
     ></div>
   );
