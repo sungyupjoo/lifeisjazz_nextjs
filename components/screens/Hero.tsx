@@ -20,7 +20,7 @@ const Hero = () => {
             <br /> <span className="text-sub">재즈</span>를 감상하고 연주하고
             즐기는 모임
           </p>
-          <div className="flex mt-12 gap-5 md:mt-2">
+          <div className="flex mt-6 gap-5 md:mt-2">
             <Button
               text={"소모임 링크"}
               backgroundColor="main"

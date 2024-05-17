@@ -1,7 +1,5 @@
-"use client";
 import { Button } from "../common";
 import { useState, useEffect } from "react";
-import colors from "../../styles/theme";
 import { useSession, signOut } from "next-auth/react";
 import { UserProps } from "../common/types";
 import Profile from "../common/Profile";
@@ -20,7 +18,7 @@ const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
   const [user, setUser] = useState<UserProps | null>(null);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const clickHandler = () => {
     setIsModalVisible(true);
@@ -89,32 +87,35 @@ const Login = () => {
     }
     setIsProfileModalVisible(false);
   };
+  if (user?.name) {
+    return (
+      <>
+        <Profile onClick={openProfileModal} user={user} />
+        {isProfileModalVisible && user && (
+          <ProfileModal
+            isProfileModalVisible={isProfileModalVisible}
+            closeProfileModal={closeProfileModal}
+            user={user}
+            logoutHandler={logOutHandler}
+            handleSubmit={saveProfileHandler}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
     <>
-      {!user?.name ? (
-        <Button
-          backgroundColor="sub"
-          text={"로그인"}
-          logoUrl=""
-          href=""
-          onClick={clickHandler}
-        />
-      ) : (
-        <Profile onClick={openProfileModal} user={user} />
-      )}
+      <Button
+        backgroundColor="sub"
+        text={"로그인"}
+        logoUrl=""
+        href=""
+        onClick={clickHandler}
+      />
 
       {isModalVisible && (
         <LoginModal isModalVisible={isModalVisible} closeModal={closeModal} />
-      )}
-      {isProfileModalVisible && user && (
-        <ProfileModal
-          isProfileModalVisible={isProfileModalVisible}
-          closeProfileModal={closeProfileModal}
-          user={user}
-          logoutHandler={logOutHandler}
-          handleSubmit={saveProfileHandler}
-        />
       )}
     </>
   );

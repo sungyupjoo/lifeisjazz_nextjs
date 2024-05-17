@@ -10,8 +10,11 @@ const LoginModal: React.FC<LoginModalProps> = ({
   isModalVisible,
   closeModal,
 }) => {
-  const loginHandler = () => {
-    signIn("kakao");
+  const loginHandler = async () => {
+    await signIn("kakao", {
+      redirect: true,
+      callbackUrl: "/",
+    });
     closeModal();
   };
 
