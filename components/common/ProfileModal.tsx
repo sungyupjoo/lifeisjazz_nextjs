@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { UserProps } from "./types";
+import { StyledModal } from ".";
 
 interface ProfileModalProps {
   isProfileModalVisible: boolean;
@@ -29,19 +30,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div
-      className={`modal ${
-        isProfileModalVisible ? "flex" : "hidden"
-      } fixed inset-0 z-50`}
+    <StyledModal
+      closeModal={closeProfileModal}
+      isModalVisible={isProfileModalVisible}
     >
-      <div
-        className="modal-content bg-white p-4 rounded-lg shadow-lg mx-auto my-20"
-        style={{ width: "25rem", height: "30rem" }}
-      >
-        <h3 className="text-center text-xl font-semibold mb-4">내 프로필</h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-4 gap-4 items-center">
-            <label htmlFor="nickname" className="col-span-1 font-semibold">
+      <div className="mt-6">
+        <h3 className="text-center mb-4">내 프로필</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-3 gap-4 items-center">
+            <label htmlFor="nickname" className="font-semibold">
               닉네임
             </label>
             <input
@@ -50,13 +47,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               name="nickname"
               required
               defaultValue={name}
-              className="col-span-3 p-2 border rounded-md"
+              className="col-span-2 p-2 border rounded-md"
             />
 
             <label htmlFor="profileImage" className="col-span-1 font-semibold">
               사진
             </label>
-            <div className="col-span-3">
+            <div className="col-span-2">
               <img
                 src={(typeof preview === "string" ? preview : image) || ""}
                 alt="Profile"
@@ -83,21 +80,21 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           <div className="flex justify-center mt-4">
             <button
               type="submit"
-              className="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg mx-2"
+              className="bg-sub hover:bg-subShade text-white font-semibold py-2 px-4 rounded-lg mx-2"
             >
               변경사항 저장
             </button>
             <button
               type="button"
               onClick={logoutHandler}
-              className="bg-secondary-500 hover:bg-secondary-700 text-white font-bold py-2 px-4 rounded-lg"
+              className="bg-main hover:bg-mainShade text-white font-semibold py-2 px-4 rounded-lg"
             >
               로그아웃
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </StyledModal>
   );
 };
 

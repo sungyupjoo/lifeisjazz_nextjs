@@ -10,7 +10,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onClick }) => {
   const { name, image } = user;
   return (
     <div
-      className="inline-block cursor-pointer max-w-xs bg-primary-500 p-2 rounded-md hover:bg-primary-700"
+      className="inline-block cursor-pointer max-w-xs bg-mainTint px-3.5 py-1.5 rounded-md hover:bg-mainShade"
       onClick={onClick}
     >
       <div className="flex items-center gap-2">
