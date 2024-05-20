@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { UserProps } from "./types";
-import { StyledModal } from ".";
+import { Input, StyledModal } from ".";
 
 interface ProfileModalProps {
   isProfileModalVisible: boolean;
@@ -37,16 +37,23 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       <div className="mt-6">
         <h3 className="text-center mb-4">내 프로필</h3>
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-3 gap-4 items-center">
+          <div className="grid grid-cols-3 gap-y-4 items-center">
             <label htmlFor="nickname" className="font-semibold">
               닉네임
             </label>
-            <input
-              type="text"
+            {/* <Input type="text"
               id="nickname"
               name="nickname"
               required
               defaultValue={name}
+              
+              /> */}
+            <input
+              type="text"
+              id="nickname"
+              name="nickname"
+              defaultValue={name}
+              required
               className="col-span-2 p-2 border rounded-md"
             />
 

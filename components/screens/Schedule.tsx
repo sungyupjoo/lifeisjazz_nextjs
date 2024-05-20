@@ -9,7 +9,6 @@ import {
 } from "../common";
 import "react-calendar/dist/Calendar.css";
 import CustomCalendar, { Value } from "../calendar/CustomCalendar";
-import { exampleMembers } from "../contents/exampleMembers";
 import {
   IconArrowRight,
   IconCalendar,
@@ -121,7 +120,8 @@ const Schedule: React.FC = () => {
                         {selectedSchedule?.totalNumber}
                       </p>
                     </div>
-                    {exampleMembers
+                    {/* TODO: 참가한 사람들 얼굴 띄우기 */}
+                    {/* {exampleMembers
                       .filter((member) =>
                         selectedSchedule?.participate.includes(member.id)
                       )
@@ -132,7 +132,7 @@ const Schedule: React.FC = () => {
                           alt="Member"
                           className="w-10 h-10 rounded-full shadow-sm"
                         />
-                      ))}
+                      ))} */}
                   </div>
                 </div>
                 <p className="mt-2">{selectedSchedule?.specific}</p>

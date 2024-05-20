@@ -17,13 +17,13 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
   return (
     <StyledModal closeModal={closeHandler} isModalVisible={isVisible}>
       <form onSubmit={handleSubmit} className="font-semibold text-lg mt-8">
-        <div className="flex mb-6 items-center">
+        <div className="flex mb-4 sm:mb-6 items-center">
           <label htmlFor="title" className="w-1/3 min-w-28 text-lg">
             곡 제목
           </label>
-          <Input id="title" type="text" name="title" required={true} />
+          <Input id="title" type="text" name="title" required />
         </div>
-        <div className="flex mb-6 items-center">
+        <div className="flex mb-4 sm:mb-6 items-center">
           <label htmlFor="key" className="w-1/3 min-w-28 text-lg">
             키
           </label>
@@ -31,10 +31,11 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
             options={keyOptions}
             inputId="key"
             name="key"
-            className="w-2/3 cursor-pointer"
+            className="w-2/3 cursor-pointer text-sm"
+            required
           />
         </div>
-        <div className="flex mb-6 items-center">
+        <div className="flex mb-4 sm:mb-6 items-center">
           <label htmlFor="rhythm" className="w-1/3 min-w-28 text-lg">
             리듬
           </label>
@@ -42,10 +43,11 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
             options={rhythmOptions}
             inputId="rhythm"
             name="rhythm"
-            className="w-2/3 cursor-pointer"
+            className="w-2/3 cursor-pointer text-sm"
+            required
           />
         </div>
-        <fieldset className="mb-6">
+        <fieldset className="mb-4 sm:mb-6">
           <legend className="mb-4">악기 구성</legend>
           <div className="grid grid-cols-3 gap-2">
             <CheckboxInput id="bass" value="베이스" defaultChecked />
@@ -57,7 +59,7 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
             <CheckboxInput id="etc" value="그외" />
           </div>
         </fieldset>
-        <div className="flex mb-6 items-center">
+        <div className="flex mb-4 sm:mb-6 items-center">
           <label htmlFor="details" className="w-1/3 min-w-28 text-lg">
             하고 싶은 말
           </label>

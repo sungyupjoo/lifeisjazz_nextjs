@@ -1,9 +1,7 @@
-import { ReactNode } from "react";
+"use client";
 
-export const metadata = {
-  title: "Life is Jazz 잼데이",
-  description: "라이재 잼데이",
-};
+import { SessionProvider } from "next-auth/react";
+import { ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -12,7 +10,9 @@ interface Props {
 export default function JamPortalLayout({ children }: Props) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SessionProvider>{children}</SessionProvider>
+      </body>
     </html>
   );
 }
