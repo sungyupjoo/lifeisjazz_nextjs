@@ -44,7 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <a
           href={href}
-          className={`no-underline text-${fontColor} align-middle`}
+          className={`no-underline text-${fontColor} align-middle break-keep`}
           onClick={(e) => {
             if (onClick) {
               e.preventDefault();

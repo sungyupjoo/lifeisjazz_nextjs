@@ -17,9 +17,12 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
         name="instruments"
         value={value}
         defaultChecked={defaultChecked}
-        className="accent-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        className="accent-blue-500 h-4 w-4 rounded focus:ring-main"
       />
-      <label htmlFor={id} className="text-base font-normal cursor-pointer">
+      <label
+        htmlFor={id}
+        className=" text-sm sm:text-base font-normal cursor-pointer"
+      >
         {value}
       </label>
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "../common";
-import { InstrumentType, Member, SongProps } from "../common/types";
+import { InstrumentType, SongProps, UserProps } from "../common/types";
 
 interface SongFCProps {
   requestedSongs: SongProps[];
@@ -20,49 +20,57 @@ const Song: React.FC<SongFCProps> = ({
     .includes(selectedDate.toDateString());
 
   return (
-    <div>
+    <div className="flex flex-col items-center sm:grid sm:grid-cols-2 ">
       {isJamDay ? (
         requestedSongs
           .filter((song) => song.date === selectedDate.toDateString())
           .map((song, index) => (
-            <div key={song.title} className="bg-gray-100 rounded-lg p-4 m-2">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">
-                  #{index + 1} {song.title}
-                </h3>
+            <div
+              key={song.title}
+              className="w-4/5 bg-backgroundGray rounded-lg p-4 mb-8 justify-self-center align-middle"
+            >
+              <h3 className="text-lg font-semibold">
+                #{index + 1} {song.title}
+              </h3>
+              <div className="pt-3 pb-3 border-b-[1px] border-borderGray flex justify-between items-center">
+                <p>
+                  신청자{" "}
+                  <span className="font-semibold">{song.requester?.name}</span>
+                </p>
                 <Button
-                  text="Cancel"
-                  backgroundColor="bg-gray-300"
+                  text="곡 취소"
+                  backgroundColor="sub"
                   onClick={() => onCancel(song.id)}
                 />
               </div>
-              <p>Requested by: {song.requester?.nickName}</p>
-              <div className="mt-1">
+              <div className="my-4">
                 {song.instruments.map((instrument, i) => (
                   <div
                     key={i}
-                    className="bg-white p-2 rounded-lg cursor-pointer hover:bg-gray-200"
+                    className="p-2 rounded-lg cursor-pointer hover:bg-borderGray border-[1px] border-borderGray mb-2"
                     onClick={() => updateParticipant(song.id, instrument.name)}
                   >
-                    {instrument.name} - Participants:
-                    {instrument.participants.map((participant: Member) => (
+                    <span className="font-semibold ">{instrument.name}</span>
+                    {instrument.participants.map((participant: UserProps) => (
                       <div
-                        key={participant.id}
-                        className="flex items-center gap-2"
+                        key={participant.email}
+                        className="flex items-center gap-2 bg-borderGray rounded-md px-2 py-1.5"
                       >
                         <img
                           className="w-8 h-8 rounded-full"
-                          src={participant.profileImageUrl}
-                          alt={participant.nickName}
+                          src={participant.image}
+                          alt={participant.name}
                         />
-                        <span>{participant.nickName}</span>
+                        <span className="text-sm text-black">
+                          {participant.name}
+                        </span>
                       </div>
                     ))}
                   </div>
                 ))}
               </div>
-              <div className="mt-2">
-                <strong>Details:</strong>
+              <div className="mt-2 pt-2 border-t-[1px] border-borderGray">
+                <p className="mb-2 font-semibold">신청자 comment</p>
                 <p>{song.details}</p>
               </div>
             </div>

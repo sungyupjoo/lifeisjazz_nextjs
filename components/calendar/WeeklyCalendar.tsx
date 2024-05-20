@@ -32,21 +32,21 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
   };
 
   const renderHeader = () => (
-    <div className=" w-full pt-18 pb-8 flex flex-col">
+    <div className=" w-full pb-4 flex flex-col">
       <div className="flex flex-row p-4 items-center justify-center">
         <button
-          className="cursor-pointer mr-20 transition duration-150 ease-out hover:text-sub"
+          className="cursor-pointer text-xs sm:text-sm transition duration-150 ease-out hover:text-sub break-keep mr-4 md:mr-20"
           onClick={() => changeWeekHandle("prev")}
         >
           &larr; 이전 주
         </button>
-        <h3 className="text-center">
+        <h3 className="text-center break-keep">
           {format(currentMonth, "yy년 MM월")}
           <br />
           라이재 잼데이
         </h3>
         <button
-          className="cursor-pointer ml-20 transition duration-150 ease-out hover:text-sub"
+          className="cursor-pointer text-xs sm:text-sm ml-4 md:ml-20 transition duration-150 ease-out hover:text-sub break-keep"
           onClick={() => changeWeekHandle("next")}
         >
           다음 주 &rarr;
@@ -95,12 +95,12 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
             >
               {format(currentDay, "d")}
               {isSameDay(currentDay, new Date()) && (
-                <div className="absolute transform -translate-x-1/2 -translate-y-20 text-xs text-white">
+                <div className="absolute -translate-y-8 text-white text-[10px]">
                   오늘
                 </div>
               )}
               {jamDayDate?.includes(currentDay.toDateString()) && (
-                <span className="absolute bg-sub w-2.5 h-2.5 rounded-full left-1/2 transform -translate-x-1/2"></span>
+                <span className="absolute bg-sub w-2.5 h-2.5 rounded-full -translate-x-3.5 translate-y-5"></span>
               )}
             </button>
           </div>

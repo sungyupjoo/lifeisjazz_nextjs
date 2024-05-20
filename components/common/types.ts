@@ -1,14 +1,6 @@
-export interface Member {
-  id: number;
-  nickName: string;
-  instrument: string[];
-  isManager: boolean;
-  profileImageUrl: string;
-}
-
 export interface InstrumentProps {
   name: InstrumentType;
-  participants: Member[];
+  participants: UserProps[];
 }
 
 export type KeyType =
@@ -53,14 +45,13 @@ export interface SongProps {
   // (Timestamp 타입으로 받아오게 하면 SongProps와 호환하는데 있어 문제 발생)
   id: string;
   date: string;
-  // TODO: context로 로그인한 member의 data를 저장해두고 있어야할듯
-  requester?: Member;
+  requester?: UserProps;
   title: string;
   key: KeyType;
   rhythm: RhythmType;
   instruments: InstrumentProps[];
   details: string;
-  participants?: Member[];
+  participants?: UserProps[];
 }
 
 export const instrumentName = {
@@ -134,4 +125,5 @@ export interface UserProps {
   email: string;
   image: string;
   name: string;
+  isManager?: boolean;
 }
