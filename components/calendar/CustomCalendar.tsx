@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import moment from "moment";
-import { exampleSchedule } from "../contents/exampleSchedule"; // Assuming types and content are defined here
-
-// Define types for the date values used in the calendar
+import { exampleSchedule } from "../contents/exampleSchedule";
 export type ValuePiece = Date | null;
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-// Define the props for the CustomCalendar component
 interface CustomCalendarProps {
   date: Value;
   onDateChange: (date: Value) => void;
 }
 
-// Define a type for what a schedule item might look like, assuming you have it defined somewhere
 interface ScheduleItem {
-  date: string; // YYYY-MM-DD format
+  date: string;
   category: string;
 }
 
@@ -73,12 +69,12 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
               >
                 <div
                   className={`rounded-full w-5 h-5 bg-${
-                    schedule.category === "잼데이" ? "red-500" : "blue-500"
+                    schedule.category === "잼데이" ? "sub" : "main"
                   }`}
                 ></div>
                 <p
                   className={`text-white text-xs mt-0.5 p-0.5 rounded bg-${
-                    schedule.category === "잼데이" ? "red-500" : "blue-500"
+                    schedule.category === "잼데이" ? "sub" : "main"
                   }`}
                 >
                   {schedule.category}
