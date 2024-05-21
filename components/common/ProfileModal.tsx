@@ -71,7 +71,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          console.log(snapshot);
+          console.log(snapshot, "스냅샷");
         },
         (error) => {
           console.error("이미지 업로드 실패", error);

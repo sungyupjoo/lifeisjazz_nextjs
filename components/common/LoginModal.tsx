@@ -1,20 +1,35 @@
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import StyledModal from "./StyledModal";
+import {
+  OAuthProvider,
+  signInWithCredential,
+  signInWithCustomToken,
+} from "firebase/auth";
+import { auth } from "@/firebase/config";
+import { Session } from "next-auth";
 
 interface LoginModalProps {
   isModalVisible: boolean;
   closeModal: () => void;
 }
 
+// async function syncFirebaseAuth(session: Session) {
+//   const provider = new OAuthProvider("oidc.kakao");
+//   const credential = provider.credential({ idToken: session?.user?.id });
+//   await signInWithCredential(auth, credential);
+// }
+
 const LoginModal: React.FC<LoginModalProps> = ({
   isModalVisible,
   closeModal,
 }) => {
+  const { data: session } = useSession();
   const loginHandler = async () => {
     await signIn("kakao", {
       redirect: true,
       callbackUrl: "/",
     });
+    // syncFirebaseAuth(session!);
     closeModal();
   };
 

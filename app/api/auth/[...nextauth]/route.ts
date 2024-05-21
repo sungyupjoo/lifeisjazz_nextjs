@@ -1,22 +1,54 @@
-import NextAuth, { Session } from "next-auth";
+import NextAuth, { Session, SessionStrategy } from "next-auth";
 import KakaoProvider from "next-auth/providers/kakao";
 import { JWT } from "next-auth/jwt";
+import { FirestoreAdapter } from "@next-auth/firebase-adapter";
+import { cert } from "firebase-admin/app";
+import * as admin from "firebase-admin";
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: cert({
+      projectId: process.env.FIREBASE_PROJECT_ID!,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, "\n"),
+    }),
+  });
+}
 
 const authOptions = {
   providers: [
     KakaoProvider({
-      clientId: process.env.KAKAO_JS_KEY as string,
-      clientSecret: process.env.KAKAO_CLIENT_SECRET_KEY as string,
+      clientId: process.env.KAKAO_JS_KEY!,
+      clientSecret: process.env.KAKAO_CLIENT_SECRET_KEY!,
     }),
   ],
   callbacks: {
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (session?.user) {
-        console.log(session.user, "세션 유저");
+    jwt({ token, user }: { token: any; user: any }) {
+      if (user) {
+        return { ...token, id: user.id };
       }
-      return session;
+      return token;
+    },
+    async session({ session, token }: { session: Session; token: JWT }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+      };
     },
   },
+  session: {
+    strategy: "jwt" as SessionStrategy,
+  },
+  adapter: FirestoreAdapter({
+    credential: cert({
+      projectId: process.env.FIREBASE_PROJECT_ID!,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, "\n"),
+    }),
+  }),
 };
 const handler = NextAuth(authOptions);
 

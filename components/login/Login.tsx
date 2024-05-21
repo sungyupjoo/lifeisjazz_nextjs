@@ -1,11 +1,11 @@
 import { Button } from "../common";
 import { useState, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { UserProps } from "../common/types";
 import Profile from "../common/Profile";
 import ProfileModal from "../common/ProfileModal";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import LoginModal from "../common/LoginModal";
 import { RotatingLines } from "react-loader-spinner";
 
@@ -43,7 +43,7 @@ const Login = () => {
           }
           setUser(docSnap.data() as UserProps);
         } catch (error) {
-          console.warn(error);
+          console.warn(error, "로그인 중 에러");
         }
       }
     };

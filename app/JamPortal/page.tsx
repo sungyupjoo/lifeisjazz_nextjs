@@ -42,7 +42,7 @@ const JamDayPortal = () => {
         if (docSnap.exists()) {
           setLoginMember(docSnap.data() as UserProps);
         } else {
-          console.log("유저 데이터 세팅 중 에러");
+          ("유저 데이터 세팅 중 에러");
         }
       }
     };
@@ -191,7 +191,7 @@ const JamDayPortal = () => {
       },
       { merge: true }
     );
-    console.log(songId);
+    console.log(songId, "곡ID");
   };
 
   return (
