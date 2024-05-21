@@ -1,12 +1,13 @@
 import { Button } from "../common";
 import { useState, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { UserProps } from "../common/types";
 import Profile from "../common/Profile";
 import ProfileModal from "../common/ProfileModal";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import LoginModal from "../common/LoginModal";
+import { RotatingLines } from "react-loader-spinner";
 
 declare global {
   interface Window {
@@ -18,7 +19,7 @@ const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
   const [user, setUser] = useState<UserProps | null>(null);
-  const { data: session } = useSession();
+  const { data: session, status, update } = useSession();
 
   const clickHandler = () => {
     setIsModalVisible(true);
@@ -42,7 +43,7 @@ const Login = () => {
           }
           setUser(docSnap.data() as UserProps);
         } catch (error) {
-          console.warn(error);
+          console.warn(error, "로그인 중 에러");
         }
       }
     };
@@ -69,16 +70,16 @@ const Login = () => {
     event.preventDefault();
     const fd = new FormData(event.currentTarget);
     const name = fd.get("nickname" as string);
-    const image = fd.get("profileImage");
-    console.log(image);
+    const image = fd.get("profileImage" as string);
 
     try {
       if (user?.email) {
         const docRef = doc(db, "members", user?.email);
         await updateDoc(docRef, {
           name: name,
-          // image: fd.get("profileImage" as string),
+          // image: image,
         });
+        update({ name: name });
       } else {
         console.warn("이메일 없음");
       }
@@ -87,6 +88,17 @@ const Login = () => {
     }
     setIsProfileModalVisible(false);
   };
+  if (status === "loading") {
+    return (
+      <RotatingLines
+        strokeColor="gray"
+        strokeWidth="40"
+        animationDuration="0.75"
+        width="40"
+        visible
+      />
+    );
+  }
   if (user?.name) {
     return (
       <>

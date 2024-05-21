@@ -1,7 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { UserProps } from "./types";
-import { Input, StyledModal } from ".";
+import { StyledModal } from ".";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "@/firebase/config";
 
 interface ProfileModalProps {
   isProfileModalVisible: boolean;
@@ -20,14 +22,71 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 }) => {
   const { name, image } = user;
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const [nickname, setNickname] = useState(name);
+  const [error, setError] = useState("");
+  const [file, setFile] = useState<File | null>(null);
 
+  // 닉네임 유효성 검사
+  const validateNickname = (value: string) => {
+    const regex = /^[a-zA-Z가-힣]*$/;
+    if (!regex.test(value)) {
+      return "한글 또는 알파벳만 가능합니다.";
+    }
+    let length = 0;
+    for (let i = 0; i < value.length; i++) {
+      length += /[가-힣]/.test(value[i]) ? 2 : 1;
+    }
+    if (length > 12) {
+      return "닉네임은 한글 6자 / 알파벳 12자까지만 가능합니다.";
+    }
+    return "";
+  };
+
+  const nicknameChangeHandler = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value;
+    const validationResult = validateNickname(value);
+    setNickname(value);
+    setError(validationResult);
+  };
+
+  // 프로필 사진 변경
   const onDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    setFile(file);
+
     const fileReader = new FileReader();
     fileReader.onload = () => setPreview(fileReader.result);
-    fileReader.readAsDataURL(acceptedFiles[0]);
+    fileReader.readAsDataURL(file);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (file) {
+      const storageRef = ref(storage, `profileImages/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          console.log(snapshot, "스냅샷");
+        },
+        (error) => {
+          console.error("이미지 업로드 실패", error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log(`${downloadURL}에 저장`);
+          });
+        }
+      );
+    }
+    if (handleSubmit) {
+      handleSubmit(event);
+    }
+  };
 
   return (
     <StyledModal
@@ -36,27 +95,27 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     >
       <div className="mt-6">
         <h3 className="text-center mb-4">내 프로필</h3>
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-3 gap-y-4 items-center">
+        <form onSubmit={handleFormSubmit}>
+          <div className="grid grid-cols-3 gap-y-4 items-start">
             <label htmlFor="nickname" className="font-semibold">
               닉네임
             </label>
-            {/* <Input type="text"
-              id="nickname"
-              name="nickname"
-              required
-              defaultValue={name}
-              
-              /> */}
-            <input
-              type="text"
-              id="nickname"
-              name="nickname"
-              defaultValue={name}
-              required
-              className="col-span-2 p-2 border rounded-md"
-            />
-
+            <div className="col-span-2 ">
+              <input
+                type="text"
+                id="nickname"
+                name="nickname"
+                defaultValue={name}
+                onChange={nicknameChangeHandler}
+                required
+                className="p-2 border rounded-md w-full"
+              />
+              {error ? (
+                <p className="text-sub text-[10px]">{error}</p>
+              ) : (
+                <p className="text-white text-[10px]">유효한 닉네임입니다.</p>
+              )}
+            </div>
             <label htmlFor="profileImage" className="col-span-1 font-semibold">
               사진
             </label>
@@ -88,6 +147,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             <button
               type="submit"
               className="bg-sub hover:bg-subShade text-white font-semibold py-2 px-4 rounded-lg mx-2"
+              disabled={Boolean(error)}
             >
               변경사항 저장
             </button>

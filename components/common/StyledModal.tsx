@@ -36,9 +36,9 @@ const StyledModal: React.FC<StyledModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60  overflow-y-auto z-50">
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="fixed flex items-center justify-center top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
         <div
-          className={`p-6 relative bg-white rounded-2xl w-screen sm:w-auto h-auto flex flex-col`}
+          className={`p-6 relative bg-white rounded-2xl w-auto h-auto flex flex-col`}
         >
           <button onClick={closeModal} className="absolute top-2 right-2">
             <IconXMark size={24} />
