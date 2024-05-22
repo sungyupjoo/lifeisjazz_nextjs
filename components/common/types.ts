@@ -64,6 +64,16 @@ export const instrumentName = {
   etc: "그외",
 };
 
+export const instruments = [
+  "베이스",
+  "드럼",
+  "피아노",
+  "관악기",
+  "기타",
+  "보컬",
+  "그외",
+];
+
 export const rhythmName = {
   mediumSwing: "미디엄 스윙",
   mediumUpSwing: "미디엄 업 스윙",
@@ -127,3 +137,5 @@ export interface UserProps {
   name: string;
   isManager?: boolean;
 }
+
+export type WeekType = "this" | "next";

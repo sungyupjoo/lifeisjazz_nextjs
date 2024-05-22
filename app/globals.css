@@ -17,15 +17,15 @@
   }
   h4 {
     @apply font-medium text-xl text-black;
-    @apply text-sm md:text-lg break-keep;
+    @apply sm:text-sm break-keep;
   }
   p {
     @apply font-normal text-black break-keep;
-    @apply text-sm;
+    @apply text-lg sm:text-sm;
   }
   a {
     @apply font-normal text-black break-keep;
-    @apply text-sm;
+    @apply text-lg sm:text-sm;
   }
 }
 

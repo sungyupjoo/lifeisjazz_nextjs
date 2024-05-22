@@ -53,9 +53,20 @@ const Schedule: React.FC = () => {
   return (
     <Container backgroundGray innerPadding>
       <Title titleText="일정" subTitle="모임 일정 및 잼데이 신청" />
+      <div className="flex justify-end">
+        {status === "authenticated" ? (
+          <Button backgroundColor="sub" text="잼데이" link />
+        ) : (
+          <Button
+            backgroundColor="sub"
+            text="잼데이"
+            onClick={showLoginModal}
+          />
+        )}
+      </div>
       <FlexWrapper>
         <CustomCalendar date={date} onDateChange={handleDateChange} />
-        <div className="flex flex-col gap-8 mt-4 w-full">
+        <div className="hidden sm:flex flex-col gap-8 mt-4 w-full">
           <div className="flex justify-center items-center mt-6">
             <div className="flex flex-col w-full">
               <div className="flex justify-between items-center mb-4">
@@ -120,19 +131,6 @@ const Schedule: React.FC = () => {
                         {selectedSchedule?.totalNumber}
                       </p>
                     </div>
-                    {/* TODO: 참가한 사람들 얼굴 띄우기 */}
-                    {/* {exampleMembers
-                      .filter((member) =>
-                        selectedSchedule?.participate.includes(member.id)
-                      )
-                      .map((member) => (
-                        <img
-                          key={member.id}
-                          src={member.profileImageUrl}
-                          alt="Member"
-                          className="w-10 h-10 rounded-full shadow-sm"
-                        />
-                      ))} */}
                   </div>
                 </div>
                 <p className="mt-2">{selectedSchedule?.specific}</p>

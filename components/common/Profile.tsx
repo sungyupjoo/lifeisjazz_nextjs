@@ -19,7 +19,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onClick }) => {
           alt={`Profile of ${name}`}
           className="h-6 w-6 rounded-md"
         />
-        <p className="text-white">{name}</p>
+        <p className="text-white text-xl">{name}</p>
       </div>
     </div>
   );

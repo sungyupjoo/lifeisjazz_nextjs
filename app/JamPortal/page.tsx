@@ -4,13 +4,19 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/common";
 import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
-import { Song, AddSongModal, CancelSongModal } from "@/components/JamPortal";
+import {
+  Song,
+  AddSongModal,
+  CancelSongModal,
+  Vote,
+} from "@/components/JamPortal";
 import {
   InstrumentType,
   RhythmType,
   SongProps,
   KeyType,
   UserProps,
+  WeekType,
 } from "../../components/common/types";
 import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
@@ -24,6 +30,16 @@ const JamDayPortal = () => {
   const [requestedSongs, setRequestedSongs] = useState<SongProps[]>([]);
   const [addSongModalVisible, setAddSongModalVisible] = useState(false);
   const [cancelSongModalVisible, setCancelSongModalVisible] = useState(false);
+  const [currentState, setCurrentState] = useState<WeekType>("this");
+  const toggleWeekState = () => {
+    setCurrentState((prev) => {
+      if (prev === "this") {
+        return "next";
+      } else {
+        return "this";
+      }
+    });
+  };
 
   const handleDateChange = (day: Date) => {
     setSelectedDate(day);
@@ -94,7 +110,10 @@ const JamDayPortal = () => {
   }, [selectedDate]);
 
   // 참가자 업데이트
-  const updateHandler = async (songId: string, instrument: InstrumentType) => {
+  const updateSongParticipantHandler = async (
+    songId: string,
+    instrument: InstrumentType
+  ) => {
     if (loginMember) {
       const updatedSongs = requestedSongs.map((song) => {
         // 곡들 중 id로 일치하는 곡 데이터 찾기
@@ -196,52 +215,60 @@ const JamDayPortal = () => {
 
   return (
     <div className="relative">
-      <div className=" ml-4 w-24 h-24">
-        <Link href="/">
-          <img src={logo_black} alt="Logo" className="w-full h-full" />
-        </Link>
-      </div>
       <WeeklyCalendar
         selectedDate={selectedDate}
         onDateChange={handleDateChange}
         jamDayDate={jamDayDate}
+        weekState={currentState}
+        setWeekState={toggleWeekState}
       />
-      <p className="ml-4 mt-8">
-        신청곡{" "}
-        <span className=" font-semibold">{`총 ${requestedSongs.length} 곡`}</span>
-      </p>
-      <div className="flex p-4 flex-col align-middle sm:flex-row sm:gap-5 sm:items-center">
-        {requestedSongs.length > 0 && (
-          <p className="">참가하실 곡의 악기 파트를 눌러주세요.</p>
-        )}
-        <div>
-          <Button
-            backgroundColor="sub"
-            text="곡 신청 +"
-            onClick={() => setAddSongModalVisible(true)}
+      {currentState === "this" && (
+        <div className="ml-4 mt-8">
+          <p>잼 참석비: 10,000원</p>
+          <p>참석자</p>
+          <p className="mt-4">
+            신청곡{" "}
+            <span className=" font-semibold">{`총 ${requestedSongs.length} 곡`}</span>
+          </p>
+          <div className="flex mt-4 flex-col align-middle sm:flex-row sm:gap-5 sm:items-center">
+            {requestedSongs.length > 0 && (
+              <p className="">참가하실 곡의 악기 파트를 눌러주세요.</p>
+            )}
+            <div>
+              <Button
+                backgroundColor="sub"
+                text="곡 신청 +"
+                onClick={() => setAddSongModalVisible(true)}
+              />
+            </div>
+          </div>
+          <Song
+            requestedSongs={requestedSongs}
+            updateParticipant={updateSongParticipantHandler}
+            selectedDate={selectedDate}
+            onCancel={cancelHandler}
           />
+          {addSongModalVisible && (
+            <AddSongModal
+              isVisible={addSongModalVisible}
+              closeHandler={() => {
+                setAddSongModalVisible(false);
+              }}
+              handleSubmit={handleSubmit}
+            />
+          )}
+          {cancelSongModalVisible && (
+            <CancelSongModal
+              isVisible={cancelSongModalVisible}
+              closeHandler={() => setCancelSongModalVisible(false)}
+            />
+          )}
         </div>
-      </div>
-      <Song
-        requestedSongs={requestedSongs}
-        updateParticipant={updateHandler}
-        selectedDate={selectedDate}
-        onCancel={cancelHandler}
-      />
-      {addSongModalVisible && (
-        <AddSongModal
-          isVisible={addSongModalVisible}
-          closeHandler={() => {
-            setAddSongModalVisible(false);
-          }}
-          handleSubmit={handleSubmit}
-        />
       )}
-      {cancelSongModalVisible && (
-        <CancelSongModal
-          isVisible={cancelSongModalVisible}
-          closeHandler={() => setCancelSongModalVisible(false)}
-        />
+      {currentState === "next" && (
+        <div>
+          <Vote />
+        </div>
       )}
     </div>
   );
