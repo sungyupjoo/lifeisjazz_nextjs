@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/common";
 import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
 import {
@@ -15,14 +14,13 @@ import {
   RhythmType,
   SongProps,
   KeyType,
-  UserProps,
   WeekType,
 } from "../../components/common/types";
 import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
-import { startOfDay } from "date-fns";
-import { logo_black } from "../../public/assets";
+import { addWeeks, startOfDay, startOfWeek } from "date-fns";
 import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 const JamDayPortal = () => {
   const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
@@ -32,6 +30,11 @@ const JamDayPortal = () => {
   const [cancelSongModalVisible, setCancelSongModalVisible] = useState(false);
   const [currentState, setCurrentState] = useState<WeekType>("this");
   const toggleWeekState = () => {
+    if (currentState === "this") {
+      setSelectedDate(startOfWeek(addWeeks(selectedDate, 1)));
+    } else {
+      setSelectedDate(new Date());
+    }
     setCurrentState((prev) => {
       if (prev === "this") {
         return "next";
@@ -48,7 +51,7 @@ const JamDayPortal = () => {
 
   // 로그인 유저 정보
   const { data: session } = useSession();
-  const [loginMember, setLoginMember] = useState<UserProps>();
+  const [loginMember, setLoginMember] = useState<Session["user"]>();
 
   useEffect(() => {
     const setUserHandler = async () => {
@@ -56,7 +59,7 @@ const JamDayPortal = () => {
         const docRef = doc(db, "members", session?.user?.email);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setLoginMember(docSnap.data() as UserProps);
+          setLoginMember(docSnap.data() as Session["user"]);
         } else {
           ("유저 데이터 세팅 중 에러");
         }
@@ -79,11 +82,11 @@ const JamDayPortal = () => {
           const jamdaysList: string[] = docSnapshot.data().jamday;
           setJamDayDate(jamdaysList);
         } else {
-          console.warn("no jamdaydate data");
+          console.warn("jamdaydate data 받아오는 중 오류");
         }
       },
       (error) => {
-        console.error("error in subscription");
+        console.error("jamdays subscription에서 오류");
       }
     );
 
@@ -183,16 +186,6 @@ const JamDayPortal = () => {
         },
         { merge: true }
       );
-
-      const jamdayDocRef = await setDoc(
-        doc(
-          db,
-          "jamday",
-          `${selectedDate.getFullYear()} ${selectedDate.getMonth() + 1}`
-        ),
-        { jamday: [...jamDayDate, selectedDate.toDateString()] },
-        { merge: true }
-      );
     } catch (e) {
       console.error("에러메시지", e);
     }
@@ -202,7 +195,6 @@ const JamDayPortal = () => {
   const cancelHandler = async (songId: string) => {
     // setCancelSongModalVisible((prev) => !prev);
     const updatedData = requestedSongs.filter((song) => song.id !== songId);
-    console.log("click됌");
     const docRef = await setDoc(
       doc(db, "jamday", startOfDay(selectedDate).toDateString()),
       {
@@ -211,6 +203,44 @@ const JamDayPortal = () => {
       { merge: true }
     );
     console.log(songId, "곡ID");
+  };
+
+  // 잼데이 날짜 받아오기
+  const [jamdays, setJamdays] = useState<string[]>([]);
+  useEffect(() => {
+    const getJamDays = async () => {
+      const jamdaysRef = doc(
+        db,
+        "jamday",
+        `${selectedDate.getFullYear()} ${selectedDate.getMonth() + 1}`
+      );
+      const jamdaysSnap = await getDoc(jamdaysRef);
+      const confirmedJamdays = jamdaysSnap.data()?.jamday;
+      setJamdays(confirmedJamdays);
+    };
+    getJamDays();
+  }, []);
+
+  const isJamDay = jamdays?.includes(startOfDay(selectedDate).toDateString());
+
+  const setJamDayHandler = async () => {
+    // 잼데이 날짜 지정
+    const jamdayDocRef = doc(
+      db,
+      "jamday",
+      `${selectedDate.getFullYear()} ${selectedDate.getMonth() + 1}`
+    );
+    const docSnap = await getDoc(jamdayDocRef);
+    let currentJamdays = [];
+    if (docSnap.exists()) {
+      currentJamdays = docSnap.data().jamday || [];
+    }
+    const formattedSelectedDate = startOfDay(selectedDate).toDateString();
+    if (!currentJamdays.includes(formattedSelectedDate)) {
+      currentJamdays.push(formattedSelectedDate);
+      await setDoc(jamdayDocRef, { jamday: currentJamdays }, { merge: true });
+      setJamdays(currentJamdays);
+    }
   };
 
   return (
@@ -224,24 +254,38 @@ const JamDayPortal = () => {
       />
       {currentState === "this" && (
         <div className="ml-4 mt-8">
-          <p>잼 참석비: 10,000원</p>
-          <p>참석자</p>
-          <p className="mt-4">
-            신청곡{" "}
-            <span className=" font-semibold">{`총 ${requestedSongs.length} 곡`}</span>
-          </p>
-          <div className="flex mt-4 flex-col align-middle sm:flex-row sm:gap-5 sm:items-center">
-            {requestedSongs.length > 0 && (
-              <p className="">참가하실 곡의 악기 파트를 눌러주세요.</p>
-            )}
-            <div>
+          {isJamDay ? (
+            <>
+              <p>잼 참석비: 10,000원</p>
+              <p className="mt-4">
+                신청곡{" "}
+                <span className=" font-semibold">{`총 ${requestedSongs.length} 곡`}</span>
+              </p>
+              <div className="flex mt-4 flex-col align-middle sm:flex-row sm:gap-5 sm:items-center">
+                {requestedSongs.length > 0 && (
+                  <p className="">참가하실 곡의 악기 파트를 눌러주세요.</p>
+                )}
+                <div>
+                  <Button
+                    backgroundColor="sub"
+                    text="곡 신청 +"
+                    onClick={() => setAddSongModalVisible(true)}
+                    big
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col mt-16 justify-center items-center h-full gap-10">
+              <h3>잼데이 날이 아닙니다</h3>
               <Button
                 backgroundColor="sub"
-                text="곡 신청 +"
-                onClick={() => setAddSongModalVisible(true)}
+                text="잼데이 지정"
+                big
+                onClick={setJamDayHandler}
               />
             </div>
-          </div>
+          )}
           <Song
             requestedSongs={requestedSongs}
             updateParticipant={updateSongParticipantHandler}
@@ -267,7 +311,11 @@ const JamDayPortal = () => {
       )}
       {currentState === "next" && (
         <div>
-          <Vote />
+          <Vote
+            selectedDate={selectedDate}
+            loginMember={loginMember!}
+            setJamdayHandler={setJamDayHandler}
+          />
         </div>
       )}
     </div>

@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { UserProps } from "./types";
 import { StyledModal } from ".";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/firebase/config";
+import { Session } from "next-auth";
 
 interface ProfileModalProps {
   isProfileModalVisible: boolean;
   closeProfileModal: () => void;
-  user: UserProps;
+  user: Session["user"];
   logoutHandler: () => void;
   handleSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -105,7 +105,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                 type="text"
                 id="nickname"
                 name="nickname"
-                defaultValue={name}
+                defaultValue={name!}
                 onChange={nicknameChangeHandler}
                 required
                 className="p-2 border rounded-md w-full"

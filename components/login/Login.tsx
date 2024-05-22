@@ -1,13 +1,13 @@
 import { Button } from "../common";
 import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { UserProps } from "../common/types";
 import Profile from "../common/Profile";
 import ProfileModal from "../common/ProfileModal";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase/config";
 import LoginModal from "../common/LoginModal";
 import { RotatingLines } from "react-loader-spinner";
+import { Session } from "next-auth";
 
 declare global {
   interface Window {
@@ -18,7 +18,7 @@ declare global {
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
-  const [user, setUser] = useState<UserProps | null>(null);
+  const [user, setUser] = useState<Session["user"] | null>(null);
   const { data: session, status, update } = useSession();
 
   const clickHandler = () => {
@@ -41,7 +41,7 @@ const Login = () => {
               setDoc(docRef, { email, image, name, isManager: false });
             }
           }
-          setUser(docSnap.data() as UserProps);
+          setUser(docSnap.data() as Session["user"]);
         } catch (error) {
           console.warn(error, "로그인 중 에러");
         }

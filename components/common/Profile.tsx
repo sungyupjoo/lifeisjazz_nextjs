@@ -1,8 +1,8 @@
+import { Session } from "next-auth";
 import React from "react";
-import { UserProps } from "./types";
 
 interface ProfileProps {
-  user: UserProps;
+  user: Session["user"];
   onClick: () => void;
 }
 
@@ -15,7 +15,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onClick }) => {
     >
       <div className="flex items-center gap-2">
         <img
-          src={image}
+          src={image || ""}
           alt={`Profile of ${name}`}
           className="h-6 w-6 rounded-md"
         />

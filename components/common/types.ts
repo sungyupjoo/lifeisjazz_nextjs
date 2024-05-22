@@ -1,6 +1,8 @@
+import { Session } from "next-auth";
+
 export interface InstrumentProps {
   name: InstrumentType;
-  participants: UserProps[];
+  participants: Session["user"][];
 }
 
 export type KeyType =
@@ -45,13 +47,13 @@ export interface SongProps {
   // (Timestamp 타입으로 받아오게 하면 SongProps와 호환하는데 있어 문제 발생)
   id: string;
   date: string;
-  requester?: UserProps;
+  requester?: Session["user"];
   title: string;
   key: KeyType;
   rhythm: RhythmType;
   instruments: InstrumentProps[];
   details: string;
-  participants?: UserProps[];
+  participants?: Session["user"][];
 }
 
 export const instrumentName = {
@@ -130,12 +132,5 @@ export const rhythmOptions = [
 ];
 
 export const dateFormat = "eee";
-
-export interface UserProps {
-  email: string;
-  image: string;
-  name: string;
-  isManager?: boolean;
-}
 
 export type WeekType = "this" | "next";

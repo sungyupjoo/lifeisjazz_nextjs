@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../common";
-import { InstrumentType, SongProps, UserProps } from "../common/types";
+import { InstrumentType, SongProps } from "../common/types";
 import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 interface SongFCProps {
   requestedSongs: SongProps[];
   updateParticipant: (songId: string, instrument: InstrumentType) => void;
-  selectedDate: Date;
+  selectedDate: Date | undefined;
   onCancel: (songId: string) => void;
 }
 
@@ -17,15 +18,13 @@ const Song: React.FC<SongFCProps> = ({
   onCancel,
 }) => {
   const { data: session } = useSession();
-  const isJamDay = requestedSongs
-    .map((song) => song.date)
-    .includes(selectedDate.toDateString());
 
   return (
     <div className="flex flex-col items-center sm:grid sm:grid-cols-2 ">
-      {isJamDay && session && session?.user ? (
+      {session &&
+        session?.user &&
         requestedSongs
-          .filter((song) => song.date === selectedDate.toDateString())
+          .filter((song) => song.date === selectedDate!.toDateString())
           .map((song, index) => (
             <div
               key={song.title}
@@ -40,7 +39,7 @@ const Song: React.FC<SongFCProps> = ({
                   <div className="flex">
                     <img
                       src={session?.user?.image!}
-                      alt={`Profile of ${session?.user?.name}`}
+                      alt={`Profile`}
                       className="h-6 w-6 rounded-md"
                     />
                     <span className="font-semibold">
@@ -62,21 +61,23 @@ const Song: React.FC<SongFCProps> = ({
                     onClick={() => updateParticipant(song.id, instrument.name)}
                   >
                     <span className="font-semibold ">{instrument.name}</span>
-                    {instrument.participants.map((participant: UserProps) => (
-                      <div
-                        key={participant.email}
-                        className="flex items-center gap-2 bg-borderGray rounded-md px-2 py-1.5"
-                      >
-                        <img
-                          className="w-8 h-8 rounded-full"
-                          src={session?.user?.image!}
-                          alt={session?.user?.name!}
-                        />
-                        <span className="text-sm text-black">
-                          {participant.name}
-                        </span>
-                      </div>
-                    ))}
+                    {instrument.participants.map(
+                      (participant: Session["user"]) => (
+                        <div
+                          key={participant.email}
+                          className="flex items-center gap-2 bg-borderGray rounded-md px-2 py-1.5"
+                        >
+                          <img
+                            className="w-8 h-8 rounded-full"
+                            src={session?.user?.image!}
+                            alt={session?.user?.name!}
+                          />
+                          <span className="text-sm text-black">
+                            {participant.name}
+                          </span>
+                        </div>
+                      )
+                    )}
                   </div>
                 ))}
               </div>
@@ -85,12 +86,7 @@ const Song: React.FC<SongFCProps> = ({
                 <p>{song.details}</p>
               </div>
             </div>
-          ))
-      ) : (
-        <div className="flex justify-center items-center h-full">
-          <h3>잼데이 날이 아닙니다</h3>
-        </div>
-      )}
+          ))}
     </div>
   );
 };

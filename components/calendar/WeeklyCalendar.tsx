@@ -14,7 +14,7 @@ import Link from "next/link";
 import { logo_black } from "@/public/assets";
 
 interface WeeklyCalendarProps {
-  selectedDate: Date;
+  selectedDate: Date | undefined;
   onDateChange: (date: Date) => void;
   jamDayDate: string[] | null;
   weekState: WeekType;
@@ -126,7 +126,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
               className={`rounded-full p-2 cursor-pointer transition duration-250 ease-out overflow-visible ${
                 isSameDay(currentDay, new Date())
                   ? "bg-subTint text-white"
-                  : isSameDay(currentDay, selectedDate)
+                  : isSameDay(currentDay, selectedDate!)
                   ? "bg-mainTint text-white"
                   : "hover:bg-mainTint hover:text-white"
               }`}
