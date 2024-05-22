@@ -11,7 +11,7 @@ export const Container: React.FC<ContainerProps> = ({
   innerPadding = false,
   backgroundGray = false,
 }) => {
-  const paddingClass = innerPadding ? "p-5 md:p-16" : "";
+  const paddingClass = innerPadding ? "p-5 md:p-10" : "";
   const backgroundColor = backgroundGray ? "bg-backgroundGray" : "bg-white";
   return (
     <section

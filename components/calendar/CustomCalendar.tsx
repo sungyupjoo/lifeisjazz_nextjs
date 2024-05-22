@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import styled from "@emotion/styled";
+import colors from "@/styles/theme";
 import Calendar from "react-calendar";
 import moment from "moment";
 import { exampleSchedule } from "../contents/exampleSchedule";
@@ -25,9 +27,8 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
   const today = new Date();
 
   return (
-    <div className="mt-6 flex justify-center relative h-[400px]">
-      <Calendar
-        className="rounded-lg border-none p-2 shadow-md bg-white"
+    <CalendarWrapper>
+      <StyledCalendar
         value={date}
         onChange={onDateChange}
         locale={"ko"}
@@ -38,56 +39,230 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
         prev2Label={null}
         minDetail="year"
         calendarType="gregory"
+        // 오늘 날짜로 돌아오는 기능을 위해 필요한 옵션 설정
         activeStartDate={activeStartDate === null ? undefined : activeStartDate}
         onActiveStartDateChange={({ activeStartDate }) =>
           setActiveStartDate(activeStartDate)
         }
+        // 일정 표시용
         tileContent={({ date, view }) => {
           let html = [];
 
+          // 오늘 날짜 표시
           if (
             view === "month" &&
             date.getMonth() === today.getMonth() &&
             date.getDate() === today.getDate()
           ) {
+            html.push(<StyledToday key={"today"}>오늘</StyledToday>);
+          }
+          // 일정 있는 날 표시
+          if (
+            exampleSchedule
+              .map((schedule) => schedule.date)
+              .find((x) => x === moment(date).format("YYYY-MM-DD"))
+          ) {
+            let category = exampleSchedule.find(
+              (schedule) => schedule.date === moment(date).format("YYYY-MM-DD")
+            )?.category;
             html.push(
-              <div key={"today"} className="text-white text-xs">
-                오늘
-              </div>
+              <ScheduleDay key={moment(date).format("YYYY-MM-DD")}>
+                <StyledDot scheduleContent={category} />
+                <ScheduleSpecific scheduleContent={category}>
+                  {category}
+                </ScheduleSpecific>
+              </ScheduleDay>
             );
           }
-
-          const formattedDate = moment(date).format("YYYY-MM-DD");
-          const schedule = exampleSchedule.find(
-            (s: ScheduleItem) => s.date === formattedDate
-          );
-          if (schedule) {
-            html.push(
-              <div
-                key={formattedDate}
-                className="absolute top-[5%] left-[51%] -translate-x-1/2"
-              >
-                <div
-                  className={`rounded-full w-5 h-5 bg-${
-                    schedule.category === "잼데이" ? "sub" : "main"
-                  }`}
-                ></div>
-                <p
-                  className={`text-white text-xs mt-0.5 p-0.5 rounded bg-${
-                    schedule.category === "잼데이" ? "sub" : "main"
-                  }`}
-                >
-                  {schedule.category}
-                </p>
-              </div>
-            );
-          }
-
           return <>{html}</>;
         }}
       />
-    </div>
+    </CalendarWrapper>
   );
 };
 
 export default CustomCalendar;
+
+const CalendarWrapper = styled.div`
+margin-top: 2.4rem; 
+display: flex;
+height: 400px;
+justify-content: center;
+position: relative;
+.react-calendar {
+  border-radius: 8px;
+  border: none;
+  padding: 1% 2%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  background-color: white;
+}
+.react-calendar {
+  @media(max-width: 576px){
+   width: 100%; 
+  }
+}
+
+/* 네비게이션 가운데 정렬 */
+.react-calendar__navigation {
+  justify-content: center;
+}
+
+/* 네비게이션 폰트 설정 */
+.react-calendar__navigation button {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+/* 네비게이션 버튼 컬러 */
+.react-calendar__navigation button:focus {
+  background-color: white;
+}
+
+/* 네비게이션 비활성화 됐을때 스타일 */
+.react-calendar__navigation button:disabled {
+  background-color: white;
+  color: ${colors.main};
+}
+
+/* 년/월 상단 네비게이션 칸 크기 줄이기 */
+.react-calendar__navigation__label {
+  flex-grow: 0.2 !important;
+}
+
+/* 요일 밑줄 제거 */
+.react-calendar__month-view__weekdays abbr {
+  text-decoration: none;
+  font-weight: 800;
+}
+
+
+/* 일요일에 빨간 폰트 */
+.react-calendar__month-view__weekdays__weekday--weekend abbr[title="일요일"] {
+  color: ${colors.sub}};
+}
+
+/* 날짜 */
+.react-calendar__tile {
+text-align: center;
+height: 50px;
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+}
+
+/*hover, focus, 선택됐을 시 */
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus,
+.react-calendar__tile--active {
+ background: ${colors.main};
+ border-radius: 14px;
+}
+
+/* 오늘 날짜 컬러 */
+.react-calendar__tile--now {
+  background: ${colors.gray};
+  border-radius: 0.3rem;
+  abbr {
+    color: white;
+  }
+}
+/* 네비게이션 월 스타일 적용 */
+.react-calendar__year-view__months__month {
+  border-radius: 0.8rem;
+  background-color: ${colors.gray};
+  padding: 0;
+}
+
+/* 네비게이션 현재 월 스타일 적용 */
+.react-calendar__tile--hasActive {
+  background-color: ${colors.sub};
+  abbr {
+    color: white;
+  }
+}
+
+/* 일 날짜 간격 */
+.react-calendar__tile {
+  padding: 5px 0px 18px;
+  position: relative;
+}
+
+/* 네비게이션 월 스타일 적용 */
+.react-calendar__year-view__months__month {
+  flex: 0 0 calc(33.3333% - 10px) !important;
+  margin-inline-start: 5px !important;
+  margin-inline-end: 5px !important;
+  margin-block-end: 10px;
+  padding: 20px 6.6667px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: ${colors.gray};
+}
+
+/* 선택한 날짜 스타일 적용 */
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus,
+.react-calendar__tile--active {
+  background-color: ${colors.main};
+  border-radius: 0.3rem;
+  color: white;
+}
+`;
+
+const StyledCalendar = styled(Calendar)``;
+
+export const StyledDate = styled.div`
+  position: absolute;
+  right: 7%;
+  top: 6%;
+  background-color: ${colors.main};
+  color: white;
+  width: 18%;
+  min-width: fit-content;
+  height: 1.5rem;
+  text-align: center;
+  margin: 0 auto;
+  line-height: 1.6rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 800;
+`;
+
+/* 일정 있는 날짜에 점 표시 스타일 */
+const StyledDot = styled.div<{ scheduleContent: string | undefined }>`
+  border-width: 1rem;
+  border: solid
+    ${(props) =>
+      props.scheduleContent === "잼데이" ? colors.subShade : colors.main};
+  border-radius: 50%;
+  width: 1.3rem;
+  height: 1.3rem;
+  transform: translateX(-50%);
+  position: absolute;
+  top: 5%;
+  left: 51%;
+`;
+
+const StyledToday = styled.p`
+  font-size: 0.8rem;
+  color: white;
+  @media (max-width: 576px) {
+    font-size: 0.65rem;
+  }
+`;
+
+const ScheduleDay = styled.div``;
+
+const ScheduleSpecific = styled.p<{ scheduleContent: string | undefined }>`
+  font-size: 0.8rem;
+  color: white;
+  background-color: ${(props) =>
+    props.scheduleContent === "잼데이" ? colors.subShade : colors.main};
+  margin-top: 0.1rem;
+  padding: 0 0.2rem;
+  border-radius: 0.3rem;
+  @media (max-width: 576px) {
+    font-size: 0.65rem;
+  }
+`;

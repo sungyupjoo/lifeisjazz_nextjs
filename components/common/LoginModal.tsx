@@ -13,23 +13,24 @@ interface LoginModalProps {
   closeModal: () => void;
 }
 
-// async function syncFirebaseAuth(session: Session) {
-//   const provider = new OAuthProvider("oidc.kakao");
-//   const credential = provider.credential({ idToken: session?.user?.id });
-//   await signInWithCredential(auth, credential);
-// }
-
 const LoginModal: React.FC<LoginModalProps> = ({
   isModalVisible,
   closeModal,
 }) => {
-  const { data: session } = useSession();
+  // const provider = new OAuthProvider("oidc.kakao");
+  // const credential = provider.credential({
+  //   idToken: "",
+  // });
   const loginHandler = async () => {
     await signIn("kakao", {
       redirect: true,
       callbackUrl: "/",
     });
-    // syncFirebaseAuth(session!);
+    // signInWithCredential(auth, credential).then((result) => {
+    //   const credential = OAuthProvider.credentialFromResult(result);
+    //   const accessToken = credential?.accessToken;
+    //   const idToken = credential?.idToken;
+    // });
     closeModal();
   };
 
