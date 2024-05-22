@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/styled": "^11.11.5",
     "@next-auth/firebase-adapter": "^2.0.1",
     "date-fns": "^3.6.0",
     "firebase": "^10.11.1",

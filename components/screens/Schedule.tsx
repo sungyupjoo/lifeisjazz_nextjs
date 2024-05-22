@@ -55,7 +55,7 @@ const Schedule: React.FC = () => {
       <Title titleText="일정" subTitle="모임 일정 및 잼데이 신청" />
       <FlexWrapper>
         <CustomCalendar date={date} onDateChange={handleDateChange} />
-        <div className="flex flex-col gap-8 mt-4">
+        <div className="flex flex-col gap-8 mt-4 w-full">
           <div className="flex justify-center items-center mt-6">
             <div className="flex flex-col w-full">
               <div className="flex justify-between items-center mb-4">
