@@ -1,6 +1,8 @@
+import { Session } from "next-auth";
+
 export interface InstrumentProps {
   name: InstrumentType;
-  participants: UserProps[];
+  participants: Session["user"][];
 }
 
 export type KeyType =
@@ -45,13 +47,13 @@ export interface SongProps {
   // (Timestamp 타입으로 받아오게 하면 SongProps와 호환하는데 있어 문제 발생)
   id: string;
   date: string;
-  requester?: UserProps;
+  requester?: Session["user"];
   title: string;
   key: KeyType;
   rhythm: RhythmType;
   instruments: InstrumentProps[];
   details: string;
-  participants?: UserProps[];
+  participants?: Session["user"][];
 }
 
 export const instrumentName = {
@@ -63,6 +65,16 @@ export const instrumentName = {
   vocals: "보컬",
   etc: "그외",
 };
+
+export const instruments = [
+  "베이스",
+  "드럼",
+  "피아노",
+  "관악기",
+  "기타",
+  "보컬",
+  "그외",
+];
 
 export const rhythmName = {
   mediumSwing: "미디엄 스윙",
@@ -121,9 +133,4 @@ export const rhythmOptions = [
 
 export const dateFormat = "eee";
 
-export interface UserProps {
-  email: string;
-  image: string;
-  name: string;
-  isManager?: boolean;
-}
+export type WeekType = "this" | "next";

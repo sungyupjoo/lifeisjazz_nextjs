@@ -1,59 +1,98 @@
-import React, { useState } from "react";
+import React, { SetStateAction, useState } from "react";
 import {
   format,
   startOfWeek,
   addDays,
   isSameDay,
   lastDayOfWeek,
-  getWeek,
   addWeeks,
   subWeeks,
-  startOfDay,
 } from "date-fns";
 import { ko } from "date-fns/locale";
+import { WeekType } from "../common/types";
+import Link from "next/link";
+import { logo_black } from "@/public/assets";
 
 interface WeeklyCalendarProps {
-  selectedDate: Date;
+  selectedDate: Date | undefined;
   onDateChange: (date: Date) => void;
   jamDayDate: string[] | null;
+  weekState: WeekType;
+  setWeekState: (prevState: WeekType) => void;
 }
 
 const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
   selectedDate,
   onDateChange,
   jamDayDate,
+  weekState,
+  setWeekState,
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const changeWeekHandle = (btnType: "prev" | "next") => {
-    setCurrentMonth((prevMonth) =>
-      btnType === "prev" ? subWeeks(prevMonth, 1) : addWeeks(prevMonth, 1)
-    );
-  };
-
   const renderHeader = () => (
-    <div className=" w-full pb-4 flex flex-col">
-      <div className="flex flex-row p-4 items-center justify-center">
-        <button
-          className="cursor-pointer text-xs sm:text-sm transition duration-150 ease-out hover:text-sub break-keep mr-4 md:mr-20"
-          onClick={() => changeWeekHandle("prev")}
-        >
-          &larr; 이전 주
-        </button>
-        <h3 className="text-center break-keep">
+    <div className="flex items-center pt-4">
+      <div className="ml-4 w-24 h-24">
+        <Link href="/">
+          <img src={logo_black} alt="Logo" className="w-full h-full" />
+        </Link>
+      </div>
+      <div className="absolute left-1/2 -translate-x-1/2">
+        <h3 className="text-center break-keep text-2xl">
           {format(currentMonth, "yy년 MM월")}
           <br />
           라이재 잼데이
         </h3>
-        <button
-          className="cursor-pointer text-xs sm:text-sm ml-4 md:ml-20 transition duration-150 ease-out hover:text-sub break-keep"
-          onClick={() => changeWeekHandle("next")}
-        >
-          다음 주 &rarr;
-        </button>
       </div>
     </div>
   );
+
+  const renderToggle = () => {
+    const changeWeekHandle = (weekType: WeekType) => {
+      if (weekType === "this") {
+        setCurrentMonth(new Date());
+      } else {
+        setCurrentMonth(addWeeks(new Date(), 1));
+      }
+    };
+    const handleToggle = (weekType: WeekType) => {
+      setWeekState(weekType);
+      changeWeekHandle(weekType);
+    };
+
+    return (
+      <div className="flex justify-end mt-2 mr-4 mb-4">
+        <div className="flex flex-col">
+          <p className="text-sm text-center">곡 신청</p>
+          <button
+            className={`px-4 py-1.5 rounded-l-3xl ${
+              weekState === "this"
+                ? "bg-main text-white"
+                : "bg-borderGray text-gray"
+            }`}
+            onClick={() => handleToggle("this")}
+            disabled={weekState === "this"}
+          >
+            이번 주
+          </button>
+        </div>
+        <div className="flex flex-col">
+          <p className="text-sm text-center">날짜 투표</p>
+          <button
+            className={`px-4 py-1.5 rounded-r-3xl ${
+              weekState === "next"
+                ? "bg-main text-white"
+                : "bg-borderGray text-gray"
+            }`}
+            onClick={() => handleToggle("next")}
+            disabled={weekState === "next"}
+          >
+            다음 주
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   const renderDays = () => {
     const startDate = startOfWeek(currentMonth, { weekStartsOn: 0 });
@@ -87,7 +126,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
               className={`rounded-full p-2 cursor-pointer transition duration-250 ease-out overflow-visible ${
                 isSameDay(currentDay, new Date())
                   ? "bg-subTint text-white"
-                  : isSameDay(currentDay, selectedDate)
+                  : isSameDay(currentDay, selectedDate!)
                   ? "bg-mainTint text-white"
                   : "hover:bg-mainTint hover:text-white"
               }`}
@@ -121,6 +160,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
   return (
     <div className="calendar">
       {renderHeader()}
+      {renderToggle()}
       {renderDays()}
       {renderCells()}
     </div>

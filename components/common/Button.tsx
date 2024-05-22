@@ -9,6 +9,7 @@ interface ButtonProps {
   href?: string;
   link?: boolean;
   onClick?: () => void;
+  big?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -19,13 +20,16 @@ export const Button: React.FC<ButtonProps> = ({
   href,
   link = false,
   onClick,
+  big = false,
 }) => {
   const hoverBgColorClass = `${
     backgroundColor === "main" ? "hover:bg-mainShade" : "hover:bg-subShade"
   }`;
   return (
     <div
-      className={`bg-${backgroundColor}  inline-block cursor-pointer text-center rounded-lg px-2 py-1.5 lg:px-5 ${hoverBgColorClass}`}
+      className={`bg-${backgroundColor} inline-block cursor-pointer text-center rounded-lg px-2 ${
+        big ? "py-3" : "py-1.5"
+      } lg:px-5 ${hoverBgColorClass}`}
     >
       {logoUrl && (
         <img
@@ -37,14 +41,18 @@ export const Button: React.FC<ButtonProps> = ({
       {link ? (
         <Link
           href={href || "/JamPortal"}
-          className="text-white no-underline font-regular"
+          className={`text-white no-underline font-regular ${
+            big ? "text-xl sm:text-sm" : "text-sm"
+          }`}
         >
           {text}
         </Link>
       ) : (
         <a
           href={href}
-          className={`no-underline text-${fontColor} align-middle break-keep`}
+          className={`no-underline text-${fontColor} align-middle break-keep ${
+            big ? "text-xl sm:text-sm" : "text-sm"
+          }`}
           onClick={(e) => {
             if (onClick) {
               e.preventDefault();
