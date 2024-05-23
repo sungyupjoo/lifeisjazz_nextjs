@@ -11,8 +11,8 @@ declare global {
 export default function KakaoMap() {
   useEffect(() => {
     const kakaoMapScript = document.createElement("script");
-    kakaoMapScript.async = false;
-    kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=700d399006256f95732f06b19c046ba5&autoload=false`;
+    kakaoMapScript.async = true;
+    kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.KAKAO_JS_KEY}&autoload=false`;
     document.head.appendChild(kakaoMapScript);
     const onLoadKakaoAPI = () => {
       window.kakao.maps.load(() => {
