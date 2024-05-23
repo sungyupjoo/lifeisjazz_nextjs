@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="kr" className={`${pretendard.variable}`}>
       <head>
         <meta
-          http-equiv="Content-Security-Policy"
+          httpEquiv="Content-Security-Policy"
           content="upgrade-insecure-requests"
         />
       </head>
