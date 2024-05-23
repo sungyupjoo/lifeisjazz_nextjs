@@ -15,12 +15,12 @@ const Hero = () => {
   return (
     <Container>
       <div
-        className="h-[calc(100vh-100px)] lg:h-full w-full bg-black bg-opacity-65 bg-cover bg-no-repeat bg-center relative"
+        className="h-screen w-full bg-black bg-opacity-65 bg-cover bg-no-repeat bg-center relative"
         style={{
           backgroundImage: `url(${grand_fest})`,
         }}
       >
-        <div className="h-[calc(100vh-100px)] lg:h-full w-full bg-[#000000] bg-opacity-65 bg-cover bg-no-repeat bg-center relative" />
+        <div className="h-full w-full bg-[#000000] bg-opacity-65 bg-cover bg-no-repeat bg-center relative" />
         <div className="absolute top-1/3 w-full flex flex-col items-center justify-center text-center animate-bounce-fadeIn">
           <h1 className="text-white mb-8 text-5xl sm:text-6xl sm:mb-4">
             Life is <span className="text-sub">JAZZ</span>
