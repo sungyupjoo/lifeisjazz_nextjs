@@ -37,11 +37,11 @@ const Manager = () => {
           <div
             key={item.id}
             ref={ref}
-            className={`flex flex-col justify-center items-center gap-4 m-3 p-5 rounded-xl ${
+            className={`flex flex-col justify-center items-center gap-4 mx-12 my-3 px-5 py-6 rounded-3xl shadow-md ${
               isVisible ? `animate-bounce-${index}` : ""
             } hover:bg-borderGray hover:scale-110 transition-transform duration-300 md:flex-row text-center`}
           >
-            <div className="flex justify-center items-center min-w-28 gap-4">
+            <div className="flex justify-center items-center min gap-4">
               <img
                 src={item.url}
                 alt=""

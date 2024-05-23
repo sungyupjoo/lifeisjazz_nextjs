@@ -86,7 +86,7 @@ export default CustomCalendar;
 const CalendarWrapper = styled.div`
 margin-top: 2.4rem; 
 display: flex;
-height: 400px;
+height: 360px;
 justify-content: center;
 position: relative;
 .react-calendar {
@@ -156,7 +156,7 @@ align-items: center;
 .react-calendar__tile:enabled:focus,
 .react-calendar__tile--active {
  background: ${colors.main};
- border-radius: 14px;
+ border-radius: 0.6rem;
 }
 
 /* 오늘 날짜 컬러 */
@@ -205,7 +205,7 @@ align-items: center;
 .react-calendar__tile:enabled:focus,
 .react-calendar__tile--active {
   background-color: ${colors.main};
-  border-radius: 0.3rem;
+  border-radius: 0.6rem;
   color: white;
 }
 `;
@@ -224,7 +224,7 @@ export const StyledDate = styled.div`
   text-align: center;
   margin: 0 auto;
   line-height: 1.6rem;
-  border-radius: 15px;
+  border-radius: 0.6rem;
   font-size: 0.8rem;
   font-weight: 800;
 `;
