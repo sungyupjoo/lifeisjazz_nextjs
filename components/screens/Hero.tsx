@@ -22,7 +22,7 @@ const Hero = () => {
       >
         <div className="h-full w-full bg-[#000000] bg-opacity-65 bg-cover bg-no-repeat bg-center relative" />
         <div className="absolute top-1/3 w-full flex flex-col items-center justify-center text-center animate-bounce-fadeIn">
-          <h1 className="text-white mb-8 text-5xl sm:text-6xl sm:mb-4">
+          <h1 className="text-white mb-8 text-5xl sm:text-8xl sm:mb-4">
             Life is <span className="text-sub">JAZZ</span>
           </h1>
           <p className="text-white text-lg sm:text-sm mb-6 leading-8 sm:leading-6">

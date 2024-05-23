@@ -42,7 +42,7 @@ export const Button: React.FC<ButtonProps> = ({
         <Link
           href={href || "/JamPortal"}
           className={`text-white no-underline font-regular ${
-            big ? "text-xl sm:text-lg" : "text-lg"
+            big ? "text-xl sm:text-lg" : "text-sm"
           }`}
         >
           {text}
@@ -51,7 +51,7 @@ export const Button: React.FC<ButtonProps> = ({
         <a
           href={href}
           className={`no-underline text-${fontColor} align-middle break-keep ${
-            big ? "text-xl sm:text-lg" : "text-lg"
+            big ? "text-xl sm:text-lg" : "text-sm"
           }`}
           onClick={(e) => {
             if (onClick) {
