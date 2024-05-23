@@ -244,7 +244,7 @@ const JamDayPortal = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative bg-white min-h-screen">
       <WeeklyCalendar
         selectedDate={selectedDate}
         onDateChange={handleDateChange}
@@ -276,7 +276,7 @@ const JamDayPortal = () => {
               </div>
             </>
           ) : (
-            <div className="flex flex-col mt-16 justify-center items-center h-full gap-10">
+            <div className="flex flex-col mt-16 justify-center items-center h-full gap-10 bg-white">
               <h3>잼데이 날이 아닙니다</h3>
               <Button
                 backgroundColor="sub"

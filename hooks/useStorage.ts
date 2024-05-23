@@ -1,12 +1,14 @@
-import { storage } from "@/firebase/config";
+import { db, storage } from "@/firebase/config";
+import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const useStorage = () => {
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<Error | null>(null);
-  const [url, setUrl] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const startUpload = (file: File) => {
     if (!file) {
@@ -26,15 +28,20 @@ const useStorage = () => {
       (error) => {
         setError(error);
       },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL: string) => {
-          setUrl(downloadURL);
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        setProgress(progress);
+        // firestore에 데이터 저장
+        await addDoc(collection(db, "gallery"), {
+          imageUrl: downloadURL,
+          createdAt: new Date(),
+          userEmail: session?.user.email,
         });
       }
     );
   };
 
-  return { progress, error, url, startUpload };
+  return { progress, error, startUpload };
 };
 
 export default useStorage;
