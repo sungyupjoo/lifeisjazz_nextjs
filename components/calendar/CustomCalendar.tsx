@@ -86,12 +86,13 @@ export default CustomCalendar;
 const CalendarWrapper = styled.div`
 margin-top: 2.4rem; 
 display: flex;
-height: 360px;
+height: 380px;
 justify-content: center;
 position: relative;
 .react-calendar {
   border-radius: 8px;
   border: none;
+  color: black;
   padding: 1% 2%;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   background-color: white;
@@ -260,7 +261,7 @@ const ScheduleSpecific = styled.p<{ scheduleContent: string | undefined }>`
   background-color: ${(props) =>
     props.scheduleContent === "잼데이" ? colors.subShade : colors.main};
   margin-top: 0.1rem;
-  padding: 0 0.2rem;
+  padding: 0 0.3rem;
   border-radius: 0.3rem;
   @media (max-width: 576px) {
     font-size: 0.65rem;
