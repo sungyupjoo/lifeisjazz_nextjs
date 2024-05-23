@@ -15,22 +15,22 @@ const Hero = () => {
   return (
     <Container>
       <div
-        className="h-screen w-full bg-black bg-opacity-65 bg-cover bg-no-repeat bg-center relative"
+        className="h-[calc(100vh-100px)] lg:h-full w-full bg-black bg-opacity-65 bg-cover bg-no-repeat bg-center relative"
         style={{
           backgroundImage: `url(${grand_fest})`,
         }}
       >
-        <div className="h-screen w-full bg-[#000000] bg-opacity-65 bg-cover bg-no-repeat bg-center relative" />
+        <div className="h-[calc(100vh-100px)] lg:h-full w-full bg-[#000000] bg-opacity-65 bg-cover bg-no-repeat bg-center relative" />
         <div className="absolute top-1/3 w-full flex flex-col items-center justify-center text-center animate-bounce-fadeIn">
-          <h1 className="text-white mb-8 text-8xl sm:text-6xl sm:mb-4">
+          <h1 className="text-white mb-8 text-6xl sm:mb-4">
             Life is <span className="text-sub">JAZZ</span>
           </h1>
-          <p className="text-white text-xl sm:text-sm mb-6 leading-8 sm:leading-6">
+          <p className="text-white text-lg sm:text-sm mb-6 leading-8 sm:leading-6">
             연주자, 리스너 구분 없이 모두가
             <br /> <span className="text-sub">재즈</span>를 감상하고 연주하고
             즐기는 모임
           </p>
-          <div className="flex flex-col gap-8 sm:flex-row mt-6 sm:gap-5 md:mt-2 w-3/5 sm:w-auto">
+          <div className="flex flex-col gap-6 sm:flex-row mt-6 sm:gap-5 md:mt-2 w-3/5 sm:w-auto">
             <Button
               text={"소모임 링크"}
               backgroundColor="main"

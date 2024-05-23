@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
 declare global {
   interface Window {
@@ -33,9 +33,11 @@ export default function KakaoMap() {
   }, []);
 
   return (
-    <div
-      className=" mt-8 w-full md:w-1/2 h-[380px] rounded-3xl flex-shrink-0 "
-      id="map"
-    ></div>
+    <Suspense>
+      <div
+        className=" mt-8 w-full md:w-1/2 h-[380px] rounded-3xl flex-shrink-0 "
+        id="map"
+      ></div>
+    </Suspense>
   );
 }
