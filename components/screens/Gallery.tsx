@@ -1,9 +1,26 @@
+import { ChangeEvent, useState } from "react";
 import { Container, Title } from "../common";
+import useStorage from "@/hooks/useStorage";
 
 const Gallery = () => {
+  const [selectedFile, setSelectedFile] = useState<File | null>();
+  const { startUpload, progress } = useStorage();
   const photos = [""];
 
-  const imageUploadHandler = () => {};
+  const imageUploadHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (selectedFile) {
+      startUpload(selectedFile);
+    }
+    setSelectedFile(null);
+  };
+
   return (
     <Container innerPadding>
       <Title titleText="사진첩" subTitle="라이재의 활동 내역" />
@@ -16,13 +33,22 @@ const Gallery = () => {
             key={url}
           />
         ))}
-        <div className="rounded-lg w-full h-full object-cover block bg-borderGray cursor-pointer text-center ">
+        <form
+          className="rounded-lg w-full h-full object-cover block bg-borderGray cursor-pointer text-center"
+          onSubmit={submitHandler}
+        >
           <input
             type="file"
             className="absolute opacity-0 w-full h-full cursor-pointer"
             onChange={imageUploadHandler}
           />
-        </div>
+          <button
+            type="submit"
+            className={`flex bg-main ${Boolean(progress) && "loading"}`}
+          >
+            업로드
+          </button>
+        </form>
       </div>
     </Container>
   );
