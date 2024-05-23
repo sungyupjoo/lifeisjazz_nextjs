@@ -78,7 +78,7 @@ const Navigation: React.FC<NavigationProps> = ({
           className="ml-4 lg:w-[156px] lg:h-[156px] w-[100px] h-[100px] justify-self-center lg:ml-0"
         />
       </a>
-      <div className="lg:hidden flex flex-col justify-between mr-6">
+      <div className="lg:hidden flex flex-col justify-between ">
         <Hamburger onClick={toggleNav} size={30} />
       </div>
       <section

@@ -97,10 +97,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         <h3 className="text-center mb-4">내 프로필</h3>
         <form onSubmit={handleFormSubmit}>
           <div className="grid grid-cols-3 gap-y-4 items-start">
-            <label htmlFor="nickname" className="font-semibold">
+            <label htmlFor="nickname" className="font-semibold text-black">
               닉네임
             </label>
-            <div className="col-span-2 ">
+            <div className="col-span-2">
               <input
                 type="text"
                 id="nickname"
@@ -108,7 +108,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                 defaultValue={name!}
                 onChange={nicknameChangeHandler}
                 required
-                className="p-2 border rounded-md w-full"
+                className="bg-white text-black p-2 border rounded-md w-full border-gray"
               />
               {error ? (
                 <p className="text-sub text-[10px]">{error}</p>
@@ -116,7 +116,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                 <p className="text-white text-[10px]">유효한 닉네임입니다.</p>
               )}
             </div>
-            <label htmlFor="profileImage" className="col-span-1 font-semibold">
+            <label
+              htmlFor="profileImage"
+              className="col-span-1 font-semibold text-black"
+            >
               사진
             </label>
             <div className="col-span-2">
