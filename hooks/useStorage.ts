@@ -1,6 +1,18 @@
 import { db, storage } from "@/firebase/config";
-import { addDoc, collection } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -40,8 +52,24 @@ const useStorage = () => {
       }
     );
   };
+  const deleteImage = async (url: string) => {
+    try {
+      console.log(url);
+      // storage에서 삭제
+      const storageRef = ref(storage, url);
+      await deleteObject(storageRef);
+      // firestore에서 데이터 삭제
+      const q = query(collection(db, "gallery"), where("imageUrl", "==", url));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+    } catch (error) {
+      setError(error as Error);
+    }
+  };
 
-  return { progress, error, startUpload };
+  return { progress, error, startUpload, deleteImage };
 };
 
 export default useStorage;

@@ -1,15 +1,26 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Container, Title } from "../common";
 import useStorage from "@/hooks/useStorage";
 import useFirestore from "@/hooks/useFirestore";
 import { formatDate } from "@/utils/formatDateString";
 import { useSession } from "next-auth/react";
 
+const ITEMS_PER_PAGE = 8;
+
 const Gallery = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>();
-  const { startUpload, progress } = useStorage();
+  const [selectedImage, setSelectedImage] = useState<string | null>();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const { startUpload, progress, deleteImage } = useStorage();
   const { docs: images, isLoading } = useFirestore("gallery");
   const { data: session } = useSession();
+
+  const totalPages = Math.ceil(images.length / ITEMS_PER_PAGE);
+  const currentImages = images.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   const imageUploadHandler = (event: ChangeEvent<HTMLInputElement>) => {
     // 운영자만 업로드 가능하게 바꿔야함
     event.preventDefault();
@@ -25,6 +36,7 @@ const Gallery = () => {
     }
     setSelectedFile(null);
   };
+
   if (isLoading) {
     return (
       <div className="text-center mt-10">
@@ -39,7 +51,7 @@ const Gallery = () => {
       {session?.user && (
         <div className="text-center mt-10">
           <form
-            className="flex items-center flex-col gap-4"
+            className="flex items-center flex-col gap-4 "
             onSubmit={submitHandler}
           >
             <input
@@ -60,32 +72,76 @@ const Gallery = () => {
                 {selectedFile ? selectedFile.name : "선택된 파일이 없습니다"}
               </span>
             </div>
-            <button
-              type="submit"
-              className={`${
-                selectedFile ? "bg-main text-white" : "bg-gray"
-              } px-2 py-1 rounded-lg ${Boolean(progress) && "loading"}`}
-              disabled={!selectedFile}
-            >
-              업로드
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className={`${
+                  selectedFile
+                    ? "bg-main text-white"
+                    : "bg-gray text-borderGray"
+                } px-2 py-1 rounded-lg ${Boolean(progress) && "loading"}`}
+                disabled={!selectedFile}
+              >
+                업로드
+              </button>
+              <button
+                type="button"
+                className={`
+                  ${
+                    selectedImage
+                      ? "bg-sub text-white"
+                      : "bg-gray text-borderGray"
+                  }
+                    rounded-lg px-2 py-1`}
+                onClick={() => {
+                  deleteImage(selectedImage!);
+                  setSelectedImage(null);
+                }}
+              >
+                삭제
+              </button>
+            </div>
           </form>
         </div>
       )}
       <div className="mt-8 mb-4 grid grid-cols-2 grid-rows-4 lg:grid-cols-4 gap-5 ">
-        {images.map((image) => (
-          <div key={image.imageUrl}>
+        {currentImages.map((image) => (
+          <div key={image.imageUrl} className="gallery-image">
             <img
               className="opacity-90 rounded-lg w-full h-full max-h-40 object-cover block transition-transform duration-300 hover:scale-110 hover:opacity-100 hover:shadow-lg"
               alt="Gallery Image"
               src={image.imageUrl}
               key={image.imageUrl}
+              onClick={() => {
+                setSelectedImage(image.imageUrl);
+              }}
             />
             <p className="text-sm text-center">
               {formatDate(image.createdAt.toDateString())}
             </p>
           </div>
         ))}
+      </div>
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 text-gray rounded-l-lg disabled:opacity-30"
+        >
+          이전
+        </button>
+        <span className="px-3 py-1 bg-white border-t border-b">
+          {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 text-gray rounded-r-lg disabled:opacity-30"
+        >
+          다음
+        </button>
       </div>
     </Container>
   );

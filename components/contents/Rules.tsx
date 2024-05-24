@@ -1,7 +1,7 @@
 const Rules = () => {
   return (
     <div>
-      <h4 className="mb-2">연습실 이용금액</h4>
+      <h4 className="mb-4 text-2xl">연습실 이용금액</h4>
       <ol>- 평일 3시간 10,000원</ol>
       <ol>- 평일 4시간 ~ 15,000원</ol>
       <ol>- 주말 4시간 15000원(잼 데이)</ol>
@@ -13,7 +13,7 @@ const Rules = () => {
       <ol>
         - 일요일 오후 1시~ 오후 4시는 클래식 팀 사용 예정(사용시 재공지함)
       </ol>
-      <h4 className="mt-4 mb-2">연습실 이용수칙</h4>
+      <h4 className="my-4 text-2xl">연습실 이용수칙</h4>
       <ol>
         - 사용전 우리은행 조성제 25821572902001 계좌로 돈 보내고 010-2278-4351
         조성제 or 운영진에게 연락하기
@@ -23,7 +23,7 @@ const Rules = () => {
         운영진에게 문의)
       </ol>
       <ol>- 다만 아무도 없으면 자유롭게 연습 가능</ol>
-      <h4 className="mt-4 mb-2">벌금 수칙 </h4>
+      <h4 className="my-4 text-2xl">벌금 수칙 </h4>
       <h4 className="text-lg mb-2">1. 기본</h4>
       <ol>- 전등 미소등 2천원 </ol>
       <ol>- 앰프 및 믹서 미소등시 개당3천원 </ol>
