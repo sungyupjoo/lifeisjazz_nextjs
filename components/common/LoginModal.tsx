@@ -1,12 +1,8 @@
 import { signIn, useSession } from "next-auth/react";
 import StyledModal from "./StyledModal";
-import {
-  OAuthProvider,
-  signInWithCredential,
-  signInWithCustomToken,
-} from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { Session } from "next-auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 interface LoginModalProps {
   isModalVisible: boolean;
@@ -26,11 +22,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
       redirect: true,
       callbackUrl: "/",
     });
-    // signInWithCredential(auth, credential).then((result) => {
-    //   const credential = OAuthProvider.credentialFromResult(result);
-    //   const accessToken = credential?.accessToken;
-    //   const idToken = credential?.idToken;
-    // });
+    const { data: session } = useSession();
+    await signInWithEmailAndPassword(
+      auth,
+      session?.user.email!,
+      session?.user.id!
+    );
     closeModal();
   };
 

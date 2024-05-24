@@ -18,13 +18,13 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
     <StyledModal closeModal={closeHandler} isModalVisible={isVisible}>
       <form onSubmit={handleSubmit} className="font-semibold text-lg mt-8">
         <div className="flex mb-4 sm:mb-6 items-center">
-          <label htmlFor="title" className="w-1/3 min-w-28 text-lg">
+          <label htmlFor="title" className="w-1/3 min-w-24 text-lg">
             곡 제목
           </label>
           <Input id="title" type="text" name="title" required />
         </div>
         <div className="flex mb-4 sm:mb-6 items-center">
-          <label htmlFor="key" className="w-1/3 min-w-28 text-lg">
+          <label htmlFor="key" className="w-1/3 min-w-24 text-lg">
             키
           </label>
           <Select
@@ -36,7 +36,7 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
           />
         </div>
         <div className="flex mb-4 sm:mb-6 items-center">
-          <label htmlFor="rhythm" className="w-1/3 min-w-28 text-lg">
+          <label htmlFor="rhythm" className="w-1/3 min-w-24 text-lg">
             리듬
           </label>
           <Select
@@ -63,7 +63,7 @@ const AddSongModal: React.FC<AddSongModalProps> = ({
           <label htmlFor="details" className="w-1/3 min-w-28 text-lg">
             하고 싶은 말
           </label>
-          <Input id="details" type="text" name="details" />
+          <Input id="details" type="text" name="details" textarea />
         </div>
         <div className="flex justify-center">
           <button

@@ -38,12 +38,12 @@ const StyledModal: React.FC<StyledModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-60  overflow-y-auto z-50">
       <div className="fixed flex items-center justify-center top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-4/5">
         <div
-          className={`p-6 relative bg-white rounded-2xl w-full sm:w-auto h-auto flex flex-col`}
+          className={`p-6 relative bg-white rounded-2xl w-full sm:w-auto h-auto flex flex-col max-h-[40rem]`}
         >
           <button onClick={closeModal} className="absolute top-2 right-2">
             <IconXMark size={24} />
           </button>
-          {children}
+          <div className="overflow-y-auto">{children}</div>
         </div>
       </div>
     </div>

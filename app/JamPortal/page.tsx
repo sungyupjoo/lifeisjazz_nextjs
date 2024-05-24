@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/common";
+import { Button, StyledModal } from "@/components/common";
 import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
 import {
   Song,
@@ -18,9 +18,10 @@ import {
 } from "../../components/common/types";
 import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
-import { addWeeks, startOfDay, startOfWeek } from "date-fns";
+import { addWeeks, getWeek, startOfDay, startOfWeek } from "date-fns";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import Rules from "@/components/contents/Rules";
 
 const JamDayPortal = () => {
   const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
@@ -29,6 +30,8 @@ const JamDayPortal = () => {
   const [addSongModalVisible, setAddSongModalVisible] = useState(false);
   const [cancelSongModalVisible, setCancelSongModalVisible] = useState(false);
   const [currentState, setCurrentState] = useState<WeekType>("this");
+  const [ruleModalVisible, setRuleModalVisible] = useState(false);
+
   const toggleWeekState = () => {
     if (currentState === "this") {
       setSelectedDate(startOfWeek(addWeeks(selectedDate, 1)));
@@ -82,7 +85,7 @@ const JamDayPortal = () => {
           const jamdaysList: string[] = docSnapshot.data().jamday;
           setJamDayDate(jamdaysList);
         } else {
-          console.warn("jamdaydate data 받아오는 중 오류");
+          setJamDayDate([]);
         }
       },
       (error) => {
@@ -243,6 +246,31 @@ const JamDayPortal = () => {
     }
   };
 
+  const cancelJamdayHandler = async () => {
+    const jamdayDocRef = doc(
+      db,
+      "jamday",
+      `${selectedDate.getFullYear()} ${selectedDate.getMonth() + 1}`
+    );
+    const docSnap = await getDoc(jamdayDocRef);
+    let currentJamdays = [];
+    if (docSnap.exists()) {
+      currentJamdays = docSnap.data().jamday || [];
+    }
+    const formattedSelectedDate = startOfDay(selectedDate).toDateString();
+    if (currentJamdays.includes(formattedSelectedDate)) {
+      const updatedJamdays = currentJamdays.filter(
+        (jamday: string) => jamday !== formattedSelectedDate
+      );
+      await setDoc(jamdayDocRef, { jamday: updatedJamdays }, { merge: true });
+      setJamdays(updatedJamdays);
+    }
+  };
+
+  const showRuleModal = () => {
+    setRuleModalVisible(true);
+  };
+
   return (
     <div className="relative bg-white min-h-screen">
       <WeeklyCalendar
@@ -253,21 +281,35 @@ const JamDayPortal = () => {
         setWeekState={toggleWeekState}
       />
       {currentState === "this" && (
-        <div className="ml-4 mt-8">
+        <div className="mx-4 mt-8">
           {isJamDay ? (
             <>
-              <p>잼 참석비: 10,000원</p>
-              <p className="mt-4">
-                신청곡{" "}
-                <span className=" font-semibold">{`총 ${requestedSongs.length} 곡`}</span>
-              </p>
+              <div className="flex justify-between">
+                <p>잼 참석비: 10,000원</p>
+                <Button
+                  backgroundColor="sub"
+                  text="이용수칙"
+                  onClick={showRuleModal}
+                />
+              </div>
+              <div className="flex justify-between mt-4">
+                <p>
+                  신청곡{" "}
+                  <span className=" font-semibold">{`총 ${requestedSongs.length} 곡`}</span>
+                </p>
+                <Button
+                  backgroundColor="sub"
+                  text="잼데이 취소"
+                  onClick={cancelJamdayHandler}
+                />
+              </div>
               <div className="flex mt-4 flex-col align-middle sm:flex-row sm:gap-5 sm:items-center">
                 {requestedSongs.length > 0 && (
                   <p className="">참가하실 곡의 악기 파트를 눌러주세요.</p>
                 )}
-                <div>
+                <div className="mt-2">
                   <Button
-                    backgroundColor="sub"
+                    backgroundColor="main"
                     text="곡 신청 +"
                     onClick={() => setAddSongModalVisible(true)}
                     big
@@ -315,8 +357,18 @@ const JamDayPortal = () => {
             selectedDate={selectedDate}
             loginMember={loginMember!}
             setJamdayHandler={setJamDayHandler}
+            jamdays={jamdays}
+            cancelJamdayHandler={cancelJamdayHandler}
           />
         </div>
+      )}
+      {ruleModalVisible && (
+        <StyledModal
+          isModalVisible={ruleModalVisible}
+          closeModal={() => setRuleModalVisible(false)}
+        >
+          <Rules />
+        </StyledModal>
       )}
     </div>
   );

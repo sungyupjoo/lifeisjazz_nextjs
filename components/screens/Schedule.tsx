@@ -24,7 +24,6 @@ import { exampleSchedule, ScheduleProps } from "../contents/exampleSchedule";
 
 const Schedule: React.FC = () => {
   const { data: session, status } = useSession();
-
   const today = new Date();
   const [date, setDate] = useState<Value | null>(null);
   const [selectedSchedule, setSelectedSchedule] = useState<

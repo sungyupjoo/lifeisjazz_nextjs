@@ -6,6 +6,7 @@ interface InputProps {
   name: string;
   required?: boolean;
   defaultValue?: string;
+  textarea?: boolean;
 }
 
 const CustomInput: FC<InputProps> = ({
@@ -14,6 +15,7 @@ const CustomInput: FC<InputProps> = ({
   name,
   required = false,
   defaultValue,
+  textarea = false,
 }) => {
   return (
     <div className="w-auto sm:w-1/2">
@@ -21,7 +23,9 @@ const CustomInput: FC<InputProps> = ({
         id={id}
         type={type}
         name={name}
-        className="w-full block text-lg outline-none focus:outline-none transition ease-in-out sm:min-w-64 duration-300 text-black bg-transparent border-b-[1px] border-borderGray"
+        className={`w-full block text-lg outline-none focus:outline-none transition ease-in-out sm:min-w-64 duration-300 text-black bg-transparent border-b-[1px] border-borderGray ${
+          textarea && "textarea-bordered"
+        }`}
         required={required}
         defaultValue={defaultValue || ""}
       />

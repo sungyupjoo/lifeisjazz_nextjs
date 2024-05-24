@@ -27,6 +27,9 @@
     @apply font-normal text-black break-keep;
     @apply text-lg sm:text-sm;
   }
+  ol {
+    @apply text-gray break-keep text-[1rem];
+  }
 }
 
 @keyframes bounce-fadeIn {

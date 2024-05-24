@@ -49,7 +49,7 @@ const Song: React.FC<SongFCProps> = ({
                 </div>
                 <Button
                   text="곡 취소"
-                  backgroundColor="sub"
+                  backgroundColor="gray"
                   onClick={() => onCancel(song.id)}
                 />
               </div>
@@ -60,7 +60,9 @@ const Song: React.FC<SongFCProps> = ({
                     className="p-2 rounded-lg cursor-pointer hover:bg-borderGray border-[1px] border-borderGray mb-2"
                     onClick={() => updateParticipant(song.id, instrument.name)}
                   >
-                    <span className="font-semibold ">{instrument.name}</span>
+                    <span className="font-semibold text-gray">
+                      {instrument.name}
+                    </span>
                     {instrument.participants.map(
                       (participant: Session["user"]) => (
                         <div
@@ -83,7 +85,7 @@ const Song: React.FC<SongFCProps> = ({
               </div>
               <div className="mt-2 pt-2 border-t-[1px] border-borderGray">
                 <p className="mb-2 font-semibold">신청자 comment</p>
-                <p>{song.details}</p>
+                <p className="text-[1rem]">{song.details}</p>
               </div>
             </div>
           ))}

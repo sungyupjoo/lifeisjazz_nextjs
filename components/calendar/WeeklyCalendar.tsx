@@ -1,4 +1,4 @@
-import React, { SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import {
   format,
   startOfWeek,
@@ -6,7 +6,6 @@ import {
   isSameDay,
   lastDayOfWeek,
   addWeeks,
-  subWeeks,
 } from "date-fns";
 import { ko } from "date-fns/locale";
 import { WeekType } from "../common/types";
@@ -63,7 +62,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
     return (
       <div className="flex justify-end mt-2 mr-4 mb-4">
         <div className="flex flex-col">
-          <p className="text-sm text-center">곡 신청</p>
+          <p className="text-sm text-center text-gray">곡 신청</p>
           <button
             className={`px-4 py-1.5 rounded-l-3xl ${
               weekState === "this"
@@ -77,7 +76,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
           </button>
         </div>
         <div className="flex flex-col">
-          <p className="text-sm text-center">날짜 투표</p>
+          <p className="text-sm text-center text-gray">날짜 투표</p>
           <button
             className={`px-4 py-1.5 rounded-r-3xl ${
               weekState === "next"
@@ -99,7 +98,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
     return (
       <div className="flex flex-row w-full">
         {Array.from({ length: 7 }, (_, i) => (
-          <div key={i} className="flex-grow text-center">
+          <div key={i} className="flex-grow text-center text-black">
             {format(addDays(startDate, i), "EEE", { locale: ko })}
           </div>
         ))}
