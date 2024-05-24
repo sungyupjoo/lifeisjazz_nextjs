@@ -2,7 +2,7 @@ import { IconProps } from "./index.js";
 
 export const Hamburger: React.FC<IconProps> = ({ size, onClick }) => {
   return (
-    <div className={`absolute top-5 right-5 cursor-pointer`} onClick={onClick}>
+    <div className={`cursor-pointer`} onClick={onClick}>
       <svg
         width={size}
         height={size}

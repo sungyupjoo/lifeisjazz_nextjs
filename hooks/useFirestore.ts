@@ -25,8 +25,7 @@ const useFirestore = (collectionName: string) => {
       try {
         const q = query(
           collection(db, "gallery"),
-          orderBy("createdAt", "desc"),
-          limit(8)
+          orderBy("createdAt", "desc")
         );
         unsubscribe = onSnapshot(q, (querySnapshot) => {
           const images: Image[] = [];
