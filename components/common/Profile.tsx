@@ -1,13 +1,13 @@
-import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 import React from "react";
 
 interface ProfileProps {
-  user: Session["user"];
   onClick: () => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ user, onClick }) => {
-  const { name, image } = user;
+const Profile: React.FC<ProfileProps> = ({ onClick }) => {
+  const { data: session } = useSession();
+  const { name, image } = session?.user!;
   return (
     <div
       className="inline-block cursor-pointer max-w-xs bg-mainTint px-3 py-0.5 rounded-md hover:bg-mainShade"

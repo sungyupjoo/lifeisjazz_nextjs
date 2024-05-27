@@ -1,8 +1,6 @@
-import { signIn, useSession } from "next-auth/react";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 import StyledModal from "./StyledModal";
-import { auth } from "@/firebase/config";
-import { Session } from "next-auth";
-import { signInWithEmailAndPassword } from "firebase/auth";
 
 interface LoginModalProps {
   isModalVisible: boolean;
@@ -13,23 +11,24 @@ const LoginModal: React.FC<LoginModalProps> = ({
   isModalVisible,
   closeModal,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   // const provider = new OAuthProvider("oidc.kakao");
   // const credential = provider.credential({
   //   idToken: "",
   // });
   const loginHandler = async () => {
+    setIsLoading(true);
     await signIn("kakao", {
       redirect: true,
       callbackUrl: "/",
     });
-    const { data: session } = useSession();
-    await signInWithEmailAndPassword(
-      auth,
-      session?.user.email!,
-      session?.user.id!
-    );
+
+    setIsLoading(false);
     closeModal();
   };
+  if (isLoading) {
+    return <div>로딩 중...</div>;
+  }
 
   return (
     <StyledModal isModalVisible={isModalVisible} closeModal={closeModal}>

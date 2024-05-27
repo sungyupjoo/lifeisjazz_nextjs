@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from "react";
+import React, { ChangeEvent, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { StyledModal } from ".";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/firebase/config";
-import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
+import useStorage from "@/hooks/useStorage";
 
 interface ProfileModalProps {
   isProfileModalVisible: boolean;
   closeProfileModal: () => void;
-  user: Session["user"];
   logoutHandler: () => void;
   handleSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -16,13 +16,14 @@ interface ProfileModalProps {
 const ProfileModal: React.FC<ProfileModalProps> = ({
   isProfileModalVisible,
   closeProfileModal,
-  user,
   logoutHandler,
   handleSubmit,
 }) => {
-  const { name, image } = user;
+  const { data: session } = useSession();
+  const { name, image } = session?.user!;
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
   const [nickname, setNickname] = useState(name);
+  const { startUpload, progress, deleteImage } = useStorage("profile");
   const [error, setError] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
@@ -66,22 +67,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (file) {
-      const storageRef = ref(storage, `profileImages/${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          console.log(snapshot, "스냅샷");
-        },
-        (error) => {
-          console.error("이미지 업로드 실패", error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log(`${downloadURL}에 저장`);
-          });
-        }
-      );
+      const downloadURL = await startUpload(file);
+      console.log(downloadURL);
     }
     if (handleSubmit) {
       handleSubmit(event);
@@ -137,6 +124,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                   {...getInputProps()}
                   id="profileImage"
                   name="profileImage"
+                  accept="image/jpeg, image/png, image/gif"
                 />
                 {isDragActive ? (
                   <p>파일을 여기에 드랍하세요</p>

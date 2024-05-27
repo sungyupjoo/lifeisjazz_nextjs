@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Container, Title } from "../common";
 import useStorage from "@/hooks/useStorage";
 import useFirestore from "@/hooks/useFirestore";
@@ -11,7 +11,7 @@ const Gallery = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>();
   const [selectedImage, setSelectedImage] = useState<string | null>();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { startUpload, progress, deleteImage } = useStorage();
+  const { startUpload, progress, deleteImage } = useStorage("gallery");
   const { docs: images, isLoading } = useFirestore("gallery");
   const { data: session } = useSession();
 

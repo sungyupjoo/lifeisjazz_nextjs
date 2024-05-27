@@ -23,20 +23,33 @@ const authOptions = {
     }),
   ],
   callbacks: {
-    jwt({ token, user }: { token: any; user: any }) {
-      if (user) {
-        return { ...token, id: user.id };
+    jwt({
+      token,
+      trigger,
+      session,
+    }: {
+      token: JWT;
+      trigger?: "signIn" | "update" | "signUp" | undefined;
+      session?: any;
+    }) {
+      if ((trigger = "update" && session?.name)) {
+        token.name = session.name;
       }
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-        },
-      };
+    async session({
+      session,
+      trigger,
+      newSession,
+    }: {
+      session: any;
+      trigger?: "signIn" | "update" | "signUp" | undefined;
+      newSession?: any;
+    }) {
+      if (trigger === "update" && newSession.name) {
+        session.name = newSession.name;
+      }
+      return session;
     },
   },
   session: {
