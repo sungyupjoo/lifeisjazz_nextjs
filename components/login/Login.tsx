@@ -1,13 +1,11 @@
 import { Button } from "../common";
 import { useState, useEffect } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { getSession, signOut, useSession } from "next-auth/react";
 import Profile from "../common/Profile";
 import ProfileModal from "../common/ProfileModal";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase/config";
+import { db } from "../../firebase/config";
 import LoginModal from "../common/LoginModal";
-import { RotatingLines } from "react-loader-spinner";
-import { Session } from "next-auth";
 
 declare global {
   interface Window {
@@ -18,8 +16,8 @@ declare global {
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
-  const [user, setUser] = useState<Session["user"] | null>(null);
-  const { data: session, status, update } = useSession();
+  const { data: session, update } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
 
   const clickHandler = () => {
     setIsModalVisible(true);
@@ -28,30 +26,39 @@ const Login = () => {
     setIsModalVisible(false);
   };
 
+  const refreshSession = async () => {
+    const updatedSession = await getSession();
+    await update(updatedSession);
+  };
+
   useEffect(() => {
     const userSettingHandler = async () => {
+      setIsLoading(true);
       if (session?.user?.email) {
         try {
+          // next-auth에서 email받아 그걸로 firebase doc 찾고 거기서 닉네임과 이미지 가져오기
           const docRef = doc(db, "members", session?.user?.email);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
+            const userData = docSnap.data();
+            const { email, image, name } = userData;
+            await update({ email: email, image: image, name: name });
+            await refreshSession();
           } else {
-            if (user) {
-              const { email, image, name } = user;
-              setDoc(docRef, { email, image, name, isManager: false });
-            }
+            const { email, image, name } = session.user;
+            // 매니저 권한은 Firebase에서 직접 부여 or 별도 페이지 만들어서 관리 예정
+            setDoc(docRef, { email, image, name, isManager: false });
           }
-          setUser(docSnap.data() as Session["user"]);
         } catch (error) {
           console.warn(error, "로그인 중 에러");
         }
       }
+      setIsLoading(false);
     };
     userSettingHandler();
-  }, [session]);
+  }, [session?.user.name, session?.user.image]);
 
   const logOutHandler = () => {
-    setUser(null);
     signOut();
     setIsProfileModalVisible(false);
   };
@@ -71,10 +78,10 @@ const Login = () => {
     const fd = new FormData(event.currentTarget);
     const name = fd.get("nickname" as string);
     const image = fd.get("profileImage" as string);
-
+    console.log(image);
     try {
-      if (user?.email) {
-        const docRef = doc(db, "members", user?.email);
+      if (session?.user?.email) {
+        const docRef = doc(db, "members", session.user?.email);
         await updateDoc(docRef, {
           name: name,
           // image: image,
@@ -88,26 +95,17 @@ const Login = () => {
     }
     setIsProfileModalVisible(false);
   };
-  if (status === "loading") {
-    return (
-      <RotatingLines
-        strokeColor="gray"
-        strokeWidth="40"
-        animationDuration="0.75"
-        width="40"
-        visible
-      />
-    );
+  if (isLoading === true) {
+    return <div>로딩 중...</div>;
   }
-  if (user?.name) {
+  if (session?.user?.name) {
     return (
       <>
-        <Profile onClick={openProfileModal} user={user} />
-        {isProfileModalVisible && user && (
+        <Profile onClick={openProfileModal} />
+        {isProfileModalVisible && session.user && (
           <ProfileModal
             isProfileModalVisible={isProfileModalVisible}
             closeProfileModal={closeProfileModal}
-            user={user}
             logoutHandler={logOutHandler}
             handleSubmit={saveProfileHandler}
           />
