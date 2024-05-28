@@ -34,6 +34,7 @@ const authOptions = {
     }) {
       if ((trigger = "update" && session?.name)) {
         token.name = session.name;
+        token.picture = session.image;
       }
       return token;
     },

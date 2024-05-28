@@ -2,7 +2,6 @@ import React, { ChangeEvent, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { StyledModal } from ".";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "@/firebase/config";
 import { useSession } from "next-auth/react";
 import useStorage from "@/hooks/useStorage";
 
@@ -10,7 +9,7 @@ interface ProfileModalProps {
   isProfileModalVisible: boolean;
   closeProfileModal: () => void;
   logoutHandler: () => void;
-  handleSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit?: (event: { nickname: string; imageUrl: string }) => void;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -22,10 +21,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const { data: session } = useSession();
   const { name, image } = session?.user!;
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
-  const [nickname, setNickname] = useState(name);
+  const [nickname, setNickname] = useState(name!);
   const { startUpload, progress, deleteImage } = useStorage("profile");
   const [error, setError] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [downloadURL, setDownloadURL] = useState<string>("");
 
   // 닉네임 유효성 검사
   const validateNickname = (value: string) => {
@@ -66,14 +67,21 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
+    let newDownloadURL = downloadURL;
     if (file) {
-      const downloadURL = await startUpload(file);
-      console.log(downloadURL);
+      newDownloadURL = (await startUpload(file)) as string;
+      setDownloadURL(newDownloadURL);
     }
     if (handleSubmit) {
-      handleSubmit(event);
+      handleSubmit({ nickname: nickname, imageUrl: newDownloadURL });
     }
+    setIsLoading(false);
+    closeProfileModal();
   };
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
 
   return (
     <StyledModal
@@ -84,7 +92,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         <h3 className="text-center mb-4">내 프로필</h3>
         <form onSubmit={handleFormSubmit}>
           <div className="grid grid-cols-3 gap-y-4 items-start">
-            <label htmlFor="nickname" className="font-semibold text-black">
+            <label
+              htmlFor="nickname"
+              className="font-semibold text-black text-center"
+            >
               닉네임
             </label>
             <div className="col-span-2">
