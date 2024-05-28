@@ -42,7 +42,7 @@ const Login = () => {
           if (docSnap.exists()) {
             const userData = docSnap.data();
             const { email, image, name } = userData;
-            await update({ email: email, image: image, name: name });
+            await update({ image: image, name: name });
             await refreshSession();
           } else {
             const { email, image, name } = session.user;
@@ -56,7 +56,7 @@ const Login = () => {
       setIsLoading(false);
     };
     userSettingHandler();
-  }, [session?.user.name, session?.user.image]);
+  }, [session?.user.name]);
 
   const logOutHandler = () => {
     signOut();
@@ -71,22 +71,21 @@ const Login = () => {
     setIsProfileModalVisible(false);
   };
 
-  const saveProfileHandler = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    const fd = new FormData(event.currentTarget);
-    const name = fd.get("nickname" as string);
-    const image = fd.get("profileImage" as string);
-    console.log(image);
+  const saveProfileHandler = async (event: {
+    nickname: string;
+    imageUrl: string;
+  }) => {
     try {
       if (session?.user?.email) {
         const docRef = doc(db, "members", session.user?.email);
         await updateDoc(docRef, {
-          name: name,
-          // image: image,
+          name: event.nickname || session.user.name,
+          image: event.imageUrl || session.user.image,
         });
-        update({ name: name });
+        update({
+          name: event.nickname || session.user.name,
+          image: event.imageUrl || session.user.image,
+        });
       } else {
         console.warn("이메일 없음");
       }
@@ -95,10 +94,10 @@ const Login = () => {
     }
     setIsProfileModalVisible(false);
   };
-  if (isLoading === true) {
-    return <div>로딩 중...</div>;
+  if (isLoading) {
+    return <div className="items-center">로딩 중...</div>;
   }
-  if (session?.user?.name) {
+  if (!isLoading && session?.user?.name) {
     return (
       <>
         <Profile onClick={openProfileModal} />

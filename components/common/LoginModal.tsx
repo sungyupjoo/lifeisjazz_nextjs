@@ -27,7 +27,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     closeModal();
   };
   if (isLoading) {
-    return <div>로딩 중...</div>;
+    return <div className="progress" />;
   }
 
   return (
