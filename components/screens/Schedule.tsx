@@ -102,7 +102,7 @@ const Schedule: React.FC = () => {
                   {selectedSchedule?.image && (
                     <img
                       src={selectedSchedule.image}
-                      className="w-32 h-32 rounded-lg mr-4"
+                      className="w-32 h-32 rounded-lg mr-4 object-cover"
                     />
                   )}
                   <div className="flex flex-col gap-2">

@@ -124,7 +124,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               <img
                 src={(typeof preview === "string" ? preview : image) || ""}
                 alt="Profile"
-                className="h-15 w-15 rounded-lg"
+                className="h-15 w-15 rounded-lg object-cover"
                 style={{ height: "60px", width: "60px" }}
               />
               <div

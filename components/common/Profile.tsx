@@ -16,7 +16,7 @@ const Profile: React.FC<ProfileProps> = ({ onClick }) => {
         <img
           src={session?.user.image || ""}
           alt={`Profile of ${session?.user.name}}`}
-          className="h-6 w-6 rounded-md"
+          className="h-6 w-6 rounded-md object-cover"
         />
         <p className="text-white text-[1rem]">{session?.user.name}</p>
       </div>
