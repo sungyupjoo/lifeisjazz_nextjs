@@ -76,7 +76,6 @@ const Vote: React.FC<VoteProps> = ({
         <Button
           backgroundColor="sub"
           text={!hasUserVoted ? "투표하기" : "투표취소"}
-          big
           fontColor="white"
           onClick={voteHandler}
         />
@@ -87,7 +86,6 @@ const Vote: React.FC<VoteProps> = ({
               ? "잼데이 취소"
               : "잼데이 지정"
           }
-          big
           onClick={
             jamdays.includes(formattedSelectedDate)
               ? cancelJamdayHandler
@@ -104,7 +102,7 @@ const Vote: React.FC<VoteProps> = ({
               key={voter.email}
             >
               <img
-                className="h-10 w-10 rounded-full mr-2"
+                className="h-10 w-10 rounded-full mr-2 object-cover"
                 src={voter.image || ""}
               />
               <p>{voter.name}</p>

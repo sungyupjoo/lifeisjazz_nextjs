@@ -45,7 +45,7 @@ const Manager = () => {
               <img
                 src={item.url}
                 alt=""
-                className="w-32 h-32 rounded-full shadow-md"
+                className="w-32 h-32 rounded-full shadow-md object-cover"
               />
             </div>
             <div className="sm:w-1/2">

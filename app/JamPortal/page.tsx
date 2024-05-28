@@ -305,14 +305,15 @@ const JamDayPortal = () => {
               </div>
               <div className="flex mt-4 flex-col align-middle sm:flex-row sm:gap-5 sm:items-center">
                 {requestedSongs.length > 0 && (
-                  <p className="">참가하실 곡의 악기 파트를 눌러주세요.</p>
+                  <p className="">
+                    참가하실 곡을 선택해 악기 파트를 눌러주세요.
+                  </p>
                 )}
-                <div className="mt-2">
+                <div className="mt-2 my-4">
                   <Button
                     backgroundColor="main"
                     text="곡 신청 +"
                     onClick={() => setAddSongModalVisible(true)}
-                    big
                   />
                 </div>
               </div>

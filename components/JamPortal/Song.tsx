@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../common";
-import { InstrumentType, SongProps } from "../common/types";
+import { InstrumentType, SongProps, rhythmName } from "../common/types";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 
@@ -28,64 +28,77 @@ const Song: React.FC<SongFCProps> = ({
           .map((song, index) => (
             <div
               key={song.title}
-              className="w-4/5 bg-backgroundGray rounded-2xl p-4 mt-4 mb-8 justify-self-center align-middle"
+              className="w-[85%] truncate overflow-hidden bg-backgroundGray rounded-2xl p-1 mt-1 mb-1 justify-self-center align-middle collapse collapse-arrow"
+              tabIndex={0}
             >
-              <h3 className="text-lg font-semibold">
-                #{index + 1} {song.title}
-              </h3>
-              <div className="pt-3 pb-3 border-b-[1px] border-borderGray flex justify-between items-center">
-                <div className="flex">
-                  신청자 :{" "}
-                  <div className="flex">
-                    <img
-                      src={session?.user?.image!}
-                      alt={`Profile`}
-                      className="h-6 w-6 rounded-md"
+              <input type="checkbox" />
+              <div className="collapse-title">
+                <h3 className="text-lg font-semibold ">
+                  #{index + 1} {song.title}
+                </h3>
+                <p className="text-sm">
+                  {song.key} / {rhythmName[song.rhythm]}
+                </p>
+              </div>
+              <div className="collapse-content">
+                <div className="pt-3 pb-3 border-b-[1px] border-borderGray flex justify-between items-center">
+                  <div className="flex text-black">
+                    신청자
+                    <div className="flex">
+                      <img
+                        src={song.requester?.image!}
+                        alt={`Profile`}
+                        className="ml-3 mr-1 h-6 w-6 rounded-md object-cover"
+                      />
+                      <span className="font-semibold">
+                        {song.requester?.name}
+                      </span>
+                    </div>
+                  </div>
+                  {song.requester?.email === session.user.email && (
+                    <Button
+                      text="곡 취소"
+                      backgroundColor="gray"
+                      onClick={() => onCancel(song.id)}
                     />
-                    <span className="font-semibold">
-                      {song.requester?.name}
-                    </span>
-                  </div>
+                  )}
                 </div>
-                <Button
-                  text="곡 취소"
-                  backgroundColor="gray"
-                  onClick={() => onCancel(song.id)}
-                />
-              </div>
-              <div className="my-4">
-                {song.instruments.map((instrument, i) => (
-                  <div
-                    key={i}
-                    className="p-2 rounded-lg cursor-pointer hover:bg-borderGray border-[1px] border-borderGray mb-2"
-                    onClick={() => updateParticipant(song.id, instrument.name)}
-                  >
-                    <span className="font-semibold text-gray">
-                      {instrument.name}
-                    </span>
-                    {instrument.participants.map(
-                      (participant: Session["user"]) => (
-                        <div
-                          key={participant.email}
-                          className="flex items-center gap-2 bg-borderGray rounded-md px-2 py-1.5"
-                        >
-                          <img
-                            className="w-8 h-8 rounded-full"
-                            src={session?.user?.image!}
-                            alt={session?.user?.name!}
-                          />
-                          <span className="text-sm text-black">
-                            {participant.name}
-                          </span>
-                        </div>
-                      )
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="mt-2 pt-2 border-t-[1px] border-borderGray">
-                <p className="mb-2 font-semibold">신청자 comment</p>
-                <p className="text-[1rem]">{song.details}</p>
+                <div className="my-4">
+                  {song.instruments.map((instrument, i) => (
+                    <div
+                      key={i}
+                      className="p-2 rounded-lg cursor-pointer hover:bg-borderGray border-[1px] border-borderGray mb-2"
+                      onClick={() =>
+                        updateParticipant(song.id, instrument.name)
+                      }
+                    >
+                      <span className="font-semibold text-gray">
+                        {instrument.name}
+                      </span>
+                      {instrument.participants.map(
+                        (participant: Session["user"]) => (
+                          <div
+                            key={participant.email}
+                            className="flex items-center gap-2 bg-borderGray rounded-md px-2 py-1.5"
+                          >
+                            <img
+                              className="w-8 h-8 rounded-full object-cover"
+                              src={session?.user?.image!}
+                              alt={session?.user?.name!}
+                            />
+                            <span className="text-sm text-black">
+                              {participant.name}
+                            </span>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-2 pt-2 border-t-[1px] border-borderGray">
+                  <p className="mb-2 font-semibold">신청자 comment</p>
+                  <p className="text-[1rem]">{song.details}</p>
+                </div>
               </div>
             </div>
           ))}
