@@ -27,7 +27,7 @@ export const Button: React.FC<ButtonProps> = ({
   }`;
   return (
     <div
-      className={`bg-${backgroundColor} inline-block cursor-pointer text-center rounded-lg px-2 ${
+      className={`btn border-none bg-${backgroundColor} inline-flex items-center cursor-pointer text-center rounded-lg px-2 ${
         big ? "py-3" : "py-1.5"
       } lg:px-5 ${hoverBgColorClass}`}
     >
@@ -50,8 +50,8 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <a
           href={href}
-          className={`no-underline text-${fontColor} align-middle break-keep ${
-            big ? "text-xl sm:text-lg" : "text-sm"
+          className={`no-underline text-${fontColor}  break-keep ${
+            big ? "text-xl sm:text-lg" : "text-lg"
           }`}
           onClick={(e) => {
             if (onClick) {
