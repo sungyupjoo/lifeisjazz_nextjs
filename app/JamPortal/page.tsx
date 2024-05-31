@@ -18,7 +18,15 @@ import {
 } from "../../components/common/types";
 import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
-import { addWeeks, getWeek, startOfDay, startOfWeek } from "date-fns";
+import {
+  Month,
+  addMonths,
+  addWeeks,
+  getWeek,
+  startOfDay,
+  startOfWeek,
+  subMonths,
+} from "date-fns";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import Rules from "@/components/contents/Rules";
@@ -212,17 +220,36 @@ const JamDayPortal = () => {
   const [jamdays, setJamdays] = useState<string[]>([]);
   useEffect(() => {
     const getJamDays = async () => {
-      const jamdaysRef = doc(
-        db,
-        "jamday",
-        `${selectedDate.getFullYear()} ${selectedDate.getMonth() + 1}`
-      );
-      const jamdaysSnap = await getDoc(jamdaysRef);
-      const confirmedJamdays = jamdaysSnap.data()?.jamday;
-      setJamdays(confirmedJamdays);
+      const currentMonth = `${selectedDate.getFullYear()} ${
+        selectedDate.getMonth() + 1
+      }`;
+      const previousMonthDate = subMonths(selectedDate, 1);
+      const nextMonthDate = addMonths(selectedDate, 1);
+      const previousMonth = `${previousMonthDate.getFullYear()} ${
+        previousMonthDate.getMonth() + 1
+      }`;
+      const nextMonth = `${nextMonthDate.getFullYear()} ${
+        nextMonthDate.getMonth() + 1
+      }`;
+      const fetchJamDays = async (month: string) => {
+        const jamdaysRef = doc(db, "jamday", month);
+        const jamdaysSnap = await getDoc(jamdaysRef);
+        return jamdaysSnap.exists() ? jamdaysSnap.data().jamday || [] : [];
+      };
+      try {
+        const [prevJamdays, currJamdays, nextJamdays] = await Promise.all([
+          fetchJamDays(previousMonth),
+          fetchJamDays(currentMonth),
+          fetchJamDays(nextMonth),
+        ]);
+        const allJamdays = [...prevJamdays, ...currJamdays, ...nextJamdays];
+        setJamdays(allJamdays);
+      } catch (error) {
+        console.warn("잼데이 페치 중 오류", error);
+      }
     };
     getJamDays();
-  }, []);
+  }, [selectedDate]);
 
   const isJamDay = jamdays?.includes(startOfDay(selectedDate).toDateString());
 
@@ -276,7 +303,7 @@ const JamDayPortal = () => {
       <WeeklyCalendar
         selectedDate={selectedDate}
         onDateChange={handleDateChange}
-        jamDayDate={jamDayDate}
+        jamDayDate={jamdays}
         weekState={currentState}
         setWeekState={toggleWeekState}
       />

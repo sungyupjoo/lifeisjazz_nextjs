@@ -96,9 +96,9 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
   const renderDays = () => {
     const startDate = startOfWeek(currentMonth, { weekStartsOn: 0 });
     return (
-      <div className="flex flex-row w-full">
+      <div className="flex flex-row">
         {Array.from({ length: 7 }, (_, i) => (
-          <div key={i} className="flex-grow text-center text-black">
+          <div key={i} className="flex-1 text-center text-black">
             {format(addDays(startDate, i), "EEE", { locale: ko })}
           </div>
         ))}
@@ -119,10 +119,10 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
         return (
           <div
             key={currentDay.toString()}
-            className="flex-grow flex items-center justify-center border-t pt-1"
+            className="flex-1 flex items-center justify-center border-t pt-1"
           >
             <button
-              className={`rounded-full p-2 cursor-pointer transition duration-250 ease-out overflow-visible ${
+              className={`rounded-full w-10 h-10 p-2 cursor-pointer transition duration-250 ease-out overflow-visible relative ${
                 isSameDay(currentDay, new Date())
                   ? "bg-subTint text-white"
                   : isSameDay(currentDay, selectedDate!)
@@ -133,12 +133,12 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
             >
               {format(currentDay, "d")}
               {isSameDay(currentDay, new Date()) && (
-                <div className="absolute -translate-y-8 text-white text-[10px]">
+                <div className="-translate-y-8 text-white text-[10px]">
                   오늘
                 </div>
               )}
               {jamDayDate?.includes(currentDay.toDateString()) && (
-                <span className="absolute bg-sub w-2.5 h-2.5 rounded-full -translate-x-3.5 translate-y-5"></span>
+                <div className="translate-x-2 -translate-y-0.5 bg-sub w-2.5 h-2.5 rounded-full"></div>
               )}
             </button>
           </div>
@@ -146,7 +146,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
       });
 
       rows.push(
-        <div key={day.toString()} className="flex flex-row w-full">
+        <div key={day.toString()} className="flex flex-row">
           {days}
         </div>
       );
