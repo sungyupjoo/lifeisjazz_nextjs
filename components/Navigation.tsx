@@ -78,15 +78,11 @@ const Navigation: React.FC<NavigationProps> = ({
           className="ml-4 lg:w-[156px] lg:h-[156px] w-[100px] h-[100px] justify-self-center lg:ml-0"
         />
       </a>
-
-      <div className="lg:hidden absolute right-5">
-        <Hamburger onClick={toggleNav} size={30} />
-      </div>
       <section
         className={`justify-between items-center lg:bg-main lg:p-16 p-6 flex-col gap-7 ${
-          isNavOpen ? "flex" : "hidden"
+          isNavOpen ? "flex animate-fadeIn" : "hidden fade-out"
         } lg:relative lg:flex
-       top-20 bg-mainTint w-full fixed z-30 lg:top-0`}
+       top-20 bg-mainTint w-full absolute z-30 lg:top-0`}
       >
         <Anchor
           label="홈"
@@ -130,15 +126,30 @@ const Navigation: React.FC<NavigationProps> = ({
           ref={contactRef}
           scrollToRef={scrollToRef}
         />
-        {/* <Anchor
-          className={activeSection === "personalInfo" ? "active" : ""}
-          onClick={() => scrollToRef(personalInfoRef)}
-        >
-          설정
-        </Anchor> */}
       </section>
-      <div className="flex justify-center mr-16 lg:mr-0 lg:mb-28">
+      <div className="absolute items-center right-0 lg:relative flex justify-center mr-2 lg:mr-0 lg:mb-28">
         <Login />
+        <div
+          tabIndex={0}
+          role="button"
+          className="btn btn-ghost btn-circle lg:hidden"
+          onClick={toggleNav}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke={isNavOpen ? "#cf404d" : "currentColor"}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="3"
+              d="M4 6h16M4 12h16M4 18h7"
+            />
+          </svg>
+        </div>
       </div>
     </section>
   );

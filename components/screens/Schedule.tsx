@@ -20,23 +20,55 @@ import {
 import moment, { MomentInput } from "moment";
 import { useSession } from "next-auth/react";
 import LoginModal from "../common/LoginModal";
-import { exampleSchedule, ScheduleProps } from "../contents/exampleSchedule";
+import AddScheduleModal from "../common/AddScheduleModal";
+import { ScheduleProps } from "../common/types";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 const Schedule: React.FC = () => {
   const { data: session, status } = useSession();
   const today = new Date();
   const [date, setDate] = useState<Value | null>(null);
+  const [scheduleData, setScheduleData] = useState<ScheduleProps[]>([]);
   const [selectedSchedule, setSelectedSchedule] = useState<
     ScheduleProps | undefined
-  >(
-    exampleSchedule.find(
-      (schedule) =>
-        schedule.date === moment(date as MomentInput).format("YYYY-MM-DD")
-    )
-  );
+  >();
   const [formattedDate, setFormattedDate] = useState<string>(
     moment(today as MomentInput).format("YYYY-MM-DD")
   );
+  const [addScheduleModalVisible, setAddScheduleModalVisible] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const fd = new FormData(event.currentTarget);
+    const data: ScheduleProps = {
+      date: formattedDate,
+      category: (fd.get("category") as string) || "",
+      expense: (fd.get("expense") as string) || "",
+      image: (fd.get("image") as string) || "",
+      location: (fd.get("location") as string) || "",
+      time: (fd.get("time") as string) || "",
+      participate: [],
+      description: (fd.get("specific") as string) || "",
+      title: (fd.get("title") as string) || "",
+      // TODO: totalNumber는 나중에 필요에 따라 개발
+      totalNumber: 5,
+    };
+    console.log(data, "데이터");
+    setAddScheduleModalVisible(false);
+    setScheduleData((prev) => [...prev, data]);
+    try {
+      // const docRef = await setDoc(
+      //   doc(db, "jamday", startOfDay(selectedDate).toDateString()),
+      //   {
+      //     data: [...requestedSongs, data],
+      //   },
+      //   { merge: true }
+      // );
+    } catch (e) {
+      console.error("에러메시지", e);
+    }
+  };
 
   const handleDateChange = (newDate: Value) => {
     setDate(newDate);
@@ -54,7 +86,16 @@ const Schedule: React.FC = () => {
       <Title titleText="일정" subTitle="모임 일정 및 잼데이 신청" />
       <div className="flex justify-end">
         {status === "authenticated" ? (
-          <Button backgroundColor="sub" text="잼데이" link />
+          <div className="flex gap-4">
+            <Button
+              backgroundColor="sub"
+              text="일정 +"
+              onClick={() => {
+                setAddScheduleModalVisible(true);
+              }}
+            />
+            <Button backgroundColor="sub" text="잼데이" link />
+          </div>
         ) : (
           <Button
             backgroundColor="sub"
@@ -64,15 +105,17 @@ const Schedule: React.FC = () => {
         )}
       </div>
       <FlexWrapper>
-        <CustomCalendar date={date} onDateChange={handleDateChange} />
+        <CustomCalendar
+          date={date}
+          onDateChange={handleDateChange}
+          scheduleData={[]}
+        />
         <div className="hidden sm:flex flex-col gap-8 mt-4 w-full">
           <div className="flex justify-center items-center mt-6">
             <div className="flex flex-col w-full">
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center">
-                  <h3 className="text-xl font-semibold">
-                    일정 ({exampleSchedule.length})
-                  </h3>
+                  <h3 className="text-xl font-semibold">일정</h3>
                   <button
                     onClick={addEventHandler}
                     className="ml-6 bg-blue-500 text-white text-2xl w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600"
@@ -123,7 +166,7 @@ const Schedule: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <p className="mt-2">{selectedSchedule?.specific}</p>
+                <p className="mt-2">{selectedSchedule?.description}</p>
               </div>
             </div>
           </div>
@@ -166,6 +209,14 @@ const Schedule: React.FC = () => {
           )}
         </div>
       </FlexWrapper>
+      <AddScheduleModal
+        isVisible={addScheduleModalVisible}
+        selectedDate={date}
+        closeHandler={() => {
+          setAddScheduleModalVisible(false);
+        }}
+        handleSubmit={handleSubmit}
+      />
     </Container>
   );
 };

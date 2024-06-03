@@ -56,6 +56,19 @@ export interface SongProps {
   participants?: Session["user"][];
 }
 
+export interface ScheduleProps {
+  date: string;
+  category: string;
+  title: string;
+  time: string;
+  location: string;
+  expense: string;
+  description: string;
+  image: string;
+  totalNumber: number;
+  participate: Session["user"][];
+}
+
 export const instrumentName = {
   bass: "베이스",
   drums: "드럼",
@@ -88,6 +101,13 @@ export const rhythmName = {
   fast: "패스트",
   variation: "원곡 박자 변형",
 };
+
+export const categoryOptions = [
+  { value: "instant", label: "번개" },
+  { value: "regular", label: "정모" },
+  { value: "show", label: "공연관람" },
+  { value: "festival", label: "페스티벌" },
+];
 
 export const keyOptions = [
   { value: "C", label: "C" },

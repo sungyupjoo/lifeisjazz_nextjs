@@ -1,5 +1,4 @@
-import React from "react";
-import { StyledModal, Input, CheckboxInput, Button } from "../common";
+import { StyledModal, Input, CheckboxInput } from "../common";
 import Select from "react-select";
 import { keyOptions, rhythmOptions } from "../common/types";
 

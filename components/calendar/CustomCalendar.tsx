@@ -3,23 +3,20 @@ import styled from "@emotion/styled";
 import colors from "@/styles/theme";
 import Calendar from "react-calendar";
 import moment from "moment";
-import { exampleSchedule } from "../contents/exampleSchedule";
+import { ScheduleProps } from "../common/types";
 export type ValuePiece = Date | null;
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 interface CustomCalendarProps {
   date: Value;
   onDateChange: (date: Value) => void;
-}
-
-interface ScheduleItem {
-  date: string;
-  category: string;
+  scheduleData: ScheduleProps[];
 }
 
 const CustomCalendar: React.FC<CustomCalendarProps> = ({
   date,
   onDateChange,
+  scheduleData,
 }) => {
   const [activeStartDate, setActiveStartDate] = useState<Date | null>(
     new Date()
@@ -58,11 +55,11 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
           }
           // 일정 있는 날 표시
           if (
-            exampleSchedule
+            scheduleData
               .map((schedule) => schedule.date)
               .find((x) => x === moment(date).format("YYYY-MM-DD"))
           ) {
-            let category = exampleSchedule.find(
+            let category = scheduleData.find(
               (schedule) => schedule.date === moment(date).format("YYYY-MM-DD")
             )?.category;
             html.push(

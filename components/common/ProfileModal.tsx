@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { StyledModal } from ".";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { useSession } from "next-auth/react";
 import useStorage from "@/hooks/useStorage";
 

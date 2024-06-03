@@ -27,9 +27,9 @@ export const Button: React.FC<ButtonProps> = ({
   }`;
   return (
     <div
-      className={`btn border-none bg-${backgroundColor} inline-flex items-center cursor-pointer text-center rounded-lg px-2 ${
+      className={`btn-sm border-none bg-${backgroundColor} inline-flex items-center cursor-pointer text-center rounded-lg px-2 ${
         big ? "py-3" : "py-1.5"
-      } lg:px-5 ${hoverBgColorClass}`}
+      } lg:px-5 ${hoverBgColorClass} h-[2.5rem] justify-center`}
     >
       {logoUrl && (
         <img
@@ -51,7 +51,7 @@ export const Button: React.FC<ButtonProps> = ({
         <a
           href={href}
           className={`no-underline text-${fontColor}  break-keep ${
-            big ? "text-xl sm:text-lg" : "text-lg"
+            big ? "text-xl sm:text-lg" : "text-sm"
           }`}
           onClick={(e) => {
             if (onClick) {

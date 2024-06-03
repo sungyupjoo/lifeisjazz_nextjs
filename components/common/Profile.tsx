@@ -9,7 +9,7 @@ const Profile: React.FC<ProfileProps> = ({ onClick }) => {
   const { data: session } = useSession();
   return (
     <div
-      className="inline-block cursor-pointer max-w-xs bg-mainTint px-3 py-0.5 rounded-md hover:bg-mainShade"
+      className="inline-block cursor-pointer max-w-xs bg-mainTint px-3 py-0.5 lg:py-1.5 rounded-md hover:bg-mainShade"
       onClick={onClick}
     >
       <div className="flex items-center gap-2">
