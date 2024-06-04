@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import colors from "@/styles/theme";
 import Calendar from "react-calendar";
 import moment from "moment";
-import { ScheduleProps, categories, categoryOptions } from "../common/types";
+import { ScheduleProps, categories, categoryTypes } from "../common/types";
 export type ValuePiece = Date | null;
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
@@ -24,7 +24,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
     new Date()
   );
   const today = new Date();
-
+  console.log(scheduleData);
   return (
     <CalendarWrapper>
       <StyledCalendar
@@ -85,8 +85,8 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
             )?.category;
             html.push(
               <ScheduleDay key={moment(date).format("YYYY-MM-DD")}>
-                <StyledDot scheduleContent={category} />
-                <ScheduleSpecific scheduleContent={category}>
+                <StyledDot category={category!} />
+                <ScheduleSpecific category={category!}>
                   {categories[category!]}
                 </ScheduleSpecific>
               </ScheduleDay>
@@ -249,11 +249,10 @@ export const StyledDate = styled.div`
 `;
 
 /* 일정 있는 날짜에 점 표시 스타일 */
-const StyledDot = styled.div<{ scheduleContent: string | undefined }>`
+const StyledDot = styled.div<{ category: categoryTypes }>`
   border-width: 1rem;
   border: solid
-    ${(props) =>
-      props.scheduleContent === "잼데이" ? colors.subShade : colors.main};
+    ${(props) => (props.category === "jamday" ? colors.subShade : colors.main)};
   border-radius: 50%;
   width: 1.3rem;
   height: 1.3rem;
@@ -273,11 +272,11 @@ const StyledToday = styled.p`
 
 const ScheduleDay = styled.div``;
 
-const ScheduleSpecific = styled.p<{ scheduleContent: string | undefined }>`
+const ScheduleSpecific = styled.p<{ category: categoryTypes }>`
   font-size: 0.8rem;
   color: white;
   background-color: ${(props) =>
-    props.scheduleContent === "잼데이" ? colors.subShade : colors.main};
+    props.category === "jamday" ? colors.subShade : colors.main};
   margin-top: 0.1rem;
   padding: 0 0.3rem;
   border-radius: 0.3rem;

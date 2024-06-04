@@ -45,15 +45,9 @@ const Schedule: React.FC = () => {
   );
   const [addScheduleModalVisible, setAddScheduleModalVisible] = useState(false);
 
-  useEffect(() => {
-    console.log(activeMonth);
-  }, [activeMonth]);
-
   // 스케쥴 데이터 받아오기
   useEffect(() => {
-    //TODO: onSnapshot으로 데이터 받아오기
     const selectedMonth = `${getYear(formattedDate)} ${activeMonth + 1}`;
-
     const docRef = doc(db, "schedules", selectedMonth);
     const unsubscribeSchedules = onSnapshot(
       docRef,
