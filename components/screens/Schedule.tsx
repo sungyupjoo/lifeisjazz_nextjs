@@ -25,7 +25,8 @@ import { ScheduleProps, categoryTypes } from "../common/types";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import useStorage from "@/hooks/useStorage";
-import { getMonth, getYear, startOfDay } from "date-fns";
+import { formatDate, getMonth, getYear, startOfDay } from "date-fns";
+import ScheduleModal from "./ScheduleModal";
 
 const Schedule: React.FC = () => {
   const { data: session, status } = useSession();
@@ -39,11 +40,13 @@ const Schedule: React.FC = () => {
   const { startUpload, progress, deleteImage } = useStorage("scheduleImages");
   const [isLoading, setIsLoading] = useState(false);
   const [downloadURL, setDownloadURL] = useState<string>("");
-
   const [formattedDate, setFormattedDate] = useState<string>(
     moment(today as MomentInput).format("YYYY-MM-DD")
   );
   const [addScheduleModalVisible, setAddScheduleModalVisible] = useState(false);
+  const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
+  const [selectedDateSchedule, setSelectedDateSchedule] =
+    useState<ScheduleProps>();
 
   // 스케쥴 데이터 받아오기
   useEffect(() => {
@@ -107,6 +110,17 @@ const Schedule: React.FC = () => {
   const handleDateChange = (newDate: Value) => {
     setDate(newDate);
     setFormattedDate(moment(newDate as MomentInput).format("YYYY-MM-DD"));
+    scheduleData.find(
+      (schedule) => schedule.date === formatDate(newDate as Date, "yyyy-MM-dd")
+    )
+      ? setIsScheduleModalVisible(true)
+      : setIsScheduleModalVisible(false);
+    setSelectedDateSchedule(
+      scheduleData.find(
+        (schedule) =>
+          schedule.date === formatDate(newDate as Date, "yyyy-MM-dd")
+      )
+    );
   };
 
   const handleMonthChange = (direction: "prev" | "next") => {
@@ -120,6 +134,8 @@ const Schedule: React.FC = () => {
 
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
   const showLoginModal = () => setIsLoginModalVisible(true);
+
+  // 세부 내역 모달
 
   return (
     <Container backgroundGray innerPadding>
@@ -261,6 +277,13 @@ const Schedule: React.FC = () => {
             setAddScheduleModalVisible(false);
           }}
           handleSubmit={handleSubmit}
+        />
+      )}
+      {isScheduleModalVisible && selectedDateSchedule && (
+        <ScheduleModal
+          isScheduleModalVisible={isScheduleModalVisible}
+          closeScheduleModal={() => setIsScheduleModalVisible(false)}
+          scheduleData={selectedDateSchedule}
         />
       )}
     </Container>

@@ -24,7 +24,6 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
     new Date()
   );
   const today = new Date();
-  console.log(scheduleData);
   return (
     <CalendarWrapper>
       <StyledCalendar
