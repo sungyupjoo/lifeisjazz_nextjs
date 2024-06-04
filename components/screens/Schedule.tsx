@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -21,58 +21,104 @@ import moment, { MomentInput } from "moment";
 import { useSession } from "next-auth/react";
 import LoginModal from "../common/LoginModal";
 import AddScheduleModal from "../common/AddScheduleModal";
-import { ScheduleProps } from "../common/types";
-import { doc, setDoc } from "firebase/firestore";
+import { ScheduleProps, categoryTypes } from "../common/types";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import useStorage from "@/hooks/useStorage";
+import { getMonth, getYear, startOfDay } from "date-fns";
 
 const Schedule: React.FC = () => {
   const { data: session, status } = useSession();
   const today = new Date();
   const [date, setDate] = useState<Value | null>(null);
+  const [activeMonth, setActiveMonth] = useState<number>(getMonth(new Date()));
   const [scheduleData, setScheduleData] = useState<ScheduleProps[]>([]);
   const [selectedSchedule, setSelectedSchedule] = useState<
     ScheduleProps | undefined
   >();
+  const { startUpload, progress, deleteImage } = useStorage("scheduleImages");
+  const [isLoading, setIsLoading] = useState(false);
+  const [downloadURL, setDownloadURL] = useState<string>("");
+
   const [formattedDate, setFormattedDate] = useState<string>(
     moment(today as MomentInput).format("YYYY-MM-DD")
   );
   const [addScheduleModalVisible, setAddScheduleModalVisible] = useState(false);
 
+  useEffect(() => {
+    console.log(activeMonth);
+  }, [activeMonth]);
+
+  // 스케쥴 데이터 받아오기
+  useEffect(() => {
+    //TODO: onSnapshot으로 데이터 받아오기
+    const selectedMonth = `${getYear(formattedDate)} ${activeMonth + 1}`;
+
+    const docRef = doc(db, "schedules", selectedMonth);
+    const unsubscribeSchedules = onSnapshot(
+      docRef,
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const schedules: ScheduleProps[] = docSnapshot.data().data || [];
+          setScheduleData(schedules);
+        }
+      },
+      (error) => {
+        console.error("no songs data");
+      }
+    );
+    return () => unsubscribeSchedules();
+  }, [activeMonth]);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
     event.preventDefault();
+
+    // 이미지 업로드
+
     const fd = new FormData(event.currentTarget);
+    const image = fd.get("image") as File;
+    let newDownloadURL = downloadURL;
+    newDownloadURL = (await startUpload(image)) as string;
+    setDownloadURL(newDownloadURL);
+
     const data: ScheduleProps = {
       date: formattedDate,
-      category: (fd.get("category") as string) || "",
+      category: (fd.get("category") as categoryTypes) || "",
       expense: (fd.get("expense") as string) || "",
-      image: (fd.get("image") as string) || "",
+      image: newDownloadURL || "",
       location: (fd.get("location") as string) || "",
       time: (fd.get("time") as string) || "",
       participate: [],
-      description: (fd.get("specific") as string) || "",
+      description: (fd.get("description") as string) || "",
       title: (fd.get("title") as string) || "",
       // TODO: totalNumber는 나중에 필요에 따라 개발
       totalNumber: 5,
     };
-    console.log(data, "데이터");
-    setAddScheduleModalVisible(false);
-    setScheduleData((prev) => [...prev, data]);
     try {
-      // const docRef = await setDoc(
-      //   doc(db, "jamday", startOfDay(selectedDate).toDateString()),
-      //   {
-      //     data: [...requestedSongs, data],
-      //   },
-      //   { merge: true }
-      // );
+      const docRef = await setDoc(
+        doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
+        {
+          data: [...scheduleData, data],
+        },
+        { merge: true }
+      );
     } catch (e) {
       console.error("에러메시지", e);
     }
+    setIsLoading(false);
+    setAddScheduleModalVisible(false);
   };
 
   const handleDateChange = (newDate: Value) => {
     setDate(newDate);
     setFormattedDate(moment(newDate as MomentInput).format("YYYY-MM-DD"));
+  };
+
+  const handleMonthChange = (direction: "prev" | "next") => {
+    setActiveMonth((prev) =>
+      direction === "prev" ? (prev -= 1) : (prev += 1)
+    );
   };
 
   const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
@@ -104,11 +150,13 @@ const Schedule: React.FC = () => {
           />
         )}
       </div>
+
       <FlexWrapper>
         <CustomCalendar
           date={date}
           onDateChange={handleDateChange}
-          scheduleData={[]}
+          scheduleData={scheduleData}
+          handleMonthChange={handleMonthChange}
         />
         <div className="hidden sm:flex flex-col gap-8 mt-4 w-full">
           <div className="flex justify-center items-center mt-6">
@@ -209,14 +257,18 @@ const Schedule: React.FC = () => {
           )}
         </div>
       </FlexWrapper>
-      <AddScheduleModal
-        isVisible={addScheduleModalVisible}
-        selectedDate={date}
-        closeHandler={() => {
-          setAddScheduleModalVisible(false);
-        }}
-        handleSubmit={handleSubmit}
-      />
+      {isLoading ? (
+        <span className="loading loading-spinner loading-lg"></span>
+      ) : (
+        <AddScheduleModal
+          isVisible={addScheduleModalVisible}
+          selectedDate={date}
+          closeHandler={() => {
+            setAddScheduleModalVisible(false);
+          }}
+          handleSubmit={handleSubmit}
+        />
+      )}
     </Container>
   );
 };

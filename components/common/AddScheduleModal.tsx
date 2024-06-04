@@ -2,9 +2,7 @@ import { StyledModal } from ".";
 import Select from "react-select";
 import { categoryOptions } from "./types";
 import { Value } from "../calendar/CustomCalendar";
-import { useCallback, useState } from "react";
-import useStorage from "@/hooks/useStorage";
-import { useDropzone } from "react-dropzone";
+import { ChangeEvent, useState } from "react";
 
 interface AddScheduleModalProps {
   isVisible: boolean;
@@ -19,14 +17,29 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
   closeHandler,
   handleSubmit,
 }) => {
-  const { startUpload, progress, deleteImage } = useStorage("profile");
   const [file, setFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [downloadURL, setDownloadURL] = useState<string>("");
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
 
+  const imageUploadHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const selectedFile = event.target.files?.[0] || null;
+    if (selectedFile) {
+      setFile(selectedFile);
+      const fileReader = new FileReader();
+      fileReader.onload = () => setPreview(fileReader.result);
+      fileReader.readAsDataURL(selectedFile);
+    }
+  };
+
   return (
-    <StyledModal closeModal={closeHandler} isModalVisible={isVisible}>
+    <StyledModal
+      closeModal={() => {
+        setFile(null);
+        setPreview(null);
+        closeHandler();
+      }}
+      isModalVisible={isVisible}
+    >
       <form onSubmit={handleSubmit} className="font-semibold text-lg  mt-8">
         <div className="mb-4 sm:mb-6 items-center">
           <label
@@ -58,31 +71,24 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
           사진
         </label>
         {file && (
-          <img
-            src={(typeof preview === "string" && preview) || ""}
-            alt="이미지 미리보기"
-            className="h-15 w-15 rounded-lg object-cover text-sm"
-            style={{ height: "60px", width: "60px" }}
-          />
+          <div className="flex">
+            <img
+              src={(typeof preview === "string" && preview) || ""}
+              alt="이미지 미리보기"
+              className="h-15 w-15 rounded-lg object-cover text-sm"
+              style={{ height: "60px", width: "60px" }}
+            />
+          </div>
         )}
         <input
           type="file"
-          id="file-upload"
-          className="hidden"
+          id="image"
+          name="image"
+          className="file-input file-input-bordered file-input-sm w-full max-w-sm bg-white text-xs mb-4"
           accept="image/jpeg, image/png, image/gif"
-          onChange={() => {}}
+          onChange={imageUploadHandler}
+          required
         />
-        <div className="flex items-middle mb-4">
-          <label
-            htmlFor="file-upload"
-            className="text-sm cursor-pointer bg-main text-white py-1 px-2 rounded-l-xl border-[1px] border-main"
-          >
-            파일 추가
-          </label>
-          <span className="text-sm px-2 py-1 rounded-r-xl border-solid border-[1px] border-l-0">
-            {file ? file.name : "선택된 파일이 없습니다"}
-          </span>
-        </div>
         <div className="mb-4 sm:mb-6 items-center">
           <label
             htmlFor="location"
@@ -137,7 +143,6 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
           name="description"
           id="description"
         />
-
         <div className="flex justify-center">
           <button
             type="submit"

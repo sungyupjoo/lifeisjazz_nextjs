@@ -58,7 +58,7 @@ export interface SongProps {
 
 export interface ScheduleProps {
   date: string;
-  category: string;
+  category: "show" | "regular" | "instant" | "festival" | "jamday";
   title: string;
   time: string;
   location: string;
@@ -108,6 +108,21 @@ export const categoryOptions = [
   { value: "show", label: "공연관람" },
   { value: "festival", label: "페스티벌" },
 ];
+
+export type categoryTypes =
+  | "instant"
+  | "regular"
+  | "show"
+  | "festival"
+  | "jamday";
+
+export const categories = {
+  instant: "번개",
+  regular: "정모",
+  show: "공연",
+  festival: "페스티벌",
+  jamday: "잼데이",
+};
 
 export const keyOptions = [
   { value: "C", label: "C" },

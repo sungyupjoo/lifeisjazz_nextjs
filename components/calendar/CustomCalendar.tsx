@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import colors from "@/styles/theme";
 import Calendar from "react-calendar";
 import moment from "moment";
-import { ScheduleProps } from "../common/types";
+import { ScheduleProps, categories, categoryOptions } from "../common/types";
 export type ValuePiece = Date | null;
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
@@ -11,12 +11,14 @@ interface CustomCalendarProps {
   date: Value;
   onDateChange: (date: Value) => void;
   scheduleData: ScheduleProps[];
+  handleMonthChange: (direction: "prev" | "next") => void;
 }
 
 const CustomCalendar: React.FC<CustomCalendarProps> = ({
   date,
   onDateChange,
   scheduleData,
+  handleMonthChange,
 }) => {
   const [activeStartDate, setActiveStartDate] = useState<Date | null>(
     new Date()
@@ -34,13 +36,32 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
         formatMonthYear={(locale, date) => moment(date).format("YYYY년 M월")}
         next2Label={null}
         prev2Label={null}
-        minDetail="year"
+        prevLabel={
+          <div
+            onClick={() => {
+              handleMonthChange("prev");
+            }}
+          >
+            {"<"}
+          </div>
+        }
+        nextLabel={
+          <div
+            onClick={() => {
+              handleMonthChange("next");
+            }}
+          >
+            {">"}
+          </div>
+        }
         calendarType="gregory"
         // 오늘 날짜로 돌아오는 기능을 위해 필요한 옵션 설정
         activeStartDate={activeStartDate === null ? undefined : activeStartDate}
         onActiveStartDateChange={({ activeStartDate }) =>
           setActiveStartDate(activeStartDate)
         }
+        minDetail="month"
+        maxDetail="month"
         // 일정 표시용
         tileContent={({ date, view }) => {
           let html = [];
@@ -66,7 +87,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
               <ScheduleDay key={moment(date).format("YYYY-MM-DD")}>
                 <StyledDot scheduleContent={category} />
                 <ScheduleSpecific scheduleContent={category}>
-                  {category}
+                  {categories[category!]}
                 </ScheduleSpecific>
               </ScheduleDay>
             );
