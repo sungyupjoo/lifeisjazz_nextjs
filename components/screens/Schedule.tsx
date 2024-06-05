@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -20,27 +20,111 @@ import {
 import moment, { MomentInput } from "moment";
 import { useSession } from "next-auth/react";
 import LoginModal from "../common/LoginModal";
-import { exampleSchedule, ScheduleProps } from "../contents/exampleSchedule";
+import AddScheduleModal from "../common/AddScheduleModal";
+import { ScheduleProps, categoryTypes } from "../common/types";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { db } from "@/firebase/config";
+import useStorage from "@/hooks/useStorage";
+import { formatDate, getMonth, getYear, startOfDay } from "date-fns";
+import ScheduleModal from "./ScheduleModal";
 
 const Schedule: React.FC = () => {
   const { data: session, status } = useSession();
   const today = new Date();
   const [date, setDate] = useState<Value | null>(null);
-  const [selectedSchedule, setSelectedSchedule] = useState<
-    ScheduleProps | undefined
-  >(
-    exampleSchedule.find(
-      (schedule) =>
-        schedule.date === moment(date as MomentInput).format("YYYY-MM-DD")
-    )
-  );
+  const [activeMonth, setActiveMonth] = useState<number>(getMonth(new Date()));
+  const [scheduleData, setScheduleData] = useState<ScheduleProps[]>([]);
+  const { startUpload, progress, deleteImage } = useStorage("scheduleImages");
+  const [isLoading, setIsLoading] = useState(false);
+  const [downloadURL, setDownloadURL] = useState<string>("");
   const [formattedDate, setFormattedDate] = useState<string>(
     moment(today as MomentInput).format("YYYY-MM-DD")
   );
+  const [addScheduleModalVisible, setAddScheduleModalVisible] = useState(false);
+  const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
+  const [selectedDateSchedule, setSelectedDateSchedule] =
+    useState<ScheduleProps>();
+  const [amIParticipating, setAmIParticipating] = useState(false);
+
+  // 스케쥴 데이터 받아오기
+  useEffect(() => {
+    const selectedMonth = `${getYear(formattedDate)} ${activeMonth + 1}`;
+    const docRef = doc(db, "schedules", selectedMonth);
+    const unsubscribeSchedules = onSnapshot(
+      docRef,
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const schedules: ScheduleProps[] = docSnapshot.data().data || [];
+          setScheduleData(schedules);
+        }
+      },
+      (error) => {
+        console.error("no songs data");
+      }
+    );
+    return () => unsubscribeSchedules();
+  }, [activeMonth]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
+    event.preventDefault();
+
+    // 이미지 업로드
+
+    const fd = new FormData(event.currentTarget);
+    const image = fd.get("image") as File;
+    let newDownloadURL = downloadURL;
+    newDownloadURL = (await startUpload(image)) as string;
+    setDownloadURL(newDownloadURL);
+
+    const data: ScheduleProps = {
+      date: formattedDate,
+      category: (fd.get("category") as categoryTypes) || "",
+      expense: (fd.get("expense") as string) || "",
+      image: newDownloadURL || "",
+      location: (fd.get("location") as string) || "",
+      time: (fd.get("time") as string) || "",
+      participate: [],
+      description: (fd.get("description") as string) || "",
+      title: (fd.get("title") as string) || "",
+      // TODO: totalNumber는 나중에 필요에 따라 개발
+      totalNumber: 5,
+    };
+    try {
+      const docRef = await setDoc(
+        doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
+        {
+          data: [...scheduleData, data],
+        },
+        { merge: true }
+      );
+    } catch (e) {
+      console.error("에러메시지", e);
+    }
+    setIsLoading(false);
+    setAddScheduleModalVisible(false);
+  };
 
   const handleDateChange = (newDate: Value) => {
     setDate(newDate);
     setFormattedDate(moment(newDate as MomentInput).format("YYYY-MM-DD"));
+    scheduleData.find(
+      (schedule) => schedule.date === formatDate(newDate as Date, "yyyy-MM-dd")
+    )
+      ? setIsScheduleModalVisible(true)
+      : setIsScheduleModalVisible(false);
+    setSelectedDateSchedule(
+      scheduleData.find(
+        (schedule) =>
+          schedule.date === formatDate(newDate as Date, "yyyy-MM-dd")
+      )
+    );
+  };
+
+  const handleMonthChange = (direction: "prev" | "next") => {
+    setActiveMonth((prev) =>
+      direction === "prev" ? (prev -= 1) : (prev += 1)
+    );
   };
 
   const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
@@ -49,12 +133,77 @@ const Schedule: React.FC = () => {
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
   const showLoginModal = () => setIsLoginModalVisible(true);
 
+  // 참여 신청
+  const participateHandler = async () => {
+    if (status === "authenticated") {
+      const scheduleIndex = scheduleData.findIndex(
+        (schedule) => schedule.date === selectedDateSchedule?.date
+      );
+      if (scheduleIndex === -1) {
+        return;
+      }
+      const updatedSchedule = { ...scheduleData[scheduleIndex] };
+      const participantIndex = updatedSchedule.participate.findIndex(
+        (participant) => participant.email === session.user.email
+      );
+      if (participantIndex === -1) {
+        updatedSchedule.participate.push(session.user);
+      } else {
+        updatedSchedule.participate.splice(participantIndex, 1);
+      }
+      const updatedScheduleData = [...scheduleData];
+      updatedScheduleData[scheduleIndex] = updatedSchedule;
+      try {
+        await setDoc(
+          doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
+          {
+            data: updatedScheduleData,
+          },
+          { merge: true }
+        );
+        setScheduleData(updatedScheduleData);
+      } catch (error) {
+        console.warn(error, "참석 신청 중 에러");
+      }
+    }
+  };
+
+  // 일정 취소
+  const cancelScheduleHandler = async () => {
+    const updatedScheduleData = scheduleData.filter(
+      (schedule) => schedule.date !== selectedDateSchedule!.date
+    );
+    try {
+      await setDoc(
+        doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
+        {
+          data: updatedScheduleData,
+        },
+        { merge: true }
+      );
+      setScheduleData(updatedScheduleData);
+      setIsScheduleModalVisible(false);
+      setSelectedDateSchedule(undefined);
+    } catch (error) {
+      console.warn(error, "일정 취소 중 에러");
+    }
+  };
+
   return (
     <Container backgroundGray innerPadding>
       <Title titleText="일정" subTitle="모임 일정 및 잼데이 신청" />
       <div className="flex justify-end">
         {status === "authenticated" ? (
-          <Button backgroundColor="sub" text="잼데이" link />
+          <div className="flex gap-4">
+            <Button
+              backgroundColor="sub"
+              text="일정 +"
+              onClick={() => {
+                setAddScheduleModalVisible(true);
+              }}
+            />
+            <Button backgroundColor="sub" text="잼데이" link />
+          </div>
         ) : (
           <Button
             backgroundColor="sub"
@@ -63,70 +212,15 @@ const Schedule: React.FC = () => {
           />
         )}
       </div>
+
       <FlexWrapper>
-        <CustomCalendar date={date} onDateChange={handleDateChange} />
+        <CustomCalendar
+          date={date}
+          onDateChange={handleDateChange}
+          scheduleData={scheduleData}
+          handleMonthChange={handleMonthChange}
+        />
         <div className="hidden sm:flex flex-col gap-8 mt-4 w-full">
-          <div className="flex justify-center items-center mt-6">
-            <div className="flex flex-col w-full">
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center">
-                  <h3 className="text-xl font-semibold">
-                    일정 ({exampleSchedule.length})
-                  </h3>
-                  <button
-                    onClick={addEventHandler}
-                    className="ml-6 bg-blue-500 text-white text-2xl w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div className="p-5 rounded-lg shadow-md hover:bg-gray-300">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg">{formattedDate}</h3>
-                  <Button
-                    backgroundColor="main"
-                    text="참석"
-                    href=""
-                    onClick={() => {}}
-                  />
-                </div>
-                <h4 className="mt-2 text-lg">
-                  {selectedSchedule?.title || (
-                    <span className="text-gray-500">
-                      해당 날짜엔 일정이 없습니다
-                    </span>
-                  )}
-                </h4>
-                <div className="flex mt-2">
-                  {selectedSchedule?.image && (
-                    <img
-                      src={selectedSchedule.image}
-                      className="w-32 h-32 rounded-lg mr-4 object-cover"
-                    />
-                  )}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center">
-                      <span className="font-semibold">위치:</span>
-                      <p>{selectedSchedule?.location}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-semibold">비용:</span>
-                      <p>{selectedSchedule?.expense}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-semibold">참석:</span>
-                      <p className="text-red-500">
-                        {selectedSchedule?.participate.length} /{" "}
-                        {selectedSchedule?.totalNumber}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <p className="mt-2">{selectedSchedule?.specific}</p>
-              </div>
-            </div>
-          </div>
           {isAddEventModalVisible && (
             <StyledModal
               isModalVisible={isAddEventModalVisible}
@@ -166,6 +260,27 @@ const Schedule: React.FC = () => {
           )}
         </div>
       </FlexWrapper>
+      {isLoading ? (
+        <span className="loading loading-spinner loading-lg"></span>
+      ) : (
+        <AddScheduleModal
+          isVisible={addScheduleModalVisible}
+          selectedDate={date}
+          closeHandler={() => {
+            setAddScheduleModalVisible(false);
+          }}
+          handleSubmit={handleSubmit}
+        />
+      )}
+      {isScheduleModalVisible && selectedDateSchedule && (
+        <ScheduleModal
+          isScheduleModalVisible={isScheduleModalVisible}
+          closeScheduleModal={() => setIsScheduleModalVisible(false)}
+          scheduleData={selectedDateSchedule}
+          participateHandler={participateHandler}
+          cancelScheduleHandler={cancelScheduleHandler}
+        />
+      )}
     </Container>
   );
 };

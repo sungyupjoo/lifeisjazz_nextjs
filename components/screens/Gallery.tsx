@@ -104,7 +104,7 @@ const Gallery = () => {
           </form>
         </div>
       )}
-      <div className="mt-8 mb-4 grid grid-cols-2 grid-rows-4 lg:grid-cols-4 gap-5 ">
+      <div className="mt-8 mb-4 grid grid-cols-2 grid-rows-4 lg:grid-cols-4 gap-5 border-b-backgroundGray max-h-full">
         {currentImages.map((image) => (
           <div key={image.imageUrl} className="gallery-image">
             <img
@@ -122,6 +122,7 @@ const Gallery = () => {
           </div>
         ))}
       </div>
+
       <div className="flex justify-center mt-4">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

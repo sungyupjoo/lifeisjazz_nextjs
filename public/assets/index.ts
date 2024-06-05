@@ -30,6 +30,8 @@ const member_skipper =
   "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Fmember_skipper.jpeg?alt=media&token=597b8f66-f002-431d-8570-5db77283a93e";
 const grand_fest =
   "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Fgrand_fest.jpeg?alt=media&token=6f21ff1b-7565-4131-a901-ef476cad5cfb";
+const jam_image =
+  "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Fimage_jam.jpeg?alt=media&token=6eb01106-9e38-4fa9-b59f-c724979faee1";
 
 export {
   logo_black,
@@ -48,4 +50,5 @@ export {
   manager_las,
   manager_bins,
   member_skipper,
+  jam_image,
 };

@@ -56,6 +56,19 @@ export interface SongProps {
   participants?: Session["user"][];
 }
 
+export interface ScheduleProps {
+  date: string;
+  category: "show" | "regular" | "instant" | "festival" | "jamday";
+  title: string;
+  time: string;
+  location: string;
+  expense: string;
+  description: string;
+  image: string;
+  totalNumber: number;
+  participate: Session["user"][];
+}
+
 export const instrumentName = {
   bass: "베이스",
   drums: "드럼",
@@ -87,6 +100,29 @@ export const rhythmName = {
   slowSwing: "슬로우 스윙",
   fast: "패스트",
   variation: "원곡 박자 변형",
+};
+
+export const categoryOptions = [
+  { value: "instant", label: "번개" },
+  { value: "jamday", label: "잼데이" },
+  { value: "regular", label: "정모" },
+  { value: "show", label: "공연관람" },
+  { value: "festival", label: "페스티벌" },
+];
+
+export type categoryTypes =
+  | "instant"
+  | "regular"
+  | "show"
+  | "festival"
+  | "jamday";
+
+export const categories = {
+  instant: "번개",
+  regular: "정모",
+  show: "공연",
+  festival: "페스티벌",
+  jamday: "잼데이",
 };
 
 export const keyOptions = [

@@ -17,7 +17,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-type StorageType = "profile" | "gallery";
+type StorageType = "profile" | "gallery" | "scheduleImages";
 
 const useStorage = (storagetype: StorageType) => {
   const [progress, setProgress] = useState<number>(0);
