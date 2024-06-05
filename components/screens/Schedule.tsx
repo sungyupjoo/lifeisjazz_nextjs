@@ -34,9 +34,6 @@ const Schedule: React.FC = () => {
   const [date, setDate] = useState<Value | null>(null);
   const [activeMonth, setActiveMonth] = useState<number>(getMonth(new Date()));
   const [scheduleData, setScheduleData] = useState<ScheduleProps[]>([]);
-  const [selectedSchedule, setSelectedSchedule] = useState<
-    ScheduleProps | undefined
-  >();
   const { startUpload, progress, deleteImage } = useStorage("scheduleImages");
   const [isLoading, setIsLoading] = useState(false);
   const [downloadURL, setDownloadURL] = useState<string>("");
@@ -47,6 +44,7 @@ const Schedule: React.FC = () => {
   const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
   const [selectedDateSchedule, setSelectedDateSchedule] =
     useState<ScheduleProps>();
+  const [amIParticipating, setAmIParticipating] = useState(false);
 
   // 스케쥴 데이터 받아오기
   useEffect(() => {
@@ -135,7 +133,61 @@ const Schedule: React.FC = () => {
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
   const showLoginModal = () => setIsLoginModalVisible(true);
 
-  // 세부 내역 모달
+  // 참여 신청
+  const participateHandler = async () => {
+    if (status === "authenticated") {
+      const scheduleIndex = scheduleData.findIndex(
+        (schedule) => schedule.date === selectedDateSchedule?.date
+      );
+      if (scheduleIndex === -1) {
+        return;
+      }
+      const updatedSchedule = { ...scheduleData[scheduleIndex] };
+      const participantIndex = updatedSchedule.participate.findIndex(
+        (participant) => participant.email === session.user.email
+      );
+      if (participantIndex === -1) {
+        updatedSchedule.participate.push(session.user);
+      } else {
+        updatedSchedule.participate.splice(participantIndex, 1);
+      }
+      const updatedScheduleData = [...scheduleData];
+      updatedScheduleData[scheduleIndex] = updatedSchedule;
+      try {
+        await setDoc(
+          doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
+          {
+            data: updatedScheduleData,
+          },
+          { merge: true }
+        );
+        setScheduleData(updatedScheduleData);
+      } catch (error) {
+        console.warn(error, "참석 신청 중 에러");
+      }
+    }
+  };
+
+  // 일정 취소
+  const cancelScheduleHandler = async () => {
+    const updatedScheduleData = scheduleData.filter(
+      (schedule) => schedule.date !== selectedDateSchedule!.date
+    );
+    try {
+      await setDoc(
+        doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
+        {
+          data: updatedScheduleData,
+        },
+        { merge: true }
+      );
+      setScheduleData(updatedScheduleData);
+      setIsScheduleModalVisible(false);
+      setSelectedDateSchedule(undefined);
+    } catch (error) {
+      console.warn(error, "일정 취소 중 에러");
+    }
+  };
 
   return (
     <Container backgroundGray innerPadding>
@@ -169,65 +221,6 @@ const Schedule: React.FC = () => {
           handleMonthChange={handleMonthChange}
         />
         <div className="hidden sm:flex flex-col gap-8 mt-4 w-full">
-          <div className="flex justify-center items-center mt-6">
-            <div className="flex flex-col w-full">
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center">
-                  <h3 className="text-xl font-semibold">일정</h3>
-                  <button
-                    onClick={addEventHandler}
-                    className="ml-6 bg-blue-500 text-white text-2xl w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div className="p-5 rounded-lg shadow-md hover:bg-gray-300">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg">{formattedDate}</h3>
-                  <Button
-                    backgroundColor="main"
-                    text="참석"
-                    href=""
-                    onClick={() => {}}
-                  />
-                </div>
-                <h4 className="mt-2 text-lg">
-                  {selectedSchedule?.title || (
-                    <span className="text-gray-500">
-                      해당 날짜엔 일정이 없습니다
-                    </span>
-                  )}
-                </h4>
-                <div className="flex mt-2">
-                  {selectedSchedule?.image && (
-                    <img
-                      src={selectedSchedule.image}
-                      className="w-32 h-32 rounded-lg mr-4 object-cover"
-                    />
-                  )}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center">
-                      <span className="font-semibold">위치:</span>
-                      <p>{selectedSchedule?.location}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-semibold">비용:</span>
-                      <p>{selectedSchedule?.expense}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-semibold">참석:</span>
-                      <p className="text-red-500">
-                        {selectedSchedule?.participate.length} /{" "}
-                        {selectedSchedule?.totalNumber}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <p className="mt-2">{selectedSchedule?.description}</p>
-              </div>
-            </div>
-          </div>
           {isAddEventModalVisible && (
             <StyledModal
               isModalVisible={isAddEventModalVisible}
@@ -284,6 +277,8 @@ const Schedule: React.FC = () => {
           isScheduleModalVisible={isScheduleModalVisible}
           closeScheduleModal={() => setIsScheduleModalVisible(false)}
           scheduleData={selectedDateSchedule}
+          participateHandler={participateHandler}
+          cancelScheduleHandler={cancelScheduleHandler}
         />
       )}
     </Container>
