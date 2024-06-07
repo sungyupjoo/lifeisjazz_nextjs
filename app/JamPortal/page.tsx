@@ -28,10 +28,8 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import {
-  Month,
   addMonths,
   addWeeks,
-  getWeek,
   startOfDay,
   startOfWeek,
   subMonths,
@@ -51,7 +49,7 @@ const JamDayPortal = () => {
   const [cancelSongModalVisible, setCancelSongModalVisible] = useState(false);
   const [currentState, setCurrentState] = useState<WeekType>("this");
   const [ruleModalVisible, setRuleModalVisible] = useState(false);
-  const formattedDate = `${selectedDate.getFullYear()} ${
+  const yearAndMonth = `${selectedDate.getFullYear()} ${
     selectedDate.getMonth() + 1
   }`;
   const formattedScheduleDate = `${moment(selectedDate).format("YYYY-MM-DD")}`;
@@ -96,7 +94,7 @@ const JamDayPortal = () => {
 
   useEffect(() => {
     // 해당 주의 언제가 잼데이인지
-    const jamDaysDocRef = doc(db, "jamday", formattedDate);
+    const jamDaysDocRef = doc(db, "jamday", yearAndMonth);
     const unsubscribeJamDays = onSnapshot(
       jamDaysDocRef,
       (docSnapshot) => {
@@ -113,8 +111,7 @@ const JamDayPortal = () => {
     );
 
     // 해당 잼데이의 곡들
-    const startOfDayDate = startOfDay(selectedDate).toDateString();
-    const docRef = doc(db, "jamday", startOfDayDate);
+    const docRef = doc(db, "jamday", formattedScheduleDate);
     const unsubscribeSongs = onSnapshot(
       docRef,
       (docSnapshot) => {
@@ -166,7 +163,7 @@ const JamDayPortal = () => {
       setRequestedSongs(updatedSongs);
       try {
         const docRef = await setDoc(
-          doc(db, "jamday", startOfDay(selectedDate).toDateString()),
+          doc(db, "jamday", formattedScheduleDate),
           {
             data: updatedSongs,
           },
@@ -187,7 +184,7 @@ const JamDayPortal = () => {
         (loginMember?.name ?? "") +
         fd.get("title") +
         (fd.get("details") as string).slice(0, 5),
-      date: startOfDay(selectedDate).toDateString(),
+      date: formattedScheduleDate,
       requester: loginMember,
       title: fd.get("title") as string,
       key: fd.get("key") as KeyType,
@@ -202,7 +199,7 @@ const JamDayPortal = () => {
     setRequestedSongs((prev) => [...prev, data]);
     try {
       const docRef = await setDoc(
-        doc(db, "jamday", startOfDay(selectedDate).toDateString()),
+        doc(db, "jamday", formattedScheduleDate),
         {
           data: [...requestedSongs, data],
         },
@@ -262,13 +259,11 @@ const JamDayPortal = () => {
     getJamDays();
   }, [selectedDate]);
 
-  const isJamDay = jamdays?.includes(startOfDay(selectedDate).toDateString());
-
-  // 스케쥴 날짜들 받아오기
+  const isJamDay = jamdays?.includes(formattedScheduleDate);
 
   const setJamDayHandler = async () => {
     // 잼데이 날짜 지정
-    const jamdayDocRef = doc(db, "jamday", formattedDate);
+    const jamdayDocRef = doc(db, "jamday", yearAndMonth);
     const data: ScheduleProps = {
       date: formattedScheduleDate,
       category: "jamday",
@@ -283,7 +278,7 @@ const JamDayPortal = () => {
       totalNumber: 5,
     };
     try {
-      const docRef = doc(db, "schedules", formattedDate);
+      const docRef = doc(db, "schedules", yearAndMonth);
       await updateDoc(docRef, { data: arrayUnion(data) });
     } catch (e) {
       console.error("에러메시지", e);
@@ -294,32 +289,30 @@ const JamDayPortal = () => {
     if (docSnap.exists()) {
       currentJamdays = docSnap.data().jamday || [];
     }
-    const formattedSelectedDate = startOfDay(selectedDate).toDateString();
-    if (!currentJamdays.includes(formattedSelectedDate)) {
-      currentJamdays.push(formattedSelectedDate);
+    if (!currentJamdays.includes(formattedScheduleDate)) {
+      currentJamdays.push(formattedScheduleDate);
       await setDoc(jamdayDocRef, { jamday: currentJamdays }, { merge: true });
       setJamdays(currentJamdays);
     }
   };
 
   const cancelJamdayHandler = async () => {
-    const jamdayDocRef = doc(db, "jamday", formattedDate);
+    const jamdayDocRef = doc(db, "jamday", yearAndMonth);
     const docSnap = await getDoc(jamdayDocRef);
     let currentJamdays = [];
     if (docSnap.exists()) {
       currentJamdays = docSnap.data().jamday || [];
     }
-    const formattedSelectedDate = startOfDay(selectedDate).toDateString();
-    if (currentJamdays.includes(formattedSelectedDate)) {
+    if (currentJamdays.includes(formattedScheduleDate)) {
       const updatedJamdays = currentJamdays.filter(
-        (jamday: string) => jamday !== formattedSelectedDate
+        (jamday: string) => jamday !== formattedScheduleDate
       );
       await setDoc(jamdayDocRef, { jamday: updatedJamdays }, { merge: true });
       setJamdays(updatedJamdays);
     }
 
     try {
-      const scheduleDocRef = doc(db, "schedules", formattedDate);
+      const scheduleDocRef = doc(db, "schedules", yearAndMonth);
       await updateDoc(scheduleDocRef, {
         data: arrayRemove({ date: formattedScheduleDate }),
       });

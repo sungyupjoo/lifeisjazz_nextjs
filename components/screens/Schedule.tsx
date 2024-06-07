@@ -213,53 +213,50 @@ const Schedule: React.FC = () => {
         )}
       </div>
 
-      <FlexWrapper>
-        <CustomCalendar
-          date={date}
-          onDateChange={handleDateChange}
-          scheduleData={scheduleData}
-          handleMonthChange={handleMonthChange}
-        />
-        <div className="hidden sm:flex flex-col gap-8 mt-4 w-full">
-          {isAddEventModalVisible && (
-            <StyledModal
-              isModalVisible={isAddEventModalVisible}
-              closeModal={() => setIsAddEventModalVisible(false)}
-            >
-              <div className="space-y-4">
-                <InputBox placeholder="일정 제목" icon={IconPen} />
-                <InputBox
-                  placeholder="날짜"
-                  icon={IconCalendar}
-                  onClick={() => {}}
-                />
-                <div className="grid grid-cols-3 gap-4">
-                  <InputBox placeholder="시작 시간" icon={IconTime} />
-                  <IconArrowRight size={16} />
-                  <InputBox placeholder="종료 시간" icon={IconTime} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <InputBox placeholder="장소" icon={IconPlace} />
-                  <InputBox placeholder="정원" icon={IconPeople} />
-                </div>
-                <InputBox placeholder="상세 내용" height="8rem" />
-                <Button
-                  text="등록"
-                  backgroundColor="sub"
-                  onClick={() => {}}
-                  href=""
-                />
-              </div>
-            </StyledModal>
-          )}
-          {isLoginModalVisible && (
-            <LoginModal
-              isModalVisible={isLoginModalVisible}
-              closeModal={() => setIsLoginModalVisible(false)}
+      <CustomCalendar
+        date={date}
+        onDateChange={handleDateChange}
+        scheduleData={scheduleData}
+        handleMonthChange={handleMonthChange}
+      />
+
+      {isAddEventModalVisible && (
+        <StyledModal
+          isModalVisible={isAddEventModalVisible}
+          closeModal={() => setIsAddEventModalVisible(false)}
+        >
+          <div className="space-y-4">
+            <InputBox placeholder="일정 제목" icon={IconPen} />
+            <InputBox
+              placeholder="날짜"
+              icon={IconCalendar}
+              onClick={() => {}}
             />
-          )}
-        </div>
-      </FlexWrapper>
+            <div className="grid grid-cols-3 gap-4">
+              <InputBox placeholder="시작 시간" icon={IconTime} />
+              <IconArrowRight size={16} />
+              <InputBox placeholder="종료 시간" icon={IconTime} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <InputBox placeholder="장소" icon={IconPlace} />
+              <InputBox placeholder="정원" icon={IconPeople} />
+            </div>
+            <InputBox placeholder="상세 내용" height="8rem" />
+            <Button
+              text="등록"
+              backgroundColor="sub"
+              onClick={() => {}}
+              href=""
+            />
+          </div>
+        </StyledModal>
+      )}
+      {isLoginModalVisible && (
+        <LoginModal
+          isModalVisible={isLoginModalVisible}
+          closeModal={() => setIsLoginModalVisible(false)}
+        />
+      )}
       {isLoading ? (
         <span className="loading loading-spinner loading-lg"></span>
       ) : (

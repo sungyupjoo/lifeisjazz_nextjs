@@ -8,7 +8,7 @@ const Contact = () => {
   const [kakaoModalVisible, setKakaoModalVisible] = useState(false);
 
   const showRuleModal = () => setRuleModalVisible(true);
-  const showKakaoModal = () => setKakaoModalVisible(true);
+  const payHandler = () => {};
 
   return (
     <Container innerPadding>
@@ -49,8 +49,8 @@ const Contact = () => {
               <h3 className="font-semibold">계좌</h3>
               <Button
                 backgroundColor="sub"
-                text="카카오페이"
-                onClick={showKakaoModal}
+                text="입금하기"
+                onClick={payHandler}
               />
             </div>
             <p className="break-words">우리은행 258-21572-902001 조성제</p>

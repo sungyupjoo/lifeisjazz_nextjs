@@ -11,6 +11,7 @@ import { ko } from "date-fns/locale";
 import { WeekType } from "../common/types";
 import Link from "next/link";
 import { logo_black } from "@/public/assets";
+import moment from "moment";
 
 interface WeeklyCalendarProps {
   selectedDate: Date | undefined;
@@ -137,8 +138,10 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                   오늘
                 </div>
               )}
-              {jamDayDate?.includes(currentDay.toDateString()) && (
-                <div className="translate-x-2 -translate-y-0.5 bg-sub w-2.5 h-2.5 rounded-full"></div>
+              {jamDayDate?.includes(
+                `${moment(currentDay).format("YYYY-MM-DD")}`
+              ) && (
+                <div className="absolute translate-x-2 -translate-y-0.5 bg-sub w-2.5 h-2.5 rounded-full"></div>
               )}
             </button>
           </div>

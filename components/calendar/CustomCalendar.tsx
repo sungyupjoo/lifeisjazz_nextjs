@@ -101,10 +101,11 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
 export default CustomCalendar;
 
 const CalendarWrapper = styled.div`
-margin-top: 2.4rem; 
+margin-top: 1.5rem; 
 display: flex;
 height: 380px;
 justify-content: center;
+align-itmes: center;
 position: relative;
 .react-calendar {
   border-radius: 8px;
