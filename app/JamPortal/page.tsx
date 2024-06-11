@@ -16,6 +16,7 @@ import {
   KeyType,
   WeekType,
   ScheduleProps,
+  VoteData,
 } from "../../components/common/types";
 import {
   arrayRemove,
@@ -31,6 +32,8 @@ import {
   addMonths,
   addWeeks,
   getMonth,
+  getWeek,
+  getWeekYear,
   getYear,
   startOfDay,
   startOfWeek,
@@ -53,6 +56,10 @@ const JamDayPortal = () => {
   const [currentState, setCurrentState] = useState<WeekType>("this");
   const [ruleModalVisible, setRuleModalVisible] = useState(false);
   const [addJamdayModalVisible, setAddJamdayModalVisible] = useState(false);
+  const [nextWeekVote, setNextWeekVote] = useState<VoteData>();
+  const [voters, setVoters] = useState<Session["user"][]>([]);
+  const [hasUserVoted, setHasUserVoted] = useState<boolean>(false);
+
   const formattedDate = `${moment(selectedDate).format("YYYY-MM-DD")}`;
   const toggleWeekState = () => {
     if (currentState === "this") {
@@ -359,6 +366,61 @@ const JamDayPortal = () => {
   const showRuleModal = () => {
     setRuleModalVisible(true);
   };
+  // 투표 관련
+  const nextWeek = `${getYear(new Date())} ${getWeek(new Date()) + 1}`;
+  const voteRef = doc(db, "vote", nextWeek);
+  const voteHandler = async () => {
+    if (!loginMember) return;
+    const docSnap = await getDoc(voteRef);
+    let currentVoters: Session["user"][] = [];
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      currentVoters = data[formattedDate] || [];
+    }
+    if (!hasUserVoted) {
+      currentVoters.push(loginMember);
+      try {
+        await setDoc(
+          voteRef,
+          { [formattedDate]: currentVoters },
+          { merge: true }
+        );
+      } catch (error) {
+        console.warn(error, "투표 과정 중 오류");
+      }
+    } else {
+      const updatedVoters = currentVoters.filter(
+        (voter) => voter.email !== loginMember.email
+      );
+      try {
+        await setDoc(
+          voteRef,
+          { [formattedDate]: updatedVoters },
+          { merge: true }
+        );
+      } catch (error) {
+        console.warn(error, "투표 취소 과정 중 오류");
+      }
+    }
+  };
+  // 데이터 받아오기
+  useEffect(() => {
+    const unsubscribeVoters = onSnapshot(voteRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data();
+        setNextWeekVote(data);
+        const votersList: Session["user"][] = data[formattedDate] || [];
+        setHasUserVoted(
+          votersList.some((voter) => voter.email === loginMember!.email)
+        );
+        setVoters(votersList);
+      } else {
+        setHasUserVoted(false);
+        setVoters([]);
+      }
+    });
+    return () => unsubscribeVoters();
+  }, [selectedDate]);
 
   return (
     <div className="relative bg-white min-h-screen">
@@ -368,6 +430,7 @@ const JamDayPortal = () => {
         jamDayDate={jamdays}
         weekState={currentState}
         setWeekState={toggleWeekState}
+        nextWeekVote={nextWeekVote}
       />
       {currentState === "this" && (
         <div className="mx-4 mt-8">
@@ -444,8 +507,10 @@ const JamDayPortal = () => {
       {currentState === "next" && (
         <div>
           <Vote
-            selectedDate={selectedDate}
-            loginMember={loginMember!}
+            formattedDate={formattedDate}
+            hasUserVoted={hasUserVoted}
+            voteHandler={voteHandler}
+            voters={voters}
             setJamdayHandler={() => setAddJamdayModalVisible(true)}
             jamdays={jamdays}
             cancelJamdayHandler={cancelJamdayHandler}

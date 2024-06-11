@@ -5,6 +5,12 @@ export interface InstrumentProps {
   participants: Session["user"][];
 }
 
+export type VoteData =
+  | {
+      [date: string]: Session["user"][];
+    }
+  | undefined;
+
 export type KeyType =
   | "C"
   | "Db"

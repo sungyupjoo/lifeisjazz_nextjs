@@ -1,71 +1,25 @@
-import { startOfDay } from "date-fns";
-import { Button } from "../common";
-import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
-import { db } from "@/firebase/config";
-import { useEffect, useState } from "react";
 import { Session } from "next-auth";
+import { Button } from "../common";
 
 interface VoteProps {
-  selectedDate: Date;
-  loginMember: Session["user"];
+  formattedDate: string;
   setJamdayHandler: () => void;
   jamdays: string[];
   cancelJamdayHandler: () => void;
+  hasUserVoted: boolean;
+  voteHandler: () => void;
+  voters: Session["user"][];
 }
 
 const Vote: React.FC<VoteProps> = ({
-  selectedDate,
-  loginMember,
+  formattedDate,
   setJamdayHandler,
   jamdays,
   cancelJamdayHandler,
+  hasUserVoted,
+  voteHandler,
+  voters,
 }) => {
-  const formattedSelectedDate = startOfDay(selectedDate).toDateString();
-  const [voters, setVoters] = useState<Session["user"][]>([]);
-  const [hasUserVoted, setHasUserVoted] = useState<boolean>(false);
-
-  // 투표 관련
-  const voteRef = doc(db, "vote", formattedSelectedDate);
-  const voteHandler = async () => {
-    if (!loginMember) return;
-    const docSnap = await getDoc(voteRef);
-    let currentVoters: Session["user"][] = [];
-    if (docSnap.exists()) {
-      currentVoters = docSnap.data().voter || [];
-    }
-    if (!hasUserVoted) {
-      currentVoters.push(loginMember);
-      try {
-        await setDoc(voteRef, { voter: currentVoters }, { merge: true });
-      } catch (error) {
-        console.warn(error, "투표 과정 중 오류");
-      }
-    } else {
-      const updatedVoters = currentVoters.filter(
-        (voter) => voter.email !== loginMember.email
-      );
-      try {
-        await setDoc(voteRef, { voter: updatedVoters }, { merge: true });
-      } catch (error) {
-        console.warn(error, "투표 취소 과정 중 오류");
-      }
-    }
-  };
-  // 데이터 받아오기
-  useEffect(() => {
-    const unsubscribeVoters = onSnapshot(voteRef, (docSnapshot) => {
-      if (docSnapshot.exists()) {
-        const votersList: Session["user"][] = docSnapshot.data().voter;
-        setHasUserVoted(
-          votersList.some((voter) => voter.email === loginMember.email)
-        );
-        setVoters(votersList);
-      } else {
-      }
-    });
-    return () => unsubscribeVoters();
-  }, [selectedDate, jamdays]);
-
   return (
     <div className="p-6">
       <p className="font-[1rem]">
@@ -81,13 +35,9 @@ const Vote: React.FC<VoteProps> = ({
         />
         <Button
           backgroundColor="sub"
-          text={
-            jamdays.includes(formattedSelectedDate)
-              ? "잼데이 취소"
-              : "잼데이 지정"
-          }
+          text={jamdays.includes(formattedDate) ? "잼데이 취소" : "잼데이 지정"}
           onClick={
-            jamdays.includes(formattedSelectedDate)
+            jamdays.includes(formattedDate)
               ? cancelJamdayHandler
               : setJamdayHandler
           }
