@@ -168,7 +168,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
             </button>
             {voteCount > 0 && (
               <div
-                className={`absolute mt-7 font-semibold text-gray text-xs ${
+                className={`absolute -mt-6 font-semibold text-gray text-xs ${
                   isSameDay(currentDay, selectedDate!) && "text-white"
                 }`}
               >
