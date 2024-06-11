@@ -59,6 +59,7 @@ const JamDayPortal = () => {
   const [nextWeekVote, setNextWeekVote] = useState<VoteData>();
   const [voters, setVoters] = useState<Session["user"][]>([]);
   const [hasUserVoted, setHasUserVoted] = useState<boolean>(false);
+  const [cancelModalVisible, setCancelModalVisible] = useState<boolean>(false);
 
   const formattedDate = `${moment(selectedDate).format("YYYY-MM-DD")}`;
   const toggleWeekState = () => {
@@ -424,6 +425,13 @@ const JamDayPortal = () => {
 
   return (
     <div className="relative bg-white min-h-screen">
+      <div className="absolute right-2 top-10">
+        <Button
+          backgroundColor="gray"
+          text="이용수칙"
+          onClick={showRuleModal}
+        />
+      </div>
       <WeeklyCalendar
         selectedDate={selectedDate}
         onDateChange={handleDateChange}
@@ -436,14 +444,6 @@ const JamDayPortal = () => {
         <div className="mx-4 mt-8">
           {isJamDay ? (
             <>
-              <div className="flex justify-between">
-                <p>잼 참석비: 10,000원</p>
-                <Button
-                  backgroundColor="sub"
-                  text="이용수칙"
-                  onClick={showRuleModal}
-                />
-              </div>
               <div className="flex justify-between mt-4">
                 <p>
                   신청곡{" "}
@@ -452,7 +452,9 @@ const JamDayPortal = () => {
                 <Button
                   backgroundColor="sub"
                   text="잼데이 취소"
-                  onClick={cancelJamdayHandler}
+                  onClick={() => {
+                    setCancelModalVisible(true);
+                  }}
                 />
               </div>
               <div className="flex mt-4 flex-col align-middle sm:flex-row sm:gap-5 sm:items-center">
@@ -535,6 +537,36 @@ const JamDayPortal = () => {
           handleSubmit={setJamDayHandler}
           jamday={true}
         />
+      )}
+      {cancelModalVisible && (
+        <StyledModal
+          isModalVisible={cancelModalVisible}
+          closeModal={() => {
+            setCancelModalVisible(true);
+          }}
+        >
+          <div>
+            <h3 className="mb-5">잼데이 취소</h3>
+            <p className="mb-5">
+              {moment(selectedDate).format("MM월 DD일")} 잼데이를
+              취소하겠습니까?
+            </p>
+            <div className="flex justify-between">
+              <Button
+                backgroundColor="sub"
+                text="네, 취소합니다"
+                onClick={cancelJamdayHandler}
+              />
+              <Button
+                backgroundColor="main"
+                text="아니오"
+                onClick={() => {
+                  setCancelModalVisible(false);
+                }}
+              />
+            </div>
+          </div>
+        </StyledModal>
       )}
     </div>
   );

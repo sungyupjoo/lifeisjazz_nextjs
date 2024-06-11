@@ -10,6 +10,7 @@ interface ScheduleModalProps {
   participateHandler: () => void;
   cancelScheduleHandler: () => void;
   jamday?: boolean;
+  amIParticipating: boolean;
 }
 
 const ScheduleModal: React.FC<ScheduleModalProps> = ({
@@ -18,11 +19,13 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   scheduleData,
   participateHandler,
   cancelScheduleHandler,
-  jamday = false,
+  jamday,
+  amIParticipating = false,
 }) => {
   const dday = differenceInDays(scheduleData.date, new Date());
   const formattedDday =
-    dday === 0 ? "오늘" : dday < 0 ? "(지난 일정)" : `D-${dday}일`;
+    dday === 0 ? "오늘" : dday < 0 ? "(지난 일정)" : `D-${dday + 1}일`;
+  jamday = scheduleData.category === "jamday";
   return (
     <StyledModal
       isModalVisible={isScheduleModalVisible}
@@ -35,12 +38,31 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
       >
         {formattedDday}
       </span>
-      <div className="flex justify-center flex-col items-center gap-4 mb-4">
-        <h3 className="text-2xl">{scheduleData.title} </h3>
+      <div className="flex justify-center flex-col items-center gap-4 mb-4 mt-4">
+        <div className="flex">
+          <h3 className="text-2xl">{scheduleData.title} </h3>
+        </div>
         <img
           src={scheduleData.image}
           className="w-40 h-40 justify-center rounded-xl shadow-md hover:scale-110 transition ease-in-out duration-200"
         />
+      </div>
+      <div className="flex">
+        <p className="mb-2">
+          <span className="mr-4 text-gray mb-2">참석</span>
+        </p>
+
+        <input
+          type="checkbox"
+          className="toggle [--tglbg:white] toggle-success"
+          onClick={participateHandler}
+          defaultChecked={amIParticipating}
+        />
+        {jamday && amIParticipating && (
+          <div className="absolute right-6">
+            <Button backgroundColor="main" text="곡 신청" link />
+          </div>
+        )}
       </div>
       <p className="mb-2">
         <span className="mr-4 text-gray mb-2">위치</span>
@@ -55,9 +77,11 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         <span className="mr-4 text-gray">비용</span>
         {scheduleData.expense}
       </p>
-      <div className="bg-backgroundGray mb-2 rounded-xl py-3 px-4 text-black">
-        {scheduleData.description}
-      </div>
+      {scheduleData.description.length > 0 && (
+        <div className="bg-backgroundGray mb-2 rounded-xl py-3 px-4 text-black">
+          {scheduleData.description}
+        </div>
+      )}
       <p>
         <span className="mr-4 text-gray mb-2 ">참석인원</span>
       </p>
@@ -82,7 +106,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
           ))
         ) : (
           <div className="bg-backgroundGray py-3 px-4 rounded-xl">
-            <p className="font-light text-gray">
+            <p className="font-light text-gray text-sm">
               아직 신청한 인원이 없습니다.
               <br /> 처음으로 신청해보세요!
             </p>
@@ -90,17 +114,9 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         )}
       </div>
       <div className="flex justify-center mt-4 gap-4">
-        {/* TODO: 토글로 만들자 */}
         <Button
           backgroundColor="sub"
-          fontColor="white"
-          text={"참석/취소"}
-          onClick={participateHandler}
-        />
-        <Button
-          backgroundColor="sub"
-          fontColor="white"
-          text={"일정취소"}
+          text="일정 취소"
           onClick={cancelScheduleHandler}
         />
       </div>

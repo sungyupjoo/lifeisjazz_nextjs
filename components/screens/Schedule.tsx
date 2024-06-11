@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Container,
-  FlexWrapper,
-  InputBox,
-  StyledModal,
-  Title,
-} from "../common";
+import { Button, Container, Title } from "../common";
 import "react-calendar/dist/Calendar.css";
 import CustomCalendar, { Value } from "../calendar/CustomCalendar";
 import moment, { MomentInput } from "moment";
@@ -109,12 +102,16 @@ const Schedule: React.FC = () => {
     )
       ? setIsScheduleModalVisible(true)
       : setIsScheduleModalVisible(false);
-    setSelectedDateSchedule(
-      scheduleData.find(
-        (schedule) =>
-          schedule.date === formatDate(newDate as Date, "yyyy-MM-dd")
-      )
+    const dateSchedule = scheduleData.find(
+      (schedule) => schedule.date === formatDate(newDate as Date, "yyyy-MM-dd")
     );
+    setSelectedDateSchedule(dateSchedule);
+    dateSchedule &&
+      setAmIParticipating(
+        dateSchedule.participate.some(
+          (member) => member.email === session?.user.email
+        )
+      );
   };
 
   const handleMonthChange = (direction: "prev" | "next") => {
@@ -155,6 +152,12 @@ const Schedule: React.FC = () => {
           { merge: true }
         );
         setScheduleData(updatedScheduleData);
+        setSelectedDateSchedule(updatedSchedule);
+        setAmIParticipating(
+          updatedSchedule.participate.some(
+            (member) => member.email === session?.user.email
+          )
+        );
       } catch (error) {
         console.warn(error, "참석 신청 중 에러");
       }
@@ -251,6 +254,7 @@ const Schedule: React.FC = () => {
           scheduleData={selectedDateSchedule}
           participateHandler={participateHandler}
           cancelScheduleHandler={cancelScheduleHandler}
+          amIParticipating={amIParticipating}
         />
       )}
     </Container>

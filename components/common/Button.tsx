@@ -28,8 +28,8 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <div
       className={`btn-sm border-none bg-${backgroundColor} inline-flex items-center cursor-pointer text-center rounded-lg px-2 ${
-        big ? "py-3" : "py-1.5"
-      } lg:px-5 ${hoverBgColorClass} h-[2.5rem] justify-center`}
+        big ? "py-3 h-[2.5rem]" : "py-1.5"
+      } lg:px-5 ${hoverBgColorClass}  justify-center`}
     >
       {logoUrl && (
         <img
