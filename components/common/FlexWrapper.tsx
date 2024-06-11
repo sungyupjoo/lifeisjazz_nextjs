@@ -6,11 +6,7 @@ interface FlexWrapperProps {
 }
 
 const FlexWrapper: React.FC<FlexWrapperProps> = ({ children, className }) => {
-  return (
-    <div className={`flex gap-8 flex-col md:flex-row ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`flex ${className}`}>{children}</div>;
 };
 
 export default FlexWrapper;

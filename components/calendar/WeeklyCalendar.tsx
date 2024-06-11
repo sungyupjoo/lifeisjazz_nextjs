@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   format,
   startOfWeek,
@@ -8,9 +8,10 @@ import {
   addWeeks,
 } from "date-fns";
 import { ko } from "date-fns/locale";
-import { WeekType } from "../common/types";
+import { VoteData, WeekType } from "../common/types";
 import Link from "next/link";
 import { logo_black } from "@/public/assets";
+import moment from "moment";
 
 interface WeeklyCalendarProps {
   selectedDate: Date | undefined;
@@ -18,16 +19,36 @@ interface WeeklyCalendarProps {
   jamDayDate: string[] | null;
   weekState: WeekType;
   setWeekState: (prevState: WeekType) => void;
+  nextWeekVote: VoteData;
 }
 
+type VoteCounts = {
+  [date: string]: number;
+};
 const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
   selectedDate,
   onDateChange,
   jamDayDate,
   weekState,
   setWeekState,
+  nextWeekVote,
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [voteCounts, setVoteCounts] = useState<VoteCounts>({});
+  const voteCounter = (data: VoteData): VoteCounts => {
+    const counts: VoteCounts = {};
+    for (const date in data) {
+      if (data.hasOwnProperty(date)) {
+        counts[date] = data[date].length;
+      }
+    }
+    return counts;
+  };
+
+  useEffect(() => {
+    const counts = voteCounter(nextWeekVote);
+    setVoteCounts(counts);
+  }, [nextWeekVote]);
 
   const renderHeader = () => (
     <div className="flex items-center pt-4">
@@ -116,6 +137,8 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
     while (day <= endDate) {
       const days = Array.from({ length: 7 }, (_, i) => {
         const currentDay = addDays(day, i);
+        const formattedDay = format(currentDay, "yyyy-MM-dd");
+        const voteCount = voteCounts[formattedDay] || 0;
         return (
           <div
             key={currentDay.toString()}
@@ -133,14 +156,25 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
             >
               {format(currentDay, "d")}
               {isSameDay(currentDay, new Date()) && (
-                <div className="-translate-y-8 text-white text-[10px]">
+                <div className="absolute translate-x-1 -translate-y-8 text-white text-[10px]">
                   오늘
                 </div>
               )}
-              {jamDayDate?.includes(currentDay.toDateString()) && (
-                <div className="translate-x-2 -translate-y-0.5 bg-sub w-2.5 h-2.5 rounded-full"></div>
+              {jamDayDate?.includes(
+                `${moment(currentDay).format("YYYY-MM-DD")}`
+              ) && (
+                <div className="absolute translate-x-2 -translate-y-1 bg-sub w-2.5 h-2.5 rounded-full"></div>
               )}
             </button>
+            {voteCount > 0 && (
+              <div
+                className={`absolute mt-7 font-semibold text-gray text-xs ${
+                  isSameDay(currentDay, selectedDate!) && "text-white"
+                }`}
+              >
+                {voteCount}표
+              </div>
+            )}
           </div>
         );
       });

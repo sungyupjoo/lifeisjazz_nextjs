@@ -5,6 +5,12 @@ export interface InstrumentProps {
   participants: Session["user"][];
 }
 
+export type VoteData =
+  | {
+      [date: string]: Session["user"][];
+    }
+  | undefined;
+
 export type KeyType =
   | "C"
   | "Db"
@@ -104,7 +110,6 @@ export const rhythmName = {
 
 export const categoryOptions = [
   { value: "instant", label: "번개" },
-  { value: "jamday", label: "잼데이" },
   { value: "regular", label: "정모" },
   { value: "show", label: "공연관람" },
   { value: "festival", label: "페스티벌" },
