@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button, StyledModal } from ".";
 import { ScheduleProps } from "./types";
 import { differenceInDays, formatDate } from "date-fns";
@@ -23,6 +24,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   amIParticipating = false,
 }) => {
   const dday = differenceInDays(scheduleData.date, new Date());
+  const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const formattedDday =
     dday === 0 ? "오늘" : dday < 0 ? "(지난 일정)" : `D-${dday + 1}일`;
   jamday = scheduleData.category === "jamday";
@@ -114,11 +116,29 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         )}
       </div>
       <div className="flex justify-center mt-4 gap-4">
-        <Button
-          backgroundColor="sub"
-          text="일정 취소"
-          onClick={cancelScheduleHandler}
-        />
+        {showCancelConfirmation ? (
+          <div className="flex flex-col items-center">
+            <p className="mb-2 transition">해당 일정을 취소할까요?</p>
+            <div className="flex gap-2">
+              <Button
+                backgroundColor="sub"
+                text="네, 취소합니다"
+                onClick={cancelScheduleHandler}
+              />
+              <Button
+                backgroundColor="main"
+                text="아니오"
+                onClick={() => setShowCancelConfirmation(false)}
+              />
+            </div>
+          </div>
+        ) : (
+          <Button
+            backgroundColor="sub"
+            text="일정 취소"
+            onClick={() => setShowCancelConfirmation(true)}
+          />
+        )}
       </div>
     </StyledModal>
   );

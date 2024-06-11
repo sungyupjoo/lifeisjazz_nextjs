@@ -31,6 +31,7 @@ import { db } from "@/firebase/config";
 import {
   addMonths,
   addWeeks,
+  formatDate,
   getMonth,
   getWeek,
   getWeekYear,
@@ -42,7 +43,7 @@ import {
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import Rules from "@/components/contents/Rules";
-import { jam_image, photo_jam } from "@/public/assets";
+import { jam_image } from "@/public/assets";
 import moment from "moment";
 import AddScheduleModal from "@/components/common/AddScheduleModal";
 
@@ -60,6 +61,9 @@ const JamDayPortal = () => {
   const [voters, setVoters] = useState<Session["user"][]>([]);
   const [hasUserVoted, setHasUserVoted] = useState<boolean>(false);
   const [cancelModalVisible, setCancelModalVisible] = useState<boolean>(false);
+  const [participants, setParticipants] = useState<Session["user"][]>([]);
+  const [amIParticipating, setAmIParticipating] = useState(false);
+  const [firstParticipate, setFirstParticipate] = useState(false);
 
   const formattedDate = `${moment(selectedDate).format("YYYY-MM-DD")}`;
   const toggleWeekState = () => {
@@ -79,11 +83,21 @@ const JamDayPortal = () => {
 
   const handleDateChange = (day: Date) => {
     setSelectedDate(day);
+    const participants =
+      scheduleData.find(
+        (schedule) => schedule.date === formatDate(day, "yyyy-MM-dd")
+      )?.participate || [];
+    setParticipants(participants);
+    const participating =
+      participants.findIndex(
+        (participant) => participant.email === session?.user.email
+      ) !== -1;
+    setAmIParticipating(participating);
     setRequestedSongs([]);
   };
 
   // 로그인 유저 정보
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [loginMember, setLoginMember] = useState<Session["user"]>();
 
   useEffect(() => {
@@ -100,6 +114,55 @@ const JamDayPortal = () => {
     };
     setUserHandler();
   }, [session]);
+
+  // 잼데이 참석
+  const participateHandler = async () => {
+    if (status === "authenticated") {
+      setFirstParticipate(false);
+      const scheduleIndex = scheduleData.findIndex(
+        (schedule) => schedule.date === formattedDate
+      );
+      if (scheduleIndex === -1) {
+        return;
+      }
+      const updatedSchedule = { ...scheduleData[scheduleIndex] };
+      const participantIndex = updatedSchedule.participate.findIndex(
+        (participant) => participant.email === session?.user.email
+      );
+      if (participantIndex === -1) {
+        updatedSchedule.participate.push(session?.user!);
+        setParticipants((prev) => [...prev, session?.user]);
+      } else {
+        updatedSchedule.participate.splice(participantIndex, 1);
+        setParticipants((prev) =>
+          prev.filter((participant) => participant.email !== session.user.email)
+        );
+      }
+      const updatedScheduleData = [...scheduleData];
+      updatedScheduleData[scheduleIndex] = updatedSchedule;
+      try {
+        await setDoc(
+          doc(
+            db,
+            "schedules",
+            `${selectedDate.getFullYear()} ${selectedDate.getMonth() + 1}`
+          ),
+          {
+            data: updatedScheduleData,
+          },
+          { merge: true }
+        );
+        setScheduleData(updatedScheduleData);
+        setAmIParticipating(
+          updatedSchedule.participate.some(
+            (member) => member.email === session?.user.email
+          )
+        );
+      } catch (error) {
+        console.warn(error, "참석 신청 중 에러");
+      }
+    }
+  };
 
   useEffect(() => {
     // 해당 주의 언제가 잼데이인지
@@ -279,7 +342,10 @@ const JamDayPortal = () => {
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const schedules: ScheduleProps[] = docSnapshot.data().data || [];
-          setScheduleData(schedules);
+          const jamdaySchedules = schedules.filter(
+            (schedule) => schedule.category === "jamday"
+          );
+          setScheduleData(jamdaySchedules);
         }
       },
       (error) => {
@@ -444,6 +510,49 @@ const JamDayPortal = () => {
         <div className="mx-4 mt-8">
           {isJamDay ? (
             <>
+              <div>
+                <div className="flex justify-between ">
+                  <p>
+                    참석인원{" "}
+                    <span className="text-gray text-sm">
+                      ({participants.length}명)
+                    </span>
+                  </p>
+                  <div className="flex justify-end">
+                    <p className={`mr-2 ${firstParticipate && "text-sub"}`}>
+                      참석
+                    </p>
+                    <input
+                      type="checkbox"
+                      className={`toggle [--tglbg:white] toggle-success ${
+                        firstParticipate && "border-sub"
+                      }`}
+                      onClick={participateHandler}
+                      defaultChecked={amIParticipating}
+                    />
+                  </div>
+                </div>
+              </div>
+              {firstParticipate && (
+                <div className="flex justify-end ">
+                  <p className="text-sub text-sm ">
+                    곡을 신청하시려면 우선 위의 참석 버튼을 눌러주세요
+                  </p>
+                </div>
+              )}
+              {participants &&
+                participants?.map((participant) => (
+                  <div className="grid grid-cols-2 " key={participant.email}>
+                    <div className="flex bg-backgroundGray rounded-xl p-2">
+                      <img
+                        src={participant.image!}
+                        alt={`Profile`}
+                        className="ml-3 mr-1 h-6 w-6 rounded-md object-cover"
+                      />
+                      <span className="text-black">{participant.name}</span>
+                    </div>
+                  </div>
+                ))}
               <div className="flex justify-between mt-4">
                 <p>
                   신청곡{" "}
@@ -467,7 +576,13 @@ const JamDayPortal = () => {
                   <Button
                     backgroundColor="main"
                     text="곡 신청 +"
-                    onClick={() => setAddSongModalVisible(true)}
+                    onClick={() => {
+                      if (amIParticipating) {
+                        setAddSongModalVisible(true);
+                      } else {
+                        setFirstParticipate(true);
+                      }
+                    }}
                   />
                 </div>
               </div>
@@ -542,7 +657,7 @@ const JamDayPortal = () => {
         <StyledModal
           isModalVisible={cancelModalVisible}
           closeModal={() => {
-            setCancelModalVisible(true);
+            setCancelModalVisible(false);
           }}
         >
           <div>
