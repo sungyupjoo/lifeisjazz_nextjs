@@ -7,7 +7,6 @@ import {
 import { Button, Container, LoginModal } from "../common";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { auth } from "@/firebase/config";
 
 const Hero = () => {
   const { data: session, status } = useSession();

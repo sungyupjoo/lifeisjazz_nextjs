@@ -9,6 +9,7 @@ interface AddScheduleModalProps {
   selectedDate: Value;
   closeHandler: () => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  jamday?: boolean;
 }
 
 const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
@@ -16,6 +17,7 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
   selectedDate,
   closeHandler,
   handleSubmit,
+  jamday = false,
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
@@ -53,42 +55,51 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
               name="title"
               className="grow text-black"
               required
-              placeholder="ex) 라이재 퀄텟 공연"
+              placeholder={
+                !jamday ? "ex) 라이재 퀄텟 공연" : "ex) 라이재 잼데이"
+              }
             />
           </label>
         </div>
-        <div className="mb-4 sm:mb-6 items-center flex text-sm">
-          <Select
-            options={categoryOptions}
-            inputId="category"
-            name="category"
-            className="w-full cursor-pointer text-sm"
-            placeholder="종류"
-            required
-          />
-        </div>
-        <label htmlFor="image" className="text-sm ml-2">
-          사진
-        </label>
-        {file && (
-          <div className="flex">
-            <img
-              src={(typeof preview === "string" && preview) || ""}
-              alt="이미지 미리보기"
-              className="h-15 w-15 rounded-lg object-cover text-sm"
-              style={{ height: "60px", width: "60px" }}
+        {!jamday && (
+          <div className="mb-4 sm:mb-6 items-center flex text-sm">
+            <Select
+              options={categoryOptions}
+              inputId="category"
+              name="category"
+              className="w-full cursor-pointer text-sm"
+              placeholder="종류"
+              required={!jamday}
             />
           </div>
         )}
-        <input
-          type="file"
-          id="image"
-          name="image"
-          className="file-input file-input-bordered file-input-sm w-full max-w-sm bg-white text-xs mb-4"
-          accept="image/jpeg, image/png, image/gif"
-          onChange={imageUploadHandler}
-          required
-        />
+        {!jamday && (
+          <>
+            <label htmlFor="image" className="text-sm ml-2">
+              사진
+            </label>
+            {file && (
+              <div className="flex">
+                <img
+                  src={(typeof preview === "string" && preview) || ""}
+                  alt="이미지 미리보기"
+                  className="h-15 w-15 rounded-lg object-cover text-sm"
+                  style={{ height: "60px", width: "60px" }}
+                />
+              </div>
+            )}
+
+            <input
+              type="file"
+              id="image"
+              name="image"
+              className="file-input file-input-bordered file-input-sm w-full max-w-sm bg-white text-xs mb-4"
+              accept="image/jpeg, image/png, image/gif"
+              onChange={imageUploadHandler}
+              required={!jamday}
+            />
+          </>
+        )}
         <div className="mb-4 sm:mb-6 items-center">
           <label
             htmlFor="location"
@@ -101,7 +112,9 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
               name="location"
               className="grow text-black"
               required
-              placeholder="ex) 아이덴하우스"
+              placeholder={
+                !jamday ? "ex) 아이덴하우스" : "ex) 내방역 라이재 연습실"
+              }
             />
           </label>
         </div>

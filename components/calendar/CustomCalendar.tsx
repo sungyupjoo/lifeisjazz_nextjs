@@ -71,7 +71,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
             date.getMonth() === today.getMonth() &&
             date.getDate() === today.getDate()
           ) {
-            html.push(<StyledToday key={"today"}>오늘</StyledToday>);
+            html.push(<StyledToday key={"today"}></StyledToday>);
           }
           // 일정 있는 날 표시
           if (
@@ -181,7 +181,7 @@ align-items: center;
 /* 오늘 날짜 컬러 */
 .react-calendar__tile--now {
   background: ${colors.gray};
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   abbr {
     color: white;
   }
@@ -279,7 +279,7 @@ const ScheduleSpecific = styled.p<{ category: categoryTypes }>`
     props.category === "jamday" ? colors.subShade : colors.main};
   margin-top: 0.1rem;
   padding: 0 0.3rem;
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   @media (max-width: 576px) {
     font-size: 0.65rem;
   }

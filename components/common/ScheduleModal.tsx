@@ -1,5 +1,5 @@
-import { Button, StyledModal } from "../common";
-import { ScheduleProps } from "../common/types";
+import { Button, StyledModal } from ".";
+import { ScheduleProps } from "./types";
 import { differenceInDays, formatDate } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -9,6 +9,7 @@ interface ScheduleModalProps {
   scheduleData: ScheduleProps;
   participateHandler: () => void;
   cancelScheduleHandler: () => void;
+  jamday?: boolean;
 }
 
 const ScheduleModal: React.FC<ScheduleModalProps> = ({
@@ -17,6 +18,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   scheduleData,
   participateHandler,
   cancelScheduleHandler,
+  jamday = false,
 }) => {
   const dday = differenceInDays(scheduleData.date, new Date());
   const formattedDday =

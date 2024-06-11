@@ -30,6 +30,8 @@ import { db } from "@/firebase/config";
 import {
   addMonths,
   addWeeks,
+  getMonth,
+  getYear,
   startOfDay,
   startOfWeek,
   subMonths,
@@ -37,22 +39,21 @@ import {
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import Rules from "@/components/contents/Rules";
-import { photo_jam } from "@/public/assets";
+import { jam_image, photo_jam } from "@/public/assets";
 import moment from "moment";
+import AddScheduleModal from "@/components/common/AddScheduleModal";
 
 const JamDayPortal = () => {
   const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
-  const [jamDayDate, setJamDayDate] = useState<string[]>([]);
+  const [jamdayDate, setJamdayDate] = useState<string[]>([]);
   const [requestedSongs, setRequestedSongs] = useState<SongProps[]>([]);
   const [scheduleData, setScheduleData] = useState<ScheduleProps[]>([]);
   const [addSongModalVisible, setAddSongModalVisible] = useState(false);
   const [cancelSongModalVisible, setCancelSongModalVisible] = useState(false);
   const [currentState, setCurrentState] = useState<WeekType>("this");
   const [ruleModalVisible, setRuleModalVisible] = useState(false);
-  const yearAndMonth = `${selectedDate.getFullYear()} ${
-    selectedDate.getMonth() + 1
-  }`;
-  const formattedScheduleDate = `${moment(selectedDate).format("YYYY-MM-DD")}`;
+  const [addJamdayModalVisible, setAddJamdayModalVisible] = useState(false);
+  const formattedDate = `${moment(selectedDate).format("YYYY-MM-DD")}`;
   const toggleWeekState = () => {
     if (currentState === "this") {
       setSelectedDate(startOfWeek(addWeeks(selectedDate, 1)));
@@ -94,15 +95,15 @@ const JamDayPortal = () => {
 
   useEffect(() => {
     // 해당 주의 언제가 잼데이인지
-    const jamDaysDocRef = doc(db, "jamday", yearAndMonth);
+    const jamdaysDocRef = doc(db, "jamday", formattedDate);
     const unsubscribeJamDays = onSnapshot(
-      jamDaysDocRef,
+      jamdaysDocRef,
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const jamdaysList: string[] = docSnapshot.data().jamday;
-          setJamDayDate(jamdaysList);
+          setJamdayDate(jamdaysList);
         } else {
-          setJamDayDate([]);
+          setJamdayDate([]);
         }
       },
       (error) => {
@@ -111,9 +112,8 @@ const JamDayPortal = () => {
     );
 
     // 해당 잼데이의 곡들
-    const docRef = doc(db, "jamday", formattedScheduleDate);
     const unsubscribeSongs = onSnapshot(
-      docRef,
+      jamdaysDocRef,
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const songsData: SongProps[] = docSnapshot.data().data || [];
@@ -163,7 +163,7 @@ const JamDayPortal = () => {
       setRequestedSongs(updatedSongs);
       try {
         const docRef = await setDoc(
-          doc(db, "jamday", formattedScheduleDate),
+          doc(db, "jamday", formattedDate),
           {
             data: updatedSongs,
           },
@@ -175,7 +175,7 @@ const JamDayPortal = () => {
     }
   };
 
-  // Form
+  // 신청곡 제출 관련
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const fd = new FormData(event.currentTarget);
@@ -184,7 +184,7 @@ const JamDayPortal = () => {
         (loginMember?.name ?? "") +
         fd.get("title") +
         (fd.get("details") as string).slice(0, 5),
-      date: formattedScheduleDate,
+      date: formattedDate,
       requester: loginMember,
       title: fd.get("title") as string,
       key: fd.get("key") as KeyType,
@@ -199,7 +199,7 @@ const JamDayPortal = () => {
     setRequestedSongs((prev) => [...prev, data]);
     try {
       const docRef = await setDoc(
-        doc(db, "jamday", formattedScheduleDate),
+        doc(db, "jamday", formattedDate),
         {
           data: [...requestedSongs, data],
         },
@@ -259,62 +259,97 @@ const JamDayPortal = () => {
     getJamDays();
   }, [selectedDate]);
 
-  const isJamDay = jamdays?.includes(formattedScheduleDate);
+  const isJamDay = jamdays?.includes(formattedDate);
 
-  const setJamDayHandler = async () => {
-    // 잼데이 날짜 지정
-    const jamdayDocRef = doc(db, "jamday", yearAndMonth);
+  useEffect(() => {
+    const selectedMonth = `${getYear(selectedDate)} ${
+      getMonth(selectedDate) + 1
+    }`;
+    const docRef = doc(db, "schedules", selectedMonth);
+    const unsubscribeSchedules = onSnapshot(
+      docRef,
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const schedules: ScheduleProps[] = docSnapshot.data().data || [];
+          setScheduleData(schedules);
+        }
+      },
+      (error) => {
+        console.error("no songs data");
+      }
+    );
+    return () => unsubscribeSchedules();
+  }, [selectedDate]);
+
+  const setJamDayHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const selectedMonth = `${getYear(selectedDate)} ${
+      getMonth(selectedDate) + 1
+    }`;
+    const fd = new FormData(event.currentTarget);
+    // 잼데이 날짜 지정 (잼데이 지정 모달 제출 시)
+    const jamdayDocRef = doc(db, "jamday", selectedMonth);
     const data: ScheduleProps = {
-      date: formattedScheduleDate,
+      date: formattedDate,
       category: "jamday",
-      expense: "인당 10,000원",
-      image: photo_jam,
-      location: "내방역 라이재 연습실",
-      time: "",
+      expense: fd.get("expense") as string,
+      image: jam_image,
+      location: fd.get("location") as string,
+      time: fd.get("time") as string,
       participate: [],
-      description: "",
-      title: "잼데이",
+      description: fd.get("description") as string,
+      title: fd.get("title") as string,
       // TODO: totalNumber는 나중에 필요에 따라 개발
       totalNumber: 5,
     };
     try {
-      const docRef = doc(db, "schedules", yearAndMonth);
-      await updateDoc(docRef, { data: arrayUnion(data) });
+      // schedules db에 추가
+      const docRef = doc(db, "schedules", selectedMonth);
+
+      await setDoc(docRef, { data: [...scheduleData, data] }, { merge: true });
+      // jamdays db에 추가
+      const docSnap = await getDoc(jamdayDocRef);
+      let currentJamdays = [];
+      if (docSnap.exists()) {
+        currentJamdays = docSnap.data().jamday || [];
+      }
+      if (!currentJamdays.includes(formattedDate)) {
+        currentJamdays.push(formattedDate);
+        await setDoc(jamdayDocRef, { jamday: currentJamdays }, { merge: true });
+        setJamdays(currentJamdays);
+      }
     } catch (e) {
       console.error("에러메시지", e);
     }
-
-    const docSnap = await getDoc(jamdayDocRef);
-    let currentJamdays = [];
-    if (docSnap.exists()) {
-      currentJamdays = docSnap.data().jamday || [];
-    }
-    if (!currentJamdays.includes(formattedScheduleDate)) {
-      currentJamdays.push(formattedScheduleDate);
-      await setDoc(jamdayDocRef, { jamday: currentJamdays }, { merge: true });
-      setJamdays(currentJamdays);
-    }
+    setAddJamdayModalVisible(false);
   };
 
   const cancelJamdayHandler = async () => {
-    const jamdayDocRef = doc(db, "jamday", yearAndMonth);
-    const docSnap = await getDoc(jamdayDocRef);
-    let currentJamdays = [];
-    if (docSnap.exists()) {
-      currentJamdays = docSnap.data().jamday || [];
-    }
-    if (currentJamdays.includes(formattedScheduleDate)) {
-      const updatedJamdays = currentJamdays.filter(
-        (jamday: string) => jamday !== formattedScheduleDate
-      );
-      await setDoc(jamdayDocRef, { jamday: updatedJamdays }, { merge: true });
-      setJamdays(updatedJamdays);
-    }
-
+    const selectedMonth = `${getYear(selectedDate)} ${
+      getMonth(selectedDate) + 1
+    }`;
+    // jamdays db에서 삭제
     try {
-      const scheduleDocRef = doc(db, "schedules", yearAndMonth);
+      const jamdayDocRef = doc(db, "jamday", selectedMonth);
+      const docSnap = await getDoc(jamdayDocRef);
+      let currentJamdays = [];
+      if (docSnap.exists()) {
+        currentJamdays = docSnap.data().jamday || [];
+      }
+      if (currentJamdays.includes(formattedDate)) {
+        const updatedJamdays = currentJamdays.filter(
+          (jamday: string) => jamday !== formattedDate
+        );
+        await setDoc(jamdayDocRef, { jamday: updatedJamdays }, { merge: true });
+        setJamdays(updatedJamdays);
+      }
+      // schedules db에서 삭제
+      const scheduleDocRef = doc(db, "schedules", selectedMonth);
+      const updatedSchedule = scheduleData.filter(
+        (schedule) => schedule.date !== formattedDate
+      );
       await updateDoc(scheduleDocRef, {
-        data: arrayRemove({ date: formattedScheduleDate }),
+        data: updatedSchedule,
       });
     } catch (e) {
       console.error("지우는 중 에러", e);
@@ -379,7 +414,7 @@ const JamDayPortal = () => {
                 backgroundColor="sub"
                 text="잼데이 지정"
                 big
-                onClick={setJamDayHandler}
+                onClick={() => setAddJamdayModalVisible(true)}
               />
             </div>
           )}
@@ -411,7 +446,7 @@ const JamDayPortal = () => {
           <Vote
             selectedDate={selectedDate}
             loginMember={loginMember!}
-            setJamdayHandler={setJamDayHandler}
+            setJamdayHandler={() => setAddJamdayModalVisible(true)}
             jamdays={jamdays}
             cancelJamdayHandler={cancelJamdayHandler}
           />
@@ -424,6 +459,17 @@ const JamDayPortal = () => {
         >
           <Rules />
         </StyledModal>
+      )}
+      {addJamdayModalVisible && (
+        <AddScheduleModal
+          isVisible={addJamdayModalVisible}
+          selectedDate={selectedDate}
+          closeHandler={() => {
+            setAddJamdayModalVisible(false);
+          }}
+          handleSubmit={setJamDayHandler}
+          jamday={true}
+        />
       )}
     </div>
   );

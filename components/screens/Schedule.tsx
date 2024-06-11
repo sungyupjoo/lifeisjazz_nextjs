@@ -9,14 +9,6 @@ import {
 } from "../common";
 import "react-calendar/dist/Calendar.css";
 import CustomCalendar, { Value } from "../calendar/CustomCalendar";
-import {
-  IconArrowRight,
-  IconCalendar,
-  IconPen,
-  IconPeople,
-  IconPlace,
-  IconTime,
-} from "../common/icons";
 import moment, { MomentInput } from "moment";
 import { useSession } from "next-auth/react";
 import LoginModal from "../common/LoginModal";
@@ -26,7 +18,7 @@ import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import useStorage from "@/hooks/useStorage";
 import { formatDate, getMonth, getYear, startOfDay } from "date-fns";
-import ScheduleModal from "./ScheduleModal";
+import ScheduleModal from "../common/ScheduleModal";
 
 const Schedule: React.FC = () => {
   const { data: session, status } = useSession();
@@ -34,7 +26,8 @@ const Schedule: React.FC = () => {
   const [date, setDate] = useState<Value | null>(null);
   const [activeMonth, setActiveMonth] = useState<number>(getMonth(new Date()));
   const [scheduleData, setScheduleData] = useState<ScheduleProps[]>([]);
-  const { startUpload, progress, deleteImage } = useStorage("scheduleImages");
+  const [jamdayDates, setJamdayDates] = useState<string[]>([]);
+  const { startUpload } = useStorage("scheduleImages");
   const [isLoading, setIsLoading] = useState(false);
   const [downloadURL, setDownloadURL] = useState<string>("");
   const [formattedDate, setFormattedDate] = useState<string>(
@@ -56,6 +49,10 @@ const Schedule: React.FC = () => {
         if (docSnapshot.exists()) {
           const schedules: ScheduleProps[] = docSnapshot.data().data || [];
           setScheduleData(schedules);
+          const filterJamdayDates = schedules
+            ?.filter((schedule) => schedule.category === "jamday")
+            .map((schedule) => schedule.date);
+          setJamdayDates(filterJamdayDates);
         }
       },
       (error) => {
@@ -70,7 +67,6 @@ const Schedule: React.FC = () => {
     event.preventDefault();
 
     // 이미지 업로드
-
     const fd = new FormData(event.currentTarget);
     const image = fd.get("image") as File;
     let newDownloadURL = downloadURL;
@@ -127,9 +123,6 @@ const Schedule: React.FC = () => {
     );
   };
 
-  const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
-  const addEventHandler = () => setIsAddEventModalVisible(true);
-
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
   const showLoginModal = () => setIsLoginModalVisible(true);
 
@@ -173,7 +166,11 @@ const Schedule: React.FC = () => {
     const updatedScheduleData = scheduleData.filter(
       (schedule) => schedule.date !== selectedDateSchedule!.date
     );
+    const updatedJamdayDates = jamdayDates.filter(
+      (dates) => dates !== selectedDateSchedule!.date
+    );
     try {
+      // schedule db에서 삭제
       await setDoc(
         doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
         {
@@ -182,6 +179,15 @@ const Schedule: React.FC = () => {
         { merge: true }
       );
       setScheduleData(updatedScheduleData);
+      // jamday일 경우 jamday db에서 삭제
+      await setDoc(
+        doc(db, "jamday", `${getYear(formattedDate)} ${activeMonth + 1}`),
+        {
+          jamday: updatedJamdayDates,
+        },
+        { merge: true }
+      );
+      setJamdayDates(updatedJamdayDates);
       setIsScheduleModalVisible(false);
       setSelectedDateSchedule(undefined);
     } catch (error) {
@@ -220,37 +226,6 @@ const Schedule: React.FC = () => {
         handleMonthChange={handleMonthChange}
       />
 
-      {isAddEventModalVisible && (
-        <StyledModal
-          isModalVisible={isAddEventModalVisible}
-          closeModal={() => setIsAddEventModalVisible(false)}
-        >
-          <div className="space-y-4">
-            <InputBox placeholder="일정 제목" icon={IconPen} />
-            <InputBox
-              placeholder="날짜"
-              icon={IconCalendar}
-              onClick={() => {}}
-            />
-            <div className="grid grid-cols-3 gap-4">
-              <InputBox placeholder="시작 시간" icon={IconTime} />
-              <IconArrowRight size={16} />
-              <InputBox placeholder="종료 시간" icon={IconTime} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <InputBox placeholder="장소" icon={IconPlace} />
-              <InputBox placeholder="정원" icon={IconPeople} />
-            </div>
-            <InputBox placeholder="상세 내용" height="8rem" />
-            <Button
-              text="등록"
-              backgroundColor="sub"
-              onClick={() => {}}
-              href=""
-            />
-          </div>
-        </StyledModal>
-      )}
       {isLoginModalVisible && (
         <LoginModal
           isModalVisible={isLoginModalVisible}
@@ -258,7 +233,7 @@ const Schedule: React.FC = () => {
         />
       )}
       {isLoading ? (
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="absolute top-1/2 left-1/2 loading loading-spinner loading-lg"></span>
       ) : (
         <AddScheduleModal
           isVisible={addScheduleModalVisible}
