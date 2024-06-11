@@ -140,7 +140,7 @@ const Navigation: React.FC<NavigationProps> = ({
             className="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
-            stroke={isNavOpen ? "#cf404d" : "currentColor"}
+            stroke={isNavOpen ? "#cf404d" : "white"}
           >
             <path
               strokeLinecap="round"

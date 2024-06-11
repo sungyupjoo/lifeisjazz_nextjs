@@ -85,7 +85,10 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         </div>
       )}
       <p>
-        <span className="mr-4 text-gray mb-2 ">참석인원</span>
+        <span className="mr-4 text-gray mb-2 ">
+          참석인원{" "}
+          <span className="text-sm">({scheduleData.participate.length}명)</span>
+        </span>
       </p>
       <div
         className={`grid ${

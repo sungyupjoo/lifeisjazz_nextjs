@@ -151,7 +151,7 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
           </label>
         </div>
         <textarea
-          className="bg-backgroundGray textarea textarea-bordered w-full text-black"
+          className="bg-backgroundGray textarea textarea-bordered w-full text-black font-light leading-5"
           placeholder="세부 내용"
           name="description"
           id="description"
