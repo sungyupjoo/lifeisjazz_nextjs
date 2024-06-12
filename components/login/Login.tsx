@@ -120,12 +120,7 @@ const Login = () => {
       />
 
       {isModalVisible && (
-        <LoginModal
-          isModalVisible={isModalVisible}
-          closeModal={closeModal}
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-        />
+        <LoginModal isModalVisible={isModalVisible} closeModal={closeModal} />
       )}
     </>
   );

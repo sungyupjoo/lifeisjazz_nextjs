@@ -5,23 +5,17 @@ import StyledModal from "./StyledModal";
 interface LoginModalProps {
   isModalVisible: boolean;
   closeModal: () => void;
-  isLoading: boolean;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({
   isModalVisible,
   closeModal,
-  isLoading,
-  setIsLoading,
 }) => {
   const loginHandler = async () => {
-    setIsLoading(true);
     await signIn("kakao", {
       redirect: true,
       callbackUrl: "/",
     });
-    setIsLoading(false);
     closeModal();
   };
 
