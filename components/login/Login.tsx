@@ -26,11 +26,6 @@ const Login = () => {
     setIsModalVisible(false);
   };
 
-  const refreshSession = async () => {
-    const updatedSession = await getSession();
-    await update(updatedSession);
-  };
-
   useEffect(() => {
     const userSettingHandler = async () => {
       setIsLoading(true);
@@ -95,7 +90,7 @@ const Login = () => {
     setIsProfileModalVisible(false);
   };
   if (isLoading) {
-    return <div className="items-center">로딩 중...</div>;
+    return <span className="loading loading-spinner loading-md"></span>;
   }
   if (!isLoading && session?.user?.name) {
     return (
@@ -115,16 +110,23 @@ const Login = () => {
 
   return (
     <>
-      <Button
-        backgroundColor="sub"
-        text={"로그인"}
-        logoUrl=""
-        href=""
-        onClick={clickHandler}
-      />
+      {!isLoading && (
+        <Button
+          backgroundColor="sub"
+          text={"로그인"}
+          logoUrl=""
+          href=""
+          onClick={clickHandler}
+        />
+      )}
 
       {isModalVisible && (
-        <LoginModal isModalVisible={isModalVisible} closeModal={closeModal} />
+        <LoginModal
+          isModalVisible={isModalVisible}
+          closeModal={closeModal}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
       )}
     </>
   );
