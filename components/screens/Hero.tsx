@@ -1,5 +1,6 @@
 import {
   grand_fest,
+  logo_instagram,
   logo_kakao,
   logo_somoim,
   logo_white,
@@ -30,7 +31,7 @@ const Hero = () => {
             <br /> <span className="text-sub">재즈</span>를 감상하고 연주하고
             즐기는 모임
           </p>
-          <div className="flex flex-col gap-6 sm:flex-row mt-6 sm:gap-5 md:mt-2 w-3/5 sm:w-auto">
+          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-6  mt-6 sm:gap-5 md:mt-2 w-3/5 sm:w-auto">
             <Button
               text={"소모임 링크"}
               backgroundColor="main"
@@ -42,6 +43,12 @@ const Hero = () => {
               backgroundColor="main"
               logoUrl={logo_kakao}
               href="https://open.kakao.com/o/g1pb2wmc"
+            />
+            <Button
+              text={"인스타그램"}
+              backgroundColor="main"
+              logoUrl={logo_instagram}
+              href="https://www.instagram.com/life_isjazz?igsh=bzNwOWRiNDFrcDZn"
             />
             {status === "authenticated" ? (
               <Button

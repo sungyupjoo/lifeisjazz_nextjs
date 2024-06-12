@@ -35,7 +35,7 @@ export const Button: React.FC<ButtonProps> = ({
         <img
           src={logoUrl}
           alt="logo"
-          className="inline-block w-6 h-6 mr-2 align-middle"
+          className="inline-block w-5 h-5 mr-2 align-middle"
         />
       )}
       {link ? (

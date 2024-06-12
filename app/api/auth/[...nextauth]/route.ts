@@ -23,21 +23,24 @@ const authOptions = {
     }),
   ],
   callbacks: {
-    jwt({
-      token,
-      trigger,
-      session,
-    }: {
-      token: JWT;
-      trigger?: "signIn" | "update" | "signUp" | undefined;
-      session?: any;
-    }) {
-      if ((trigger = "update" && session?.name)) {
-        token.name = session.name;
-        token.picture = session.image;
-      }
-      return token;
-    },
+    // async jwt({
+    //   token,
+    //   trigger,
+    //   session,
+    // }: {
+    //   // JSON Web Token
+    //   token: JWT;
+    //   trigger?: "signIn" | "update" | "signUp" | undefined;
+    //   session?: any;
+    // }) {
+    //   if ((trigger = "update" && session?.name)) {
+    //     // token.name = session.name;
+    //     // token.picture = session.image;
+    //     // token.sub = session.isManager;
+    //     // console.log(session, "세션");
+    //   }
+    //   return token;
+    // },
     async session({
       session,
       trigger,
@@ -47,15 +50,17 @@ const authOptions = {
       trigger?: "signIn" | "update" | "signUp" | undefined;
       newSession?: any;
     }) {
-      if (trigger === "update" && newSession.name) {
-        session.name = newSession.name;
+      if (trigger === "update" && newSession?.name) {
+        session.user.name = newSession.name;
+        session.user.image = newSession.image;
+        session.user.isManager = newSession.isManager;
       }
       return session;
     },
   },
-  session: {
-    strategy: "jwt" as SessionStrategy,
-  },
+  // session: {
+  //   strategy: "jwt" as SessionStrategy,
+  // },
   adapter: FirestoreAdapter({
     credential: cert({
       projectId: process.env.FIREBASE_PROJECT_ID!,

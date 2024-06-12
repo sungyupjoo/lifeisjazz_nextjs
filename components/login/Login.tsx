@@ -41,12 +41,12 @@ const Login = () => {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const userData = docSnap.data();
-            const { email, image, name } = userData;
-            await update({ image: image, name: name });
-            await refreshSession();
+            const { email, image, name, isManager } = userData;
+            await update({ image: image, name: name, isManager: isManager });
           } else {
+            // firebase에 해당되는 doc이 없다면 계정 생성
             const { email, image, name } = session.user;
-            // 매니저 권한은 Firebase에서 직접 부여 or 별도 페이지 만들어서 관리 예정
+            // 매니저 권한은 Firebase에서 직접 부여
             setDoc(docRef, { email, image, name, isManager: false });
           }
         } catch (error) {
