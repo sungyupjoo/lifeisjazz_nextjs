@@ -16,7 +16,7 @@ declare global {
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
-  const { data: session, update } = useSession();
+  const { data: session, update, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
   const clickHandler = () => {
@@ -89,7 +89,8 @@ const Login = () => {
     }
     setIsProfileModalVisible(false);
   };
-  if (isLoading) {
+
+  if (status === "loading") {
     return <span className="loading loading-spinner loading-md"></span>;
   }
   if (!isLoading && session?.user?.name) {
@@ -110,23 +111,16 @@ const Login = () => {
 
   return (
     <>
-      {!isLoading && (
-        <Button
-          backgroundColor="sub"
-          text={"로그인"}
-          logoUrl=""
-          href=""
-          onClick={clickHandler}
-        />
-      )}
+      <Button
+        backgroundColor="sub"
+        text={"로그인"}
+        logoUrl=""
+        href=""
+        onClick={clickHandler}
+      />
 
       {isModalVisible && (
-        <LoginModal
-          isModalVisible={isModalVisible}
-          closeModal={closeModal}
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-        />
+        <LoginModal isModalVisible={isModalVisible} closeModal={closeModal} />
       )}
     </>
   );
