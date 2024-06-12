@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction, useState } from "react";
 import { signIn } from "next-auth/react";
 import StyledModal from "./StyledModal";
 

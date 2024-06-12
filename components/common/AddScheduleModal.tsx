@@ -46,14 +46,14 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
         <div className="mb-4 sm:mb-6 items-center">
           <label
             htmlFor="title"
-            className="input input-sm input-bordered flex items-center bg-white gap-2 text-sm "
+            className="input input-sm input-bordered flex items-center bg-white gap-2 text-sm grow"
           >
             제목
             <input
               id="title"
               type="text"
               name="title"
-              className="grow text-black"
+              className="text-black"
               required
               placeholder={
                 !jamday ? "ex) 라이재 퀄텟 공연" : "ex) 라이재 잼데이"
