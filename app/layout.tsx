@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
 import { grand_fest, logo_white } from "@/public/assets";
+import AuthSession from "@/components/AuthSession";
 
 export const metadata: Metadata = {
   title: "Life is Jazz",
@@ -53,7 +54,9 @@ export default function RootLayout({
         integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01"
         crossOrigin="anonymous"
       ></Script>
-      <body className={pretendard.className}>{children}</body>
+      <AuthSession>
+        <body className={pretendard.className}>{children}</body>
+      </AuthSession>
     </html>
   );
 }

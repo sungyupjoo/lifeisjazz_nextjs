@@ -31,7 +31,7 @@ const Schedule: React.FC = () => {
   const [selectedDateSchedule, setSelectedDateSchedule] =
     useState<ScheduleProps>();
   const [amIParticipating, setAmIParticipating] = useState(false);
-
+  console.log(scheduleData);
   // 스케쥴 데이터 받아오기
   useEffect(() => {
     const selectedMonth = `${getYear(formattedDate)} ${activeMonth + 1}`;
@@ -204,13 +204,15 @@ const Schedule: React.FC = () => {
       <div className="flex justify-end">
         {status === "authenticated" ? (
           <div className="flex gap-4">
-            <Button
-              backgroundColor="sub"
-              text="일정 +"
-              onClick={() => {
-                setAddScheduleModalVisible(true);
-              }}
-            />
+            {session.user.isManager && (
+              <Button
+                backgroundColor="sub"
+                text="일정 +"
+                onClick={() => {
+                  setAddScheduleModalVisible(true);
+                }}
+              />
+            )}
             <Button backgroundColor="sub" text="잼데이" link />
           </div>
         ) : (

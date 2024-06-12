@@ -46,7 +46,7 @@ const Display = () => {
     };
   }, [homeRef, aboutRef, managerRef, galleryRef, scheduleRef, contactRef]);
   return (
-    <AuthSession>
+    <>
       <Navigation
         homeRef={homeRef}
         aboutRef={aboutRef}
@@ -74,7 +74,7 @@ const Display = () => {
       <div id="contact" ref={contactRef}>
         <Contact />
       </div>
-    </AuthSession>
+    </>
   );
 };
 

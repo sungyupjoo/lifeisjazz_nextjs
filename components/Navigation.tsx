@@ -2,7 +2,6 @@
 
 import { logo_white } from "../public/assets";
 import React, { RefObject, forwardRef, useState } from "react";
-import { Hamburger } from "./common/icons/Hamburger";
 import Login from "./login/Login";
 
 interface NavigationProps {

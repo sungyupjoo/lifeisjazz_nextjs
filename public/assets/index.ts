@@ -6,6 +6,10 @@ const playing_bass =
   "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Fplaying_bass.jpeg?alt=media&token=43206bdf-c1c8-417f-a240-d39790b5b5d8";
 const logo_kakao =
   "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Flogo_kakao.png?alt=media&token=754effa2-5b75-479a-ba8e-d4e8158151db";
+
+const logo_instagram =
+  "https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png";
+
 const logo_somoim =
   "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Flogo_somoim.png?alt=media&token=a52021c2-f8ba-4609-a79a-8095ce25f0da";
 const photo_club =
@@ -39,6 +43,7 @@ export {
   grand_fest,
   playing_bass,
   logo_kakao,
+  logo_instagram,
   logo_somoim,
   photo_club,
   photo_fest,

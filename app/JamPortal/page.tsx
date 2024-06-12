@@ -99,6 +99,7 @@ const JamDayPortal = () => {
   // 로그인 유저 정보
   const { data: session, status } = useSession();
   const [loginMember, setLoginMember] = useState<Session["user"]>();
+  console.log(session);
 
   useEffect(() => {
     const setUserHandler = async () => {
@@ -342,10 +343,8 @@ const JamDayPortal = () => {
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const schedules: ScheduleProps[] = docSnapshot.data().data || [];
-          const jamdaySchedules = schedules.filter(
-            (schedule) => schedule.category === "jamday"
-          );
-          setScheduleData(jamdaySchedules);
+
+          setScheduleData(schedules);
         }
       },
       (error) => {
@@ -590,12 +589,14 @@ const JamDayPortal = () => {
           ) : (
             <div className="flex flex-col mt-16 justify-center items-center h-full gap-10 bg-white">
               <h3>잼데이 날이 아닙니다</h3>
-              <Button
-                backgroundColor="sub"
-                text="잼데이 지정"
-                big
-                onClick={() => setAddJamdayModalVisible(true)}
-              />
+              {session?.user.isManager && (
+                <Button
+                  backgroundColor="sub"
+                  text="잼데이 지정"
+                  big
+                  onClick={() => setAddJamdayModalVisible(true)}
+                />
+              )}
             </div>
           )}
           <Song
