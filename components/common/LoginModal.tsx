@@ -21,13 +21,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
       redirect: true,
       callbackUrl: "/",
     });
-
     setIsLoading(false);
     closeModal();
   };
-  if (isLoading) {
-    return <span className="loading loading-dots loading-md"></span>;
-  }
 
   return (
     <StyledModal isModalVisible={isModalVisible} closeModal={closeModal}>
