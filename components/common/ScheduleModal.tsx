@@ -3,6 +3,7 @@ import { Button, StyledModal } from ".";
 import { ScheduleProps } from "./types";
 import { differenceInDays, formatDate } from "date-fns";
 import { ko } from "date-fns/locale";
+import { useSession } from "next-auth/react";
 
 interface ScheduleModalProps {
   isScheduleModalVisible: boolean;
@@ -23,6 +24,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   jamday,
   amIParticipating = false,
 }) => {
+  const { data: session } = useSession();
   const dday = differenceInDays(scheduleData.date, new Date());
   const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const formattedDday =
@@ -80,25 +82,27 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         {scheduleData.expense}
       </p>
       {scheduleData.description.length > 0 && (
-        <div className="bg-backgroundGray mb-2 rounded-xl py-3 px-4 text-black">
+        <div className="bg-backgroundGray mb-2 rounded-xl py-3 px-4 text-black border-none whitespace-pre-line break-keep">
           {scheduleData.description}
         </div>
       )}
-      <p>
-        <span className="mr-4 text-gray mb-2 ">
-          참석인원{" "}
-          <span className="text-sm">({scheduleData.participate.length}명)</span>
+      <p className="my-4">
+        <span className="text-gray">
+          참석인원
+          <span className="text-sm ml-1">
+            ({scheduleData.participate.length}명)
+          </span>
         </span>
       </p>
       <div
         className={`grid ${
-          scheduleData.participate.length > 0 && "grid-cols-2"
+          scheduleData.participate.length > 0 && "grid-cols-2 gap-4"
         }`}
       >
         {scheduleData.participate.length > 0 ? (
           scheduleData.participate.map((member) => (
             <div
-              className="flex bg-backgroundGray py-2 px-2 rounded-xl hover:bg-borderGray"
+              className="flex bg-backgroundGray py-1 px-2 rounded-xl hover:bg-borderGray"
               key={member.email}
             >
               <img
@@ -118,7 +122,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
           </div>
         )}
       </div>
-      <div className="flex justify-center mt-4 gap-4">
+      <div className="flex justify-center mt-4 gap-4 mb-4">
         {showCancelConfirmation ? (
           <div className="flex flex-col items-center">
             <p className="mb-2 transition">해당 일정을 취소할까요?</p>
@@ -136,11 +140,15 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
             </div>
           </div>
         ) : (
-          <Button
-            backgroundColor="sub"
-            text="일정 취소"
-            onClick={() => setShowCancelConfirmation(true)}
-          />
+          <>
+            {session?.user.isManager && (
+              <Button
+                backgroundColor="sub"
+                text="일정 취소하기"
+                onClick={() => setShowCancelConfirmation(true)}
+              />
+            )}
+          </>
         )}
       </div>
     </StyledModal>

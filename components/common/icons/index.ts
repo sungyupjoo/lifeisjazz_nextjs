@@ -8,6 +8,7 @@ import { IconArrowRight } from "./IconArrowRight";
 import { IconPeople } from "./IconPeople";
 import { IconInstagram } from "./IconInstagram";
 import { IconYoutube } from "./IconYoutube";
+import { IconCrown } from "./IconCrown";
 
 export type IconProps = {
   size: number;
@@ -25,4 +26,5 @@ export {
   IconXMark,
   IconInstagram,
   IconYoutube,
+  IconCrown,
 };

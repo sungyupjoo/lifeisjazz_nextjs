@@ -84,22 +84,24 @@ const Gallery = () => {
               >
                 업로드
               </button>
-              <button
-                type="button"
-                className={`
+              {session.user.isManager && (
+                <button
+                  type="button"
+                  className={`
                   ${
                     selectedImage
                       ? "bg-sub text-white"
                       : "bg-gray text-borderGray"
                   }
                     rounded-lg px-2 py-1`}
-                onClick={() => {
-                  deleteImage(selectedImage!);
-                  setSelectedImage(null);
-                }}
-              >
-                삭제
-              </button>
+                  onClick={() => {
+                    deleteImage(selectedImage!);
+                    setSelectedImage(null);
+                  }}
+                >
+                  삭제
+                </button>
+              )}
             </div>
           </form>
         </div>

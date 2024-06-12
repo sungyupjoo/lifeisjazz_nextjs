@@ -115,7 +115,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             </div>
             <label
               htmlFor="profileImage"
-              className="col-span-1 font-semibold text-black"
+              className="col-span-1 font-semibold text-black text-center"
             >
               사진
             </label>

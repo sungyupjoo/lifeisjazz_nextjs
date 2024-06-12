@@ -1,5 +1,6 @@
 import { Session } from "next-auth";
 import { Button } from "../common";
+import { useSession } from "next-auth/react";
 
 interface VoteProps {
   formattedDate: string;
@@ -20,6 +21,7 @@ const Vote: React.FC<VoteProps> = ({
   voteHandler,
   voters,
 }) => {
+  const { data: session } = useSession();
   return (
     <div className="p-6">
       <p className="font-[1rem]">
@@ -33,15 +35,19 @@ const Vote: React.FC<VoteProps> = ({
           fontColor="white"
           onClick={voteHandler}
         />
-        <Button
-          backgroundColor="sub"
-          text={jamdays.includes(formattedDate) ? "잼데이 취소" : "잼데이 지정"}
-          onClick={
-            jamdays.includes(formattedDate)
-              ? cancelJamdayHandler
-              : setJamdayHandler
-          }
-        />
+        {session?.user.isManager && (
+          <Button
+            backgroundColor="sub"
+            text={
+              jamdays.includes(formattedDate) ? "잼데이 취소" : "잼데이 지정"
+            }
+            onClick={
+              jamdays.includes(formattedDate)
+                ? cancelJamdayHandler
+                : setJamdayHandler
+            }
+          />
+        )}
       </div>
       <div className="mt-4 rounded-xl bg-borderGray p-4 ">
         <h3>투표한 사람 ({voters.length}명)</h3>
