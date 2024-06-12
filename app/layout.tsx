@@ -2,10 +2,31 @@ import localFont from "next/font/local";
 import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
+import { grand_fest, logo_white } from "@/public/assets";
 
 export const metadata: Metadata = {
-  title: "Life is jazz",
-  description: "",
+  title: "Life is Jazz",
+  description: "재즈를 감상하며 연주하고 즐기는 모임입니다",
+  // keywords는 더 이상 SEO에 유용하지 않다고 하여 작성하지 않음(ex.구글)
+  openGraph: {
+    title: "Life is Jazz",
+    description: "재즈를 감상하며 연주하고 즐기는 모임입니다",
+    // TODO: 주소 옮긴 후 바꾸기
+    url: "https://lifeisjazz-nextjs.vercel.app",
+    siteName: "Life is Jazz",
+    images: grand_fest,
+    locale: "ko_KR",
+    type: "website",
+  },
+  icons: {
+    icon: [{ url: logo_white }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Life is Jazz",
+    description: "재즈를 감상하며 연주하고 즐기는 모임입니다",
+    images: [grand_fest],
+  },
 };
 
 const pretendard = localFont({
