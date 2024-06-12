@@ -1,21 +1,20 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { signIn } from "next-auth/react";
 import StyledModal from "./StyledModal";
 
 interface LoginModalProps {
   isModalVisible: boolean;
   closeModal: () => void;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({
   isModalVisible,
   closeModal,
+  isLoading,
+  setIsLoading,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  // const provider = new OAuthProvider("oidc.kakao");
-  // const credential = provider.credential({
-  //   idToken: "",
-  // });
   const loginHandler = async () => {
     setIsLoading(true);
     await signIn("kakao", {
@@ -27,7 +26,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     closeModal();
   };
   if (isLoading) {
-    return <div className="progress" />;
+    return <span className="loading loading-dots loading-md"></span>;
   }
 
   return (
