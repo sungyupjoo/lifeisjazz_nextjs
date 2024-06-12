@@ -13,7 +13,7 @@ const logo_instagram =
 const logo_somoim =
   "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Flogo_somoim.png?alt=media&token=a52021c2-f8ba-4609-a79a-8095ce25f0da";
 const photo_club =
-  "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Fphoto_club.jpeg?alt=media&token=511424ae-c6f2-4049-9908-7d6a0cd6a936";
+  "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Gallery%2FKakaoTalk_Photo_2024-06-12-16-22-38.jpeg?alt=media&token=7eb0ec42-917b-4c9c-a67c-038d616de6ff";
 const photo_fest =
   "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Src%2Fphoto_fest.jpeg?alt=media&token=d2d36483-56c9-4b05-9053-f08337cbc8e2";
 const photo_festival =

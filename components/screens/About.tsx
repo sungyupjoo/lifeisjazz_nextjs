@@ -13,12 +13,12 @@ const About = () => (
       {about.map((item) => (
         <div
           key={item.id}
-          className="flex flex-col w-3/4 sm:w-full justify-self-center md:w-full rounded-lg shadow-md transition-transform duration-300 hover:scale-110 hover:opacity-110 lg:flex-col"
+          className="flex flex-col w-3/4 sm:w-full justify-self-center md:w-full rounded-2xl shadow-md transition-transform duration-300 hover:scale-110 hover:opacity-110 lg:flex-col"
         >
           <img
             src={item.url}
             alt=""
-            className="w-full h-40 mb-2 rounded-t-lg object-cover"
+            className="w-full h-40 mb-2 rounded-t-2xl object-cover"
           />
           <div className="px-4 py-1 flex flex-col items-center ">
             <h4 className="mb-5 lg:mb-2 text-center font-semibold">

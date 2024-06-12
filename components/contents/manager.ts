@@ -33,13 +33,13 @@ export const manager: ManagerProps[] = [
     url: `${manager_jaehyuck}`,
     name: "신재혁",
     position: "피아노, 클라리넷/운영진",
-    introduction: `"Confirmation 6박 하면 재밌던데...${"\n"}도나리도 6박 하면 재밌음"`,
+    introduction: `"재즈는 저항의 음악"`,
   },
   {
     id: 4,
     url: `${manager_bins}`,
-    name: "빈즈",
+    name: "페북",
     position: "피아노/운영진",
-    introduction: `"Misty 치고 왔습니다."`,
+    introduction: `"건강하게 운동하고 뒤풀이 참석은 자유, 뒤풀이만 참석도 자유, 앞풀이 제안도 자유, 고유가 시대에 음악과 희망은 자유"`,
   },
 ];
