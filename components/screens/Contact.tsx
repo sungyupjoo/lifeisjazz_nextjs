@@ -5,10 +5,21 @@ import Rules from "../contents/Rules";
 
 const Contact = () => {
   const [ruleModalVisible, setRuleModalVisible] = useState(false);
-  const [kakaoModalVisible, setKakaoModalVisible] = useState(false);
+  const [buttonText, setButtonText] = useState<string>("계좌번호 복사");
 
   const showRuleModal = () => setRuleModalVisible(true);
-  const payHandler = () => {};
+  const copyAccount = () => {
+    const accountNumber = "25821572902001";
+    navigator.clipboard.writeText(accountNumber).then(
+      () => {
+        setButtonText("복사 완료!");
+        setTimeout(() => setButtonText("계좌번호 복사"), 2000);
+      },
+      (err: Error) => {
+        console.error("클립보드 복사 실패: ", err);
+      }
+    );
+  };
 
   return (
     <Container innerPadding>
@@ -48,9 +59,11 @@ const Contact = () => {
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-semibold">계좌</h3>
               <Button
-                backgroundColor="sub"
-                text="입금하기"
-                onClick={payHandler}
+                backgroundColor={
+                  buttonText === "계좌번호 복사" ? "sub" : "main"
+                }
+                text={buttonText}
+                onClick={copyAccount}
               />
             </div>
             <p className="break-words">우리은행 258-21572-902001 조성제</p>
