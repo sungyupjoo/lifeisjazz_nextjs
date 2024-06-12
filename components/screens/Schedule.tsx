@@ -31,7 +31,6 @@ const Schedule: React.FC = () => {
   const [selectedDateSchedule, setSelectedDateSchedule] =
     useState<ScheduleProps>();
   const [amIParticipating, setAmIParticipating] = useState(false);
-  console.log(scheduleData);
   // 스케쥴 데이터 받아오기
   useEffect(() => {
     const selectedMonth = `${getYear(formattedDate)} ${activeMonth + 1}`;

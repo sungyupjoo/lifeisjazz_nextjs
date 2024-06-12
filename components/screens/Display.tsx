@@ -1,16 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Hero, About, Gallery } from ".";
+import { Hero, About, Gallery, Recruit, Schedule, Contact, Manager } from ".";
 import Navigation from "../Navigation";
-import Manager from "./Manager";
-import Schedule from "./Schedule";
-import Contact from "./Contact";
-import AuthSession from "../AuthSession";
 
 const Display = () => {
   const homeRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const managerRef = useRef<HTMLDivElement>(null);
+  const recruitRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const scheduleRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
@@ -51,6 +48,7 @@ const Display = () => {
         homeRef={homeRef}
         aboutRef={aboutRef}
         managerRef={managerRef}
+        recruitRef={recruitRef}
         galleryRef={galleryRef}
         scheduleRef={scheduleRef}
         contactRef={contactRef}
@@ -65,6 +63,9 @@ const Display = () => {
       <div id="manager" ref={managerRef}>
         <Manager />
       </div>
+      {/* <div id="recruit" ref={recruitRef}>
+        <Recruit />
+      </div> */}
       <div id="gallery" ref={galleryRef}>
         <Gallery />
       </div>

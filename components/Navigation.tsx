@@ -8,6 +8,7 @@ interface NavigationProps {
   homeRef: RefObject<HTMLDivElement>;
   aboutRef: RefObject<HTMLDivElement>;
   managerRef: RefObject<HTMLDivElement>;
+  recruitRef: RefObject<HTMLDivElement>;
   galleryRef: RefObject<HTMLDivElement>;
   scheduleRef: RefObject<HTMLDivElement>;
   contactRef: RefObject<HTMLDivElement>;
@@ -42,6 +43,7 @@ const Navigation: React.FC<NavigationProps> = ({
   homeRef,
   aboutRef,
   managerRef,
+  recruitRef,
   galleryRef,
   scheduleRef,
   contactRef,
@@ -97,6 +99,13 @@ const Navigation: React.FC<NavigationProps> = ({
           ref={aboutRef}
           scrollToRef={scrollToRef}
         />
+        {/* <Anchor
+          label="팀원모집"
+          labelEnglish="recruit"
+          activeSection={activeSection}
+          ref={recruitRef}
+          scrollToRef={scrollToRef}
+        /> */}
         <Anchor
           label="운영진"
           labelEnglish="manager"

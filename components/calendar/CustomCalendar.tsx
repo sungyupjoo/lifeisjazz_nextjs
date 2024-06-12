@@ -103,7 +103,7 @@ export default CustomCalendar;
 const CalendarWrapper = styled.div`
 margin-top: 1.5rem; 
 display: flex;
-height: 380px;
+height: 400px;
 justify-content: center;
 align-itmes: center;
 position: relative;
@@ -163,7 +163,7 @@ position: relative;
 /* 날짜 */
 .react-calendar__tile {
 text-align: center;
-height: 50px;
+height: 52px;
 display: flex;
 flex-direction: column;
 justify-content: flex-start;
