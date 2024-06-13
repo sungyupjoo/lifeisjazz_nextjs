@@ -46,9 +46,9 @@ const authOptions = {
       trigger,
       newSession,
     }: {
-      session: any;
+      session: Session;
       trigger?: "signIn" | "update" | "signUp" | undefined;
-      newSession?: any;
+      newSession?: Session["user"];
     }) {
       if (trigger === "update" && newSession?.name) {
         session.user.name = newSession.name;

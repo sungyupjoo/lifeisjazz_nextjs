@@ -48,7 +48,7 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
             htmlFor="title"
             className="input input-sm input-bordered flex items-center bg-white gap-2 text-sm grow"
           >
-            제목
+            <span className="min-w-8">제목</span>
             <input
               id="title"
               type="text"
@@ -105,7 +105,7 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
             htmlFor="location"
             className="input input-sm input-bordered flex items-center bg-white gap-2 text-sm"
           >
-            위치
+            <span className="min-w-8">위치</span>
             <input
               id="location"
               type="text"
@@ -123,7 +123,7 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
             htmlFor="time"
             className="input input-sm input-bordered flex items-center bg-white gap-2 text-sm"
           >
-            시간
+            <span className="min-w-8">시간</span>
             <input
               id="time"
               type="text"
@@ -139,7 +139,7 @@ const AddScheduleModal: React.FC<AddScheduleModalProps> = ({
             htmlFor="expense"
             className="input input-sm input-bordered flex items-center bg-white gap-2 text-sm"
           >
-            비용
+            <span className="min-w-8">비용</span>
             <input
               id="expense"
               type="text"

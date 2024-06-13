@@ -17,7 +17,7 @@ const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
   const { data: session, update, status } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const clickHandler = () => {
     setIsModalVisible(true);
@@ -28,7 +28,6 @@ const Login = () => {
 
   useEffect(() => {
     const userSettingHandler = async () => {
-      setIsLoading(true);
       if (session?.user?.email) {
         try {
           // next-auth에서 email받아 그걸로 firebase doc 찾고 거기서 닉네임과 이미지 가져오기
@@ -51,7 +50,7 @@ const Login = () => {
       setIsLoading(false);
     };
     userSettingHandler();
-  }, [session?.user.name]);
+  }, [session?.user?.name]);
 
   const logOutHandler = () => {
     signOut();
@@ -89,9 +88,13 @@ const Login = () => {
     }
     setIsProfileModalVisible(false);
   };
-
-  if (status === "loading") {
-    return <span className="loading loading-spinner loading-md"></span>;
+  if (status === "loading" || isLoading) {
+    return (
+      <div className="flex items-middle bg-mainTint rounded-lg p-2">
+        <span className="loading loading-spinner loading-md"></span>
+        <p className="ml-2 text-white text-sm">로딩 중...</p>
+      </div>
+    );
   }
   if (!isLoading && session?.user?.name) {
     return (
@@ -111,13 +114,15 @@ const Login = () => {
 
   return (
     <>
-      <Button
-        backgroundColor="sub"
-        text={"로그인"}
-        logoUrl=""
-        href=""
-        onClick={clickHandler}
-      />
+      {status === "unauthenticated" && (
+        <Button
+          backgroundColor="sub"
+          text={"로그인"}
+          logoUrl=""
+          href=""
+          onClick={clickHandler}
+        />
+      )}
 
       {isModalVisible && (
         <LoginModal isModalVisible={isModalVisible} closeModal={closeModal} />
