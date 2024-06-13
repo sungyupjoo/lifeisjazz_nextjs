@@ -2,7 +2,7 @@ import localFont from "next/font/local";
 import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
-import { grand_fest, logo_white } from "@/public/assets";
+import { logo_black } from "@/public/assets";
 import AuthSession from "@/components/AuthSession";
 
 export const metadata: Metadata = {
@@ -15,18 +15,18 @@ export const metadata: Metadata = {
     // TODO: 주소 옮긴 후 바꾸기
     url: "https://lifeisjazz-nextjs.vercel.app",
     siteName: "Life is Jazz",
-    images: grand_fest,
+    images: logo_black,
     locale: "ko_KR",
     type: "website",
   },
   icons: {
-    icon: [{ url: logo_white }],
+    icon: [{ url: logo_black }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Life is Jazz",
     description: "재즈를 감상하며 연주하고 즐기는 모임입니다",
-    images: [grand_fest],
+    images: [logo_black],
   },
 };
 
