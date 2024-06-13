@@ -43,7 +43,7 @@ const StyledModal: React.FC<StyledModalProps> = ({
           <button onClick={closeModal} className="absolute top-2 right-2">
             <IconXMark size={24} />
           </button>
-          <div className="overflow-y-auto">{children}</div>
+          <div className="overflow-y-scroll">{children}</div>
         </div>
       </div>
     </div>
