@@ -30,9 +30,6 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   const today = toZonedTime(new Date(), timeZone);
   const formattedScheduleDate = toZonedTime(scheduleData.date, timeZone);
   const dday = differenceInDays(formattedScheduleDate, today);
-  console.log(today, "오늘");
-  console.log(formattedScheduleDate, "포맷");
-  console.log(dday, "디데이");
   const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const formattedDday =
     dday === -1 ? "오늘" : dday < -1 ? "(지난 일정)" : `D-${dday + 1}일`;

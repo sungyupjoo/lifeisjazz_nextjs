@@ -3,12 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, StyledModal } from "@/components/common";
 import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
-import {
-  Song,
-  AddSongModal,
-  CancelSongModal,
-  Vote,
-} from "@/components/JamPortal";
+import { Song, AddSongModal, Vote } from "@/components/JamPortal";
 import {
   InstrumentType,
   RhythmType,
@@ -18,15 +13,7 @@ import {
   ScheduleProps,
   VoteData,
 } from "../../components/common/types";
-import {
-  arrayRemove,
-  arrayUnion,
-  doc,
-  getDoc,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import {
   addMonths,
@@ -34,7 +21,6 @@ import {
   formatDate,
   getMonth,
   getWeek,
-  getWeekYear,
   getYear,
   startOfDay,
   startOfWeek,
@@ -53,7 +39,6 @@ const JamDayPortal = () => {
   const [requestedSongs, setRequestedSongs] = useState<SongProps[]>([]);
   const [scheduleData, setScheduleData] = useState<ScheduleProps[]>([]);
   const [addSongModalVisible, setAddSongModalVisible] = useState(false);
-  const [cancelSongModalVisible, setCancelSongModalVisible] = useState(false);
   const [currentState, setCurrentState] = useState<WeekType>("this");
   const [ruleModalVisible, setRuleModalVisible] = useState(false);
   const [addJamdayModalVisible, setAddJamdayModalVisible] = useState(false);
@@ -99,7 +84,6 @@ const JamDayPortal = () => {
   // 로그인 유저 정보
   const { data: session, status } = useSession();
   const [loginMember, setLoginMember] = useState<Session["user"]>();
-  console.log(session);
 
   useEffect(() => {
     const setUserHandler = async () => {
@@ -284,16 +268,14 @@ const JamDayPortal = () => {
 
   // 취소
   const cancelHandler = async (songId: string) => {
-    // setCancelSongModalVisible((prev) => !prev);
     const updatedData = requestedSongs.filter((song) => song.id !== songId);
     const docRef = await setDoc(
-      doc(db, "jamday", startOfDay(selectedDate).toDateString()),
+      doc(db, "jamday", formattedDate),
       {
         data: updatedData,
       },
       { merge: true }
     );
-    console.log(songId, "곡ID");
   };
 
   // 잼데이 날짜 받아오기
@@ -612,12 +594,6 @@ const JamDayPortal = () => {
                 setAddSongModalVisible(false);
               }}
               handleSubmit={handleSubmit}
-            />
-          )}
-          {cancelSongModalVisible && (
-            <CancelSongModal
-              isVisible={cancelSongModalVisible}
-              closeHandler={() => setCancelSongModalVisible(false)}
             />
           )}
         </div>

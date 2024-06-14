@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../common";
+import { Button, StyledModal } from "../common";
 import { InstrumentType, SongProps, rhythmName } from "../common/types";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { formatDate } from "date-fns";
 
 interface SongFCProps {
   requestedSongs: SongProps[];
@@ -18,13 +19,14 @@ const Song: React.FC<SongFCProps> = ({
   onCancel,
 }) => {
   const { data: session } = useSession();
-
+  const formattedDate = formatDate(selectedDate!, "yyyy-MM-dd");
+  const [isCancelSongModalVisible, setIsCancelSongModalVisible] =
+    useState(false);
   return (
     <div className="flex flex-col items-center sm:grid sm:grid-cols-2 ">
-      {session &&
-        session?.user &&
+      {session?.user &&
         requestedSongs
-          .filter((song) => song.date === selectedDate!.toDateString())
+          .filter((song) => song.date === formattedDate)
           .map((song, index) => (
             <div
               key={song.title}
@@ -55,11 +57,14 @@ const Song: React.FC<SongFCProps> = ({
                       </span>
                     </div>
                   </div>
-                  {song.requester?.email === session.user.email && (
+                  {(song.requester?.email === session.user.email ||
+                    session.user.isManager) && (
                     <Button
                       text="곡 취소"
                       backgroundColor="gray"
-                      onClick={() => onCancel(song.id)}
+                      onClick={() => {
+                        setIsCancelSongModalVisible(true);
+                      }}
                     />
                   )}
                 </div>
@@ -100,6 +105,38 @@ const Song: React.FC<SongFCProps> = ({
                   <p className="text-[1rem]">{song.details}</p>
                 </div>
               </div>
+              {isCancelSongModalVisible && (
+                <StyledModal
+                  isModalVisible={isCancelSongModalVisible}
+                  closeModal={() => {
+                    setIsCancelSongModalVisible(false);
+                  }}
+                >
+                  <h3 className="mb-4">곡 취소</h3>
+                  <div className="mb-4 flex w-full break-keep">
+                    <p className="break-words w-full overflow-wrap-anywhere">
+                      {song.title} 신청을 취소할까요?
+                    </p>
+                  </div>
+                  <div className="flex justify-self-center  justify-between max-w-48">
+                    <Button
+                      backgroundColor="sub"
+                      text="네, 취소합니다"
+                      onClick={() => {
+                        onCancel(song.id);
+                        setIsCancelSongModalVisible(false);
+                      }}
+                    />
+                    <Button
+                      backgroundColor="main"
+                      text="아니오"
+                      onClick={() => {
+                        setIsCancelSongModalVisible(false);
+                      }}
+                    />
+                  </div>
+                </StyledModal>
+              )}
             </div>
           ))}
     </div>
