@@ -4,10 +4,39 @@ import {
   logo_kakao,
   logo_somoim,
   logo_white,
+  photo_club,
+  photo_festival,
+  photo_jam,
 } from "@/public/assets";
 import { Button, Container, LoginModal } from "../common";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import Carousel from "../Carousel";
+import { CarouselProps } from "../common/types";
+
+const exampleContent: CarouselProps[] = [
+  {
+    title: "초보밴드 중간 발표 & Jam day",
+    date: "6월 23일(일) 오후 4시~",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Gallery%2FKakaoTalk_Photo_2024-06-17-16-31-16%20001.jpeg?alt=media&token=ee4b4494-3696-4d50-9ede-67d2fee5197b",
+    category: "jamday",
+  },
+  {
+    title: "Modern-Dard 퀄텟 공연",
+    date: "6월 21일(금) 오후 8시~",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Profile%2F9cecb7c5-b85d-4a9d-9ec0-5fd9dbe027e5.jpeg?alt=media&token=2c22b922-4d49-4708-ad3c-c209ade7b700",
+    category: "show",
+  },
+  {
+    title: "[칼럼]A Love Supreme을 둘러싼 오해와 진실",
+    date: "윈튼",
+    image:
+      "https://upload.wikimedia.org/wikipedia/en/9/9a/John_Coltrane_-_A_Love_Supreme.jpg",
+    category: "column",
+  },
+];
 
 const Hero = () => {
   const { data: session, status } = useSession();
@@ -16,22 +45,22 @@ const Hero = () => {
   return (
     <Container>
       <div
-        className="h-screen w-full bg-black bg-opacity-65 bg-cover bg-no-repeat bg-center relative"
+        className="h-screen w-full bg-black bg-cover bg-no-repeat bg-center relative"
         style={{
-          backgroundImage: `url(${grand_fest})`,
+          backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0,0,0,0) 70%, rgba(0, 0, 0, 0.9) 100%), url(${grand_fest})`,
         }}
       >
-        <div className="h-full w-full bg-[#000000] bg-opacity-65 bg-cover bg-no-repeat bg-center relative" />
-        <div className="absolute top-1/3 w-full flex flex-col items-center justify-center text-center animate-bounce-fadeIn">
-          <h1 className="text-white mb-8 text-5xl sm:text-8xl sm:mb-4">
+        <div className="h-full w-full bg-[#000000] bg-opacity-70 bg-cover bg-no-repeat bg-center relative" />
+        <div className="absolute top-[20%] w-full flex flex-col items-center justify-center text-center animate-bounce-fadeIn sm:top-[10%]">
+          <h1 className="text-white mb-8 text-6xl sm:text-8xl sm:mb-4">
             Life is <span className="text-sub">JAZZ</span>
           </h1>
-          <p className="text-white text-lg sm:text-sm mb-6 leading-8 sm:leading-6">
+          <p className="text-white font-light text-lg sm:text-sm mb-2 leading-8 sm:leading-6">
             연주자, 리스너 구분 없이 모두가
             <br /> <span className="text-sub">재즈</span>를 감상하고 연주하고
             즐기는 모임
           </p>
-          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-6 sm:gap-4  mt-6 md:mt-2 w-3/5 sm:w-auto">
+          <div className="grid grid-cols-2 gap-6 sm:gap-4  mt-6 md:mt-2 sm:w-auto sm:flex">
             <Button
               text={"소모임 링크"}
               backgroundColor="main"
@@ -65,12 +94,16 @@ const Hero = () => {
                 onClick={showLoginModal}
               />
             )}
+
             {isLoginModalVisible && (
               <LoginModal
                 isModalVisible={isLoginModalVisible}
                 closeModal={() => setIsLoginModalVisible(false)}
               />
             )}
+          </div>
+          <div className="flex flex-col items-center mt-10">
+            <Carousel content={exampleContent} />
           </div>
         </div>
       </div>

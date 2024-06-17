@@ -14,6 +14,7 @@ interface ScheduleModalProps {
   cancelScheduleHandler: () => void;
   jamday?: boolean;
   amIParticipating: boolean;
+  setDocToMain: () => void;
 }
 
 const ScheduleModal: React.FC<ScheduleModalProps> = ({
@@ -24,6 +25,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   cancelScheduleHandler,
   jamday,
   amIParticipating = false,
+  setDocToMain,
 }) => {
   const { data: session } = useSession();
   const timeZone = "Asia/Seoul";
@@ -47,12 +49,12 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         {formattedDday}
       </span>
       <div className="flex justify-center flex-col items-center gap-4 mb-4 mt-4">
-        <div className="flex">
+        <div className="flex text-center">
           <h3 className="text-2xl">{scheduleData.title} </h3>
         </div>
         <img
           src={scheduleData.image}
-          className="w-40 h-40 justify-center rounded-xl shadow-md hover:scale-110 transition ease-in-out duration-200"
+          className="w-60 h-60 justify-center rounded-2xl shadow-md hover:scale-110 transition ease-in-out duration-200"
         />
       </div>
       <div className="flex">
@@ -146,11 +148,18 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         ) : (
           <>
             {session?.user.isManager && (
-              <Button
-                backgroundColor="sub"
-                text="일정 취소하기"
-                onClick={() => setShowCancelConfirmation(true)}
-              />
+              <div className="flex justify-center gap-4">
+                <Button
+                  backgroundColor="sub"
+                  text="일정 취소하기"
+                  onClick={() => setShowCancelConfirmation(true)}
+                />
+                <Button
+                  backgroundColor="main"
+                  text="메인에 공지"
+                  onClick={setDocToMain}
+                />
+              </div>
             )}
           </>
         )}

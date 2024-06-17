@@ -62,9 +62,16 @@ export interface SongProps {
   participants?: Session["user"][];
 }
 
+export type CategoryProps =
+  | "show"
+  | "regular"
+  | "instant"
+  | "festival"
+  | "jamday";
+
 export interface ScheduleProps {
   date: string;
-  category: "show" | "regular" | "instant" | "festival" | "jamday";
+  category: CategoryProps;
   title: string;
   time: string;
   location: string;
@@ -73,6 +80,17 @@ export interface ScheduleProps {
   image: string;
   totalNumber: number;
   participate: Session["user"][];
+  main?: boolean; // 메인 스케줄인지 여부
+  id?: string;
+}
+
+export interface CarouselProps {
+  title: string;
+  date: string;
+  time?: string;
+  image: string;
+  id?: string;
+  category: CategoryProps | "column";
 }
 
 export const instrumentName = {
