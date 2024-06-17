@@ -48,18 +48,18 @@ const Carousel: React.FC<CarouselProps> = ({ content }) => {
         {content.map((item, index) => (
           <div
             id={`item${index}`}
-            className={`carousel-item max-w-52 sm:max-w-40 flex-col ${
+            className={`carousel-item max-w-48 sm:max-w-40 flex-col ${
               index === currentIndex ? "" : "opacity-35"
             }`}
             key={index}
           >
             <img
               src={item.image}
-              className="flex-grow w-52 h-52 sm:w-40 sm:h-40 sm:max-h-40 sm:min-h-40 object-fit rounded-t-3xl shadow-2xl"
+              className="flex-grow max-w-48 max-h-48 min-w-48 min-h-48 sm:w-40 sm:h-40 sm:max-h-40 sm:min-h-40 object-fit rounded-t-3xl shadow-2xl"
               alt={"메인 이벤트 이미지"}
             />
-            <div className="bg-main sm:h-20 flex flex-col w-full p-4 rounded-b-3xl sm:px-3 sm:py-2">
-              <h2 className="text-lg sm:text-sm font-semibold text-backgroundGray text-left break-keep mb-4 sm:mb-2">
+            <div className="bg-main sm:h-20 flex flex-col w-full py-2 px-4 rounded-b-3xl sm:px-3 sm:py-2">
+              <h2 className="text-[1rem] leading-6 sm:text-sm font-semibold text-backgroundGray text-left break-keep mb-2">
                 {item.title.slice(0, 24)}
                 {item.title.length > 24 && "..."}
               </h2>

@@ -52,7 +52,7 @@ const Hero = () => {
       >
         <div className="h-full w-full bg-[#000000] bg-opacity-70 bg-cover bg-no-repeat bg-center relative" />
         <div className="absolute top-[20%] w-full flex flex-col items-center justify-center text-center animate-bounce-fadeIn sm:top-[10%]">
-          <h1 className="text-white mb-8 text-6xl sm:text-8xl sm:mb-4">
+          <h1 className="text-white mb-4 text-6xl sm:text-8xl sm:mb-4">
             Life is <span className="text-sub">JAZZ</span>
           </h1>
           <p className="text-white font-light text-lg sm:text-sm mb-2 leading-8 sm:leading-6">
@@ -60,7 +60,7 @@ const Hero = () => {
             <br /> <span className="text-sub">재즈</span>를 감상하고 연주하고
             즐기는 모임
           </p>
-          <div className="grid grid-cols-2 gap-6 sm:gap-4  mt-6 md:mt-2 sm:w-auto sm:flex">
+          <div className="grid grid-cols-2 gap-6 sm:gap-4  md:mt-2 sm:w-auto sm:flex">
             <Button
               text={"소모임 링크"}
               backgroundColor="main"
