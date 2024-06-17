@@ -43,26 +43,27 @@ const Carousel: React.FC<CarouselProps> = ({ content }) => {
     <>
       <div
         id="carousel"
-        className="w-full carousel carousel-center max-w-md px-14 space-x-4"
+        className="w-full carousel carousel-center max-w-md sm:max-w-full px-14 space-x-4"
       >
         {content.map((item, index) => (
           <div
             id={`item${index}`}
-            className={`carousel-item max-w-52 flex-col ${
+            className={`carousel-item max-w-52 sm:max-w-40 flex-col ${
               index === currentIndex ? "" : "opacity-35"
             }`}
             key={index}
           >
             <img
               src={item.image}
-              className="flex-grow w-52 h-52 sm:w-40 sm:h-40 object-cover rounded-t-3xl shadow-2xl"
+              className="flex-grow w-52 h-52 sm:w-40 sm:h-40 sm:max-h-40 sm:min-h-40 object-fit rounded-t-3xl shadow-2xl"
               alt={"메인 이벤트 이미지"}
             />
-            <div className="bg-main flex flex-col w-full p-4 rounded-b-3xl">
-              <h2 className="text-lg font-semibold text-backgroundGray text-left break-keep mb-4">
-                {item.title}
+            <div className="bg-main sm:h-20 flex flex-col w-full p-4 rounded-b-3xl sm:px-3 sm:py-2">
+              <h2 className="text-lg sm:text-sm font-semibold text-backgroundGray text-left break-keep mb-4 sm:mb-2">
+                {item.title.slice(0, 24)}
+                {item.title.length > 24 && "..."}
               </h2>
-              <p className="text-borderGray text-left text-light text-sm">
+              <p className="text-borderGray text-left text-light text-xs">
                 {item.date}
               </p>
             </div>

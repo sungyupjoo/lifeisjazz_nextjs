@@ -102,7 +102,7 @@ const Hero = () => {
               />
             )}
           </div>
-          <div className="flex flex-col items-center mt-10">
+          <div className="w-full flex flex-col items-center mt-10">
             <Carousel content={exampleContent} />
           </div>
         </div>
