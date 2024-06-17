@@ -48,7 +48,7 @@ const Carousel: React.FC<CarouselProps> = ({ content }) => {
         {content.map((item, index) => (
           <div
             id={`item${index}`}
-            className={`carousel-item flex-col ${
+            className={`carousel-item max-w-52 flex-col ${
               index === currentIndex ? "" : "opacity-35"
             }`}
             key={index}
@@ -59,10 +59,10 @@ const Carousel: React.FC<CarouselProps> = ({ content }) => {
               alt={"메인 이벤트 이미지"}
             />
             <div className="bg-main flex flex-col w-full p-4 rounded-b-3xl">
-              <h2 className="text-xl font-semibold text-backgroundGray">
+              <h2 className="text-lg font-semibold text-backgroundGray text-left break-keep mb-4">
                 {item.title}
               </h2>
-              <p className="text-backgroundGray text-light text-sm">
+              <p className="text-borderGray text-left text-light text-sm">
                 {item.date}
               </p>
             </div>

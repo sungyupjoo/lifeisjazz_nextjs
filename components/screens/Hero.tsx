@@ -12,12 +12,30 @@ import { Button, Container, LoginModal } from "../common";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Carousel from "../Carousel";
+import { CarouselProps } from "../common/types";
 
-const exampleContent = [
-  { image: photo_jam, title: "라이재 잼데이", date: "6월 17일" },
-  { image: photo_club, title: "재즈 클럽 관람", date: "6월 20일" },
-  { image: photo_festival, title: "페스티벌", date: "6월 23일" },
-  { image: logo_somoim, title: "페스티벌", date: "6월 23일" },
+const exampleContent: CarouselProps[] = [
+  {
+    title: "초보밴드 중간 발표 & Jam day",
+    date: "6월 23일(일) 오후 4시~",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Gallery%2FKakaoTalk_Photo_2024-06-17-16-31-16%20001.jpeg?alt=media&token=ee4b4494-3696-4d50-9ede-67d2fee5197b",
+    category: "jamday",
+  },
+  {
+    title: "Modern-Dard 퀄텟 공연",
+    date: "6월 21일(금) 오후 8시~",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/life-is-jazz-web-app.appspot.com/o/Profile%2F9cecb7c5-b85d-4a9d-9ec0-5fd9dbe027e5.jpeg?alt=media&token=2c22b922-4d49-4708-ad3c-c209ade7b700",
+    category: "show",
+  },
+  {
+    title: "[칼럼]A Love Supreme을 둘러싼 오해와 진실",
+    date: "윈튼",
+    image:
+      "https://upload.wikimedia.org/wikipedia/en/9/9a/John_Coltrane_-_A_Love_Supreme.jpg",
+    category: "column",
+  },
 ];
 
 const Hero = () => {

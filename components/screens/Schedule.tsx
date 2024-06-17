@@ -77,6 +77,9 @@ const Schedule: React.FC = () => {
       title: (fd.get("title") as string) || "",
       // TODO: totalNumber는 나중에 필요에 따라 개발
       totalNumber: 5,
+      id: (fd.get("category") as categoryTypes)
+        .concat(formattedDate)
+        .concat(fd.get("title") as string),
     };
     try {
       const docRef = await setDoc(
@@ -197,6 +200,9 @@ const Schedule: React.FC = () => {
     }
   };
 
+  // 해당 일정을 메인으로
+  const setDocToMain = () => {};
+
   return (
     <Container backgroundGray innerPadding>
       <Title titleText="일정" subTitle="모임 일정 및 잼데이 신청" />
@@ -256,6 +262,7 @@ const Schedule: React.FC = () => {
           participateHandler={participateHandler}
           cancelScheduleHandler={cancelScheduleHandler}
           amIParticipating={amIParticipating}
+          setDocToMain={setDocToMain}
         />
       )}
     </Container>
