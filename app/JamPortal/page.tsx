@@ -356,6 +356,7 @@ const JamDayPortal = () => {
       title: fd.get("title") as string,
       // TODO: totalNumber는 나중에 필요에 따라 개발
       totalNumber: 5,
+      id: "jamday".concat(formattedDate).concat(fd.get("title") as string),
     };
     try {
       // schedules db에 추가

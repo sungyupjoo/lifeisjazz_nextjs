@@ -80,8 +80,8 @@ export interface ScheduleProps {
   image: string;
   totalNumber: number;
   participate: Session["user"][];
-  main?: boolean; // 메인 스케줄인지 여부
-  id?: string;
+  isMain?: boolean;
+  id: string;
 }
 
 export interface CarouselProps {
@@ -89,7 +89,7 @@ export interface CarouselProps {
   date: string;
   time?: string;
   image: string;
-  id?: string;
+  id: string;
   category: CategoryProps | "column";
 }
 

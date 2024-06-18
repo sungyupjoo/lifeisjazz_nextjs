@@ -1,4 +1,7 @@
+import { formatDate } from "date-fns";
+import { ko } from "date-fns/locale";
 import { useEffect, useState } from "react";
+import { CarouselProps } from "./common/types";
 
 const goToOtherImage = (
   index: number,
@@ -13,11 +16,11 @@ const goToOtherImage = (
   }
 };
 
-interface CarouselProps {
-  content: { title: string; date: string; image: string }[];
+interface CarouselContentProps {
+  content: CarouselProps[];
 }
 
-const Carousel: React.FC<CarouselProps> = ({ content }) => {
+const Carousel: React.FC<CarouselContentProps> = ({ content }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const clickHandler = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -39,6 +42,25 @@ const Carousel: React.FC<CarouselProps> = ({ content }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
+  useEffect(() => {
+    const carousel = document.getElementById("carousel");
+
+    const onScroll = () => {
+      if (carousel) {
+        const itemWidth = carousel.children[0].getBoundingClientRect().width;
+        const scrollLeft = carousel.scrollLeft;
+        const newIndex = Math.round(scrollLeft / itemWidth);
+        setCurrentIndex(newIndex);
+      }
+    };
+
+    carousel?.addEventListener("scroll", onScroll);
+
+    return () => {
+      carousel?.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <>
       <div
@@ -48,23 +70,23 @@ const Carousel: React.FC<CarouselProps> = ({ content }) => {
         {content.map((item, index) => (
           <div
             id={`item${index}`}
-            className={`carousel-item max-w-48 sm:max-w-40 flex-col ${
+            className={`carousel-item max-w-40 flex-col ${
               index === currentIndex ? "" : "opacity-35"
             }`}
             key={index}
           >
             <img
               src={item.image}
-              className="flex-grow max-w-48 max-h-48 min-w-48 min-h-48 sm:w-40 sm:h-40 sm:max-h-40 sm:min-h-40 object-fit rounded-t-3xl shadow-2xl"
+              className="flex-grow max-w-40 max-h-40 min-w-40 min-h-40 object-fit rounded-t-3xl shadow-2xl"
               alt={"메인 이벤트 이미지"}
             />
             <div className="bg-main sm:h-20 flex flex-col w-full py-2 px-4 rounded-b-3xl sm:px-3 sm:py-2">
-              <h2 className="text-[1rem] leading-6 sm:text-sm font-semibold text-backgroundGray text-left break-keep mb-2">
+              <h2 className="text-sm leading-6 sm:text-sm font-semibold text-backgroundGray text-left break-keep mb-2">
                 {item.title.slice(0, 24)}
                 {item.title.length > 24 && "..."}
               </h2>
               <p className="text-borderGray text-left text-light text-xs">
-                {item.date}
+                {formatDate(item.date, "MM/dd (EE)", { locale: ko })}
               </p>
             </div>
           </div>
@@ -75,7 +97,7 @@ const Carousel: React.FC<CarouselProps> = ({ content }) => {
           <a
             href={`#item${index}`}
             key={index}
-            className={`badge badge-sm ${
+            className={`badge badge-sm border-none ${
               index === currentIndex ? "bg-mainBrightTint" : "bg-mainShade"
             }`}
             onClick={(e) => clickHandler(e, index)}
