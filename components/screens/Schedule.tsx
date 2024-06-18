@@ -6,8 +6,15 @@ import moment, { MomentInput } from "moment";
 import { useSession } from "next-auth/react";
 import LoginModal from "../common/LoginModal";
 import AddScheduleModal from "../common/AddScheduleModal";
-import { ScheduleProps, categoryTypes } from "../common/types";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { CarouselProps, ScheduleProps, categoryTypes } from "../common/types";
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/firebase/config";
 import useStorage from "@/hooks/useStorage";
 import { formatDate, getMonth, getYear, startOfDay } from "date-fns";
@@ -199,9 +206,56 @@ const Schedule: React.FC = () => {
       console.warn(error, "일정 취소 중 에러");
     }
   };
+  // 해당 일정을 메인으로 / 메인이면 메인에서 내리기
+  const setDocToMain = async () => {
+    setIsLoading(true);
+    if (selectedDateSchedule) {
+      const docRef = doc(db, "main", selectedDateSchedule.id);
+      const docSnapshot = await getDoc(docRef);
+      const scheduleIndex = scheduleData.findIndex(
+        (schedule) => schedule.date === selectedDateSchedule?.date
+      );
+      if (scheduleIndex === -1) {
+        setIsLoading(false);
+        setIsScheduleModalVisible(false);
+        return;
+      }
+      const updatedSchedule = { ...scheduleData[scheduleIndex] };
 
-  // 해당 일정을 메인으로
-  const setDocToMain = () => {};
+      try {
+        if (docSnapshot.exists()) {
+          await deleteDoc(docRef);
+          updatedSchedule.isMain = false;
+        } else {
+          const carouselData: CarouselProps = {
+            title: selectedDateSchedule.title,
+            date: selectedDateSchedule.date,
+            time: selectedDateSchedule.time,
+            image: selectedDateSchedule.image,
+            id: selectedDateSchedule.id,
+            category: selectedDateSchedule.category,
+          };
+          await setDoc(docRef, carouselData, { merge: true });
+          updatedSchedule.isMain = true;
+        }
+
+        const updatedScheduleData = [...scheduleData];
+        updatedScheduleData[scheduleIndex] = updatedSchedule;
+
+        await setDoc(
+          doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
+          {
+            data: updatedScheduleData,
+          },
+          { merge: true }
+        );
+      } catch (e) {
+        console.error("에러메시지", e);
+      }
+    }
+    setIsLoading(false);
+    setIsScheduleModalVisible(false);
+  };
 
   return (
     <Container backgroundGray innerPadding>

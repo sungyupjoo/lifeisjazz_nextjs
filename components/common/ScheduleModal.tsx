@@ -156,7 +156,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
                 />
                 <Button
                   backgroundColor="main"
-                  text="메인에 공지"
+                  text={scheduleData.isMain ? "메인에서 내림" : "메인에 공지"}
                   onClick={setDocToMain}
                 />
               </div>
