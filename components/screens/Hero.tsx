@@ -7,26 +7,35 @@ import {
 } from "@/public/assets";
 import { Button, Container, LoginModal } from "../common";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Carousel from "../Carousel";
-import { CarouselProps } from "../common/types";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/firebase/config";
+import { ScheduleProps } from "../common/types";
+import { ScheduleModalProps } from "../common/ScheduleModal";
 
-const Hero = () => {
+export interface HeroProps extends ScheduleModalProps {
+  setSelectedDateSchedule: React.Dispatch<
+    React.SetStateAction<ScheduleProps | undefined>
+  >;
+  scheduleData: ScheduleProps[];
+}
+
+const Hero: React.FC<HeroProps> = ({
+  isScheduleModalVisible,
+  setIsScheduleModalVisible,
+  amIParticipating,
+  cancelScheduleHandler,
+  closeScheduleModal,
+  participateHandler,
+  selectedDateSchedule,
+  setSelectedDateSchedule,
+  scheduleData,
+  setDocToMain,
+  jamday,
+}) => {
   const { data: session, status } = useSession();
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
-  const [carouselContent, setCarouselContent] = useState<CarouselProps[]>([]);
   const showLoginModal = () => setIsLoginModalVisible(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(db, "main"));
-      const data = querySnapshot.docs.map((doc) => doc.data() as CarouselProps);
-      setCarouselContent(data);
-    };
-    fetchData();
-  }, []);
   return (
     <Container>
       <div
@@ -88,7 +97,19 @@ const Hero = () => {
             )}
           </div>
           <div className="w-full flex flex-col items-center mt-10">
-            <Carousel content={carouselContent} />
+            <Carousel
+              amIParticipating={amIParticipating}
+              cancelScheduleHandler={cancelScheduleHandler}
+              closeScheduleModal={closeScheduleModal}
+              isScheduleModalVisible={isScheduleModalVisible}
+              setIsScheduleModalVisible={setIsScheduleModalVisible}
+              participateHandler={participateHandler}
+              selectedDateSchedule={selectedDateSchedule}
+              setSelectedDateSchedule={setSelectedDateSchedule}
+              scheduleData={scheduleData}
+              setDocToMain={setDocToMain}
+              jamday={jamday}
+            />
           </div>
         </div>
       </div>

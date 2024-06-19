@@ -14,9 +14,9 @@ declare global {
 }
 
 const Login = () => {
+  const { data: session, update, status } = useSession();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
-  const { data: session, update, status } = useSession();
   const [isLoading, setIsLoading] = useState(true);
 
   const clickHandler = () => {
@@ -29,6 +29,7 @@ const Login = () => {
   useEffect(() => {
     const userSettingHandler = async () => {
       if (session?.user?.email) {
+        setIsLoading(true);
         try {
           // next-auth에서 email받아 그걸로 firebase doc 찾고 거기서 닉네임과 이미지 가져오기
           const docRef = doc(db, "members", session?.user?.email);
@@ -99,7 +100,7 @@ const Login = () => {
   if (!isLoading && session?.user?.name) {
     return (
       <>
-        <Profile onClick={openProfileModal} />
+        <Profile onClick={openProfileModal} session={session} />
         {isProfileModalVisible && session.user && (
           <ProfileModal
             isProfileModalVisible={isProfileModalVisible}

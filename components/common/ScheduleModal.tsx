@@ -6,10 +6,11 @@ import { format, toZonedTime } from "date-fns-tz";
 import { ko } from "date-fns/locale";
 import { useSession } from "next-auth/react";
 
-interface ScheduleModalProps {
+export interface ScheduleModalProps {
   isScheduleModalVisible: boolean;
+  setIsScheduleModalVisible?: React.Dispatch<React.SetStateAction<boolean>>;
   closeScheduleModal: () => void;
-  scheduleData: ScheduleProps;
+  selectedDateSchedule: ScheduleProps | undefined;
   participateHandler: () => void;
   cancelScheduleHandler: () => void;
   jamday?: boolean;
@@ -20,22 +21,36 @@ interface ScheduleModalProps {
 const ScheduleModal: React.FC<ScheduleModalProps> = ({
   isScheduleModalVisible,
   closeScheduleModal,
-  scheduleData,
+  selectedDateSchedule,
   participateHandler,
   cancelScheduleHandler,
   jamday,
   amIParticipating = false,
   setDocToMain,
 }) => {
+  const {
+    date,
+    title,
+    category,
+    description,
+    expense,
+    id,
+    image,
+    location,
+    participate,
+    time,
+    totalNumber,
+    isMain,
+  } = selectedDateSchedule!;
   const { data: session } = useSession();
   const timeZone = "Asia/Seoul";
   const today = toZonedTime(new Date(), timeZone);
-  const formattedScheduleDate = toZonedTime(scheduleData.date, timeZone);
+  const formattedScheduleDate = toZonedTime(date, timeZone);
   const dday = differenceInDays(formattedScheduleDate, today);
   const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const formattedDday =
     dday === -1 ? "오늘" : dday < -1 ? "(지난 일정)" : `D-${dday + 1}일`;
-  jamday = scheduleData.category === "jamday";
+  jamday = category === "jamday";
   return (
     <StyledModal
       isModalVisible={isScheduleModalVisible}
@@ -50,10 +65,10 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
       </span>
       <div className="flex justify-center flex-col items-center gap-4 mb-4 mt-4">
         <div className="flex text-center">
-          <h3 className="text-2xl">{scheduleData.title} </h3>
+          <h3 className="text-2xl">{title} </h3>
         </div>
         <img
-          src={scheduleData.image}
+          src={image}
           className="w-60 h-60 justify-center rounded-2xl shadow-md hover:scale-110 transition ease-in-out duration-200"
         />
       </div>
@@ -76,37 +91,30 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
       </div>
       <p className="mb-2">
         <span className="mr-4 text-gray mb-2">위치</span>
-        {scheduleData.location}
+        {location}
       </p>
       <p className="mb-2">
         <span className="mr-4 text-gray mb-2">일시</span>
-        {formatDate(scheduleData.date, "MM/dd(EE)", { locale: ko })}{" "}
-        {scheduleData.time}
+        {formatDate(date, "MM/dd(EE)", { locale: ko })} {time}
       </p>
       <p className="mb-2">
         <span className="mr-4 text-gray">비용</span>
-        {scheduleData.expense}
+        {expense}
       </p>
-      {scheduleData.description.length > 0 && (
+      {description.length > 0 && (
         <div className="bg-backgroundGray mb-2 rounded-xl py-3 px-4 text-black border-none whitespace-pre-line break-keep">
-          {scheduleData.description}
+          {description}
         </div>
       )}
       <p className="my-4">
         <span className="text-gray">
           참석인원
-          <span className="text-sm ml-1">
-            ({scheduleData.participate.length}명)
-          </span>
+          <span className="text-sm ml-1">({participate.length}명)</span>
         </span>
       </p>
-      <div
-        className={`grid ${
-          scheduleData.participate.length > 0 && "grid-cols-2 gap-4"
-        }`}
-      >
-        {scheduleData.participate.length > 0 ? (
-          scheduleData.participate.map((member) => (
+      <div className={`grid ${participate.length > 0 && "grid-cols-2 gap-4"}`}>
+        {participate.length > 0 ? (
+          participate.map((member) => (
             <div
               className="flex bg-backgroundGray py-1 px-2 rounded-xl hover:bg-borderGray"
               key={member.email}
@@ -156,7 +164,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
                 />
                 <Button
                   backgroundColor="main"
-                  text={scheduleData.isMain ? "메인에서 내림" : "메인에 공지"}
+                  text={isMain ? "메인에서 내림" : "메인에 공지"}
                   onClick={setDocToMain}
                 />
               </div>
