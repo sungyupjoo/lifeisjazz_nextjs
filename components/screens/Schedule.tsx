@@ -7,59 +7,60 @@ import { useSession } from "next-auth/react";
 import LoginModal from "../common/LoginModal";
 import AddScheduleModal from "../common/AddScheduleModal";
 import { CarouselProps, ScheduleProps, categoryTypes } from "../common/types";
-import {
-  deleteDoc,
-  doc,
-  getDoc,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import useStorage from "@/hooks/useStorage";
 import { formatDate, getMonth, getYear, startOfDay } from "date-fns";
 import ScheduleModal from "../common/ScheduleModal";
 
-const Schedule: React.FC = () => {
+interface ScheduleComponentProps {
+  formattedDate: string;
+  setFormattedDate: React.Dispatch<React.SetStateAction<string>>;
+  activeMonth: number;
+  setActiveMonth: React.Dispatch<React.SetStateAction<number>>;
+  scheduleData: ScheduleProps[];
+  setScheduleData: React.Dispatch<React.SetStateAction<ScheduleProps[]>>;
+  selectedDateSchedule: ScheduleProps | undefined;
+  setSelectedDateSchedule: React.Dispatch<
+    React.SetStateAction<ScheduleProps | undefined>
+  >;
+  participateHandler: () => void;
+  date: Value | null;
+  setDate: React.Dispatch<React.SetStateAction<Value | null>>;
+  isScheduleModalVisible: boolean;
+  setIsScheduleModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  amIParticipating: boolean;
+  setAmIParticipating: React.Dispatch<React.SetStateAction<boolean>>;
+  cancelScheduleHandler: () => void;
+  setDocToMain: () => void;
+}
+
+const Schedule: React.FC<ScheduleComponentProps> = ({
+  formattedDate,
+  setFormattedDate,
+  activeMonth,
+  setActiveMonth,
+  scheduleData,
+  setScheduleData,
+  selectedDateSchedule,
+  setSelectedDateSchedule,
+  participateHandler,
+  date,
+  setDate,
+  isScheduleModalVisible,
+  setIsScheduleModalVisible,
+  amIParticipating,
+  setAmIParticipating,
+  cancelScheduleHandler,
+  setDocToMain,
+}) => {
   const { data: session, status } = useSession();
-  const today = new Date();
-  const [date, setDate] = useState<Value | null>(null);
-  const [activeMonth, setActiveMonth] = useState<number>(getMonth(new Date()));
-  const [scheduleData, setScheduleData] = useState<ScheduleProps[]>([]);
-  const [jamdayDates, setJamdayDates] = useState<string[]>([]);
+
   const { startUpload } = useStorage("scheduleImages");
   const [isLoading, setIsLoading] = useState(false);
   const [downloadURL, setDownloadURL] = useState<string>("");
-  const [formattedDate, setFormattedDate] = useState<string>(
-    moment(today as MomentInput).format("YYYY-MM-DD")
-  );
+
   const [addScheduleModalVisible, setAddScheduleModalVisible] = useState(false);
-  const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
-  const [selectedDateSchedule, setSelectedDateSchedule] =
-    useState<ScheduleProps>();
-  const [amIParticipating, setAmIParticipating] = useState(false);
-  // 스케쥴 데이터 받아오기
-  useEffect(() => {
-    const selectedMonth = `${getYear(formattedDate)} ${activeMonth + 1}`;
-    const docRef = doc(db, "schedules", selectedMonth);
-    const unsubscribeSchedules = onSnapshot(
-      docRef,
-      (docSnapshot) => {
-        if (docSnapshot.exists()) {
-          const schedules: ScheduleProps[] = docSnapshot.data().data || [];
-          setScheduleData(schedules);
-          const filterJamdayDates = schedules
-            ?.filter((schedule) => schedule.category === "jamday")
-            .map((schedule) => schedule.date);
-          setJamdayDates(filterJamdayDates);
-        }
-      },
-      (error) => {
-        console.error("no songs data");
-      }
-    );
-    return () => unsubscribeSchedules();
-  }, [activeMonth]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
@@ -89,7 +90,7 @@ const Schedule: React.FC = () => {
         .concat(fd.get("title") as string),
     };
     try {
-      const docRef = await setDoc(
+      await setDoc(
         doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
         {
           data: [...scheduleData, data],
@@ -114,7 +115,7 @@ const Schedule: React.FC = () => {
     const dateSchedule = scheduleData.find(
       (schedule) => schedule.date === formatDate(newDate as Date, "yyyy-MM-dd")
     );
-    setSelectedDateSchedule(dateSchedule);
+    setSelectedDateSchedule(dateSchedule!);
     dateSchedule &&
       setAmIParticipating(
         dateSchedule.participate.some(
@@ -131,131 +132,6 @@ const Schedule: React.FC = () => {
 
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
   const showLoginModal = () => setIsLoginModalVisible(true);
-
-  // 참여 신청
-  const participateHandler = async () => {
-    if (status === "authenticated") {
-      const scheduleIndex = scheduleData.findIndex(
-        (schedule) => schedule.date === selectedDateSchedule?.date
-      );
-      if (scheduleIndex === -1) {
-        return;
-      }
-      const updatedSchedule = { ...scheduleData[scheduleIndex] };
-      const participantIndex = updatedSchedule.participate.findIndex(
-        (participant) => participant.email === session.user.email
-      );
-      if (participantIndex === -1) {
-        updatedSchedule.participate.push(session.user);
-      } else {
-        updatedSchedule.participate.splice(participantIndex, 1);
-      }
-      const updatedScheduleData = [...scheduleData];
-      updatedScheduleData[scheduleIndex] = updatedSchedule;
-      try {
-        await setDoc(
-          doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
-          {
-            data: updatedScheduleData,
-          },
-          { merge: true }
-        );
-        setScheduleData(updatedScheduleData);
-        setSelectedDateSchedule(updatedSchedule);
-        setAmIParticipating(
-          updatedSchedule.participate.some(
-            (member) => member.email === session?.user.email
-          )
-        );
-      } catch (error) {
-        console.warn(error, "참석 신청 중 에러");
-      }
-    }
-  };
-
-  // 일정 취소
-  const cancelScheduleHandler = async () => {
-    const updatedScheduleData = scheduleData.filter(
-      (schedule) => schedule.date !== selectedDateSchedule!.date
-    );
-    const updatedJamdayDates = jamdayDates.filter(
-      (dates) => dates !== selectedDateSchedule!.date
-    );
-    try {
-      // schedule db에서 삭제
-      await setDoc(
-        doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
-        {
-          data: updatedScheduleData,
-        },
-        { merge: true }
-      );
-      setScheduleData(updatedScheduleData);
-      // jamday일 경우 jamday db에서 삭제
-      await setDoc(
-        doc(db, "jamday", `${getYear(formattedDate)} ${activeMonth + 1}`),
-        {
-          jamday: updatedJamdayDates,
-        },
-        { merge: true }
-      );
-      setJamdayDates(updatedJamdayDates);
-      setIsScheduleModalVisible(false);
-      setSelectedDateSchedule(undefined);
-    } catch (error) {
-      console.warn(error, "일정 취소 중 에러");
-    }
-  };
-  // 해당 일정을 메인으로 / 메인이면 메인에서 내리기
-  const setDocToMain = async () => {
-    setIsLoading(true);
-    if (selectedDateSchedule) {
-      const docRef = doc(db, "main", selectedDateSchedule.id);
-      const docSnapshot = await getDoc(docRef);
-      const scheduleIndex = scheduleData.findIndex(
-        (schedule) => schedule.date === selectedDateSchedule?.date
-      );
-      if (scheduleIndex === -1) {
-        setIsLoading(false);
-        setIsScheduleModalVisible(false);
-        return;
-      }
-      const updatedSchedule = { ...scheduleData[scheduleIndex] };
-
-      try {
-        if (docSnapshot.exists()) {
-          await deleteDoc(docRef);
-          updatedSchedule.isMain = false;
-        } else {
-          const carouselData: CarouselProps = {
-            title: selectedDateSchedule.title,
-            date: selectedDateSchedule.date,
-            time: selectedDateSchedule.time,
-            image: selectedDateSchedule.image,
-            id: selectedDateSchedule.id,
-            category: selectedDateSchedule.category,
-          };
-          await setDoc(docRef, carouselData, { merge: true });
-          updatedSchedule.isMain = true;
-        }
-
-        const updatedScheduleData = [...scheduleData];
-        updatedScheduleData[scheduleIndex] = updatedSchedule;
-
-        await setDoc(
-          doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
-          {
-            data: updatedScheduleData,
-          },
-          { merge: true }
-        );
-      } catch (e) {
-        console.error("에러메시지", e);
-      }
-    }
-    setIsLoading(false);
-    setIsScheduleModalVisible(false);
-  };
 
   return (
     <Container backgroundGray innerPadding>
@@ -312,7 +188,7 @@ const Schedule: React.FC = () => {
         <ScheduleModal
           isScheduleModalVisible={isScheduleModalVisible}
           closeScheduleModal={() => setIsScheduleModalVisible(false)}
-          scheduleData={selectedDateSchedule}
+          selectedDateSchedule={selectedDateSchedule}
           participateHandler={participateHandler}
           cancelScheduleHandler={cancelScheduleHandler}
           amIParticipating={amIParticipating}

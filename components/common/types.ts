@@ -84,15 +84,6 @@ export interface ScheduleProps {
   id: string;
 }
 
-export interface CarouselProps {
-  title: string;
-  date: string;
-  time?: string;
-  image: string;
-  id: string;
-  category: CategoryProps | "column";
-}
-
 export const instrumentName = {
   bass: "베이스",
   drums: "드럼",

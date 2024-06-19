@@ -1,7 +1,8 @@
-import { formatDate } from "date-fns";
+import { differenceInDays, formatDate } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useEffect, useState } from "react";
-import { CarouselProps } from "./common/types";
+import ScheduleModal from "./common/ScheduleModal";
+import { HeroProps } from "./screens/Hero";
 
 const goToOtherImage = (
   index: number,
@@ -16,14 +17,43 @@ const goToOtherImage = (
   }
 };
 
-interface CarouselContentProps {
-  content: CarouselProps[];
-}
-
-const Carousel: React.FC<CarouselContentProps> = ({ content }) => {
+const Carousel: React.FC<HeroProps> = ({
+  amIParticipating,
+  cancelScheduleHandler,
+  closeScheduleModal,
+  isScheduleModalVisible,
+  setIsScheduleModalVisible,
+  selectedDateSchedule,
+  setSelectedDateSchedule,
+  participateHandler,
+  scheduleData,
+  setDocToMain,
+  jamday,
+}) => {
+  const content = scheduleData
+    .filter((schedule) => schedule.isMain === true)
+    .map((schedule) => {
+      return {
+        title: schedule.title,
+        date: schedule.date,
+        image: schedule.image,
+        time: schedule.time,
+        id: schedule.id,
+        category: schedule.category,
+      };
+    });
   const [currentIndex, setCurrentIndex] = useState(0);
+  // Dday 추가
+  const formattedDday = (date: string) => {
+    const today = new Date();
+    const dday = differenceInDays(date, today);
+    const formatDday =
+      dday === -1 ? "오늘" : dday < -1 ? "(지난 일정)" : `D-${dday + 1}일`;
+    return formatDday;
+  };
+
   const clickHandler = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement, MouseEvent>,
     i: number
   ) => {
     event.preventDefault();
@@ -61,11 +91,17 @@ const Carousel: React.FC<CarouselContentProps> = ({ content }) => {
     };
   }, []);
 
+  const openModal = (id: string) => {
+    const dateSchedule = scheduleData.find((schedule) => schedule.id === id);
+    setSelectedDateSchedule(dateSchedule);
+    setIsScheduleModalVisible!(true);
+  };
+
   return (
     <>
       <div
         id="carousel"
-        className="w-full carousel carousel-center max-w-md sm:max-w-full px-14 space-x-4"
+        className="w-full sm:justify-center carousel carousel-center max-w-md sm:max-w-full px-14 space-x-4"
       >
         {content.map((item, index) => (
           <div
@@ -74,6 +110,7 @@ const Carousel: React.FC<CarouselContentProps> = ({ content }) => {
               index === currentIndex ? "" : "opacity-35"
             }`}
             key={index}
+            onClick={() => openModal(item.id)}
           >
             <img
               src={item.image}
@@ -85,9 +122,20 @@ const Carousel: React.FC<CarouselContentProps> = ({ content }) => {
                 {item.title.slice(0, 24)}
                 {item.title.length > 24 && "..."}
               </h2>
-              <p className="text-borderGray text-left text-light text-xs">
-                {formatDate(item.date, "MM/dd (EE)", { locale: ko })}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-borderGray text-left text-light text-xs">
+                  {formatDate(item.date, "MM/dd (EE)", { locale: ko })}
+                </p>
+                <p
+                  className={`${
+                    formattedDday(item.date) === "오늘"
+                      ? "text-sub"
+                      : "text-backgroundGray"
+                  } text-xs`}
+                >
+                  {formattedDday(item.date)}
+                </p>
+              </div>
             </div>
           </div>
         ))}
@@ -104,6 +152,17 @@ const Carousel: React.FC<CarouselContentProps> = ({ content }) => {
           ></a>
         ))}
       </div>
+      {isScheduleModalVisible && selectedDateSchedule && (
+        <ScheduleModal
+          isScheduleModalVisible={isScheduleModalVisible}
+          closeScheduleModal={closeScheduleModal}
+          selectedDateSchedule={selectedDateSchedule}
+          participateHandler={participateHandler}
+          cancelScheduleHandler={cancelScheduleHandler}
+          amIParticipating={amIParticipating}
+          setDocToMain={setDocToMain}
+        />
+      )}
     </>
   );
 };
