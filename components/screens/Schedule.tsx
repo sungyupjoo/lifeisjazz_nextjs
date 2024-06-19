@@ -6,7 +6,7 @@ import moment, { MomentInput } from "moment";
 import { useSession } from "next-auth/react";
 import LoginModal from "../common/LoginModal";
 import AddScheduleModal from "../common/AddScheduleModal";
-import { CarouselProps, ScheduleProps, categoryTypes } from "../common/types";
+import { ScheduleProps, categoryTypes } from "../common/types";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import useStorage from "@/hooks/useStorage";
