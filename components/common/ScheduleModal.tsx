@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, StyledModal } from ".";
 import { ScheduleProps } from "./types";
-import { differenceInDays, formatDate } from "date-fns";
+import { differenceInDays, formatDate, startOfDay } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { ko } from "date-fns/locale";
 import { useSession } from "next-auth/react";
@@ -44,12 +44,12 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   } = selectedDateSchedule!;
   const { data: session } = useSession();
   const timeZone = "Asia/Seoul";
-  const today = toZonedTime(new Date(), timeZone);
+  const today = startOfDay(toZonedTime(new Date(), timeZone));
   const formattedScheduleDate = toZonedTime(date, timeZone);
   const dday = differenceInDays(formattedScheduleDate, today);
   const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const formattedDday =
-    dday === -1 ? "오늘" : dday < -1 ? "(지난 일정)" : `D-${dday + 1}일`;
+    dday === 0 ? "오늘" : dday < 0 ? "(지난 일정)" : `D-${dday}일`;
   jamday = category === "jamday";
   return (
     <StyledModal

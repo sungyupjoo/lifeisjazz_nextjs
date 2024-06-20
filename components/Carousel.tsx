@@ -1,22 +1,12 @@
-import { differenceInDays, formatDate } from "date-fns";
+import { differenceInDays, formatDate, startOfDay } from "date-fns";
 import { ko } from "date-fns/locale";
-import { useEffect, useState } from "react";
 import ScheduleModal from "./common/ScheduleModal";
 import { HeroProps } from "./screens/Hero";
-import { useSession } from "next-auth/react";
-
-const goToOtherImage = (
-  index: number,
-  carouselId: string,
-  carouselLength: number
-) => {
-  const carousel = document.getElementById(carouselId);
-  if (carousel) {
-    const target = carousel.children[index] as HTMLDivElement;
-    const left = target.offsetLeft * (1 - 1 / carouselLength);
-    carousel.scrollTo({ left: left, behavior: "smooth" });
-  }
-};
+import Flicking, { ViewportSlot } from "@egjs/react-flicking";
+import "@egjs/react-flicking/dist/flicking.css";
+import "@egjs/flicking-plugins/dist/pagination.css";
+import { Pagination, AutoPlay, Fade } from "@egjs/flicking-plugins";
+import { toZonedTime } from "date-fns-tz";
 
 const Carousel: React.FC<HeroProps> = ({
   amIParticipating,
@@ -31,7 +21,11 @@ const Carousel: React.FC<HeroProps> = ({
   setDocToMain,
   jamday,
 }) => {
-  const { data: session } = useSession();
+  const plugins = [
+    new AutoPlay({ duration: 4500, direction: "NEXT" }),
+    new Fade("", 1),
+    new Pagination({ type: "bullet" }),
+  ];
   const content = scheduleData
     .filter((schedule) => schedule.isMain === true)
     .map((schedule) => {
@@ -44,54 +38,16 @@ const Carousel: React.FC<HeroProps> = ({
         category: schedule.category,
       };
     });
-  const [currentIndex, setCurrentIndex] = useState(0);
   // Dday 추가
   const formattedDday = (date: string) => {
-    const today = new Date();
-    const dday = differenceInDays(date, today);
+    const timeZone = "Asia/Seoul";
+    const today = startOfDay(toZonedTime(new Date(), timeZone));
+    const timezoneDate = toZonedTime(date, timeZone);
+    const dday = differenceInDays(timezoneDate, today);
     const formatDday =
-      dday === -1 ? "오늘" : dday < -1 ? "(지난 일정)" : `D-${dday + 1}일`;
+      dday === 0 ? "오늘" : dday < 0 ? "(지난 일정)" : `D-${dday}일`;
     return formatDday;
   };
-
-  const clickHandler = (
-    event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement, MouseEvent>,
-    i: number
-  ) => {
-    event.preventDefault();
-    setCurrentIndex(i);
-    goToOtherImage(i, "carousel", content.length);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newCurrentIndex =
-        currentIndex + 1 === content.length ? 0 : currentIndex + 1;
-      setCurrentIndex(newCurrentIndex);
-      goToOtherImage(newCurrentIndex, "carousel", content.length);
-    }, 4500);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-  useEffect(() => {
-    const carousel = document.getElementById("carousel");
-
-    const onScroll = () => {
-      if (carousel) {
-        const itemWidth = carousel.children[0].getBoundingClientRect().width;
-        const scrollLeft = carousel.scrollLeft;
-        const newIndex = Math.round(scrollLeft / itemWidth);
-        setCurrentIndex(newIndex);
-      }
-    };
-
-    carousel?.addEventListener("scroll", onScroll);
-
-    return () => {
-      carousel?.removeEventListener("scroll", onScroll);
-    };
-  }, []);
 
   const openModal = (id: string) => {
     const dateSchedule = scheduleData.find((schedule) => schedule.id === id);
@@ -101,16 +57,16 @@ const Carousel: React.FC<HeroProps> = ({
 
   return (
     <>
-      <div
-        id="carousel"
-        className="w-full sm:justify-center carousel carousel-center max-w-md sm:max-w-full px-14 space-x-4"
+      <Flicking
+        align="center"
+        viewportTag="div"
+        cameraTag="div"
+        circular={true}
+        plugins={plugins}
       >
         {content.map((item, index) => (
           <div
-            id={`item${index}`}
-            className={`carousel-item max-w-40 flex-col ${
-              index === currentIndex ? "" : "opacity-35"
-            }`}
+            className={`max-w-40 flex-col mr-4`}
             key={index}
             onClick={() => openModal(item.id)}
           >
@@ -141,19 +97,11 @@ const Carousel: React.FC<HeroProps> = ({
             </div>
           </div>
         ))}
-      </div>
-      <div className="justify-center flex w-full py-2 gap-2">
-        {content.map((_, index) => (
-          <a
-            href={`#item${index}`}
-            key={index}
-            className={`badge badge-sm border-none ${
-              index === currentIndex ? "bg-mainBrightTint" : "bg-mainShade"
-            }`}
-            onClick={(e) => clickHandler(e, index)}
-          ></a>
-        ))}
-      </div>
+        <ViewportSlot>
+          <div className="flicking-pagination"></div>
+        </ViewportSlot>
+      </Flicking>
+
       {isScheduleModalVisible && selectedDateSchedule && (
         <ScheduleModal
           isScheduleModalVisible={isScheduleModalVisible}

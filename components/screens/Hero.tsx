@@ -96,7 +96,7 @@ const Hero: React.FC<HeroProps> = ({
               />
             )}
           </div>
-          <div className="w-full flex flex-col items-center mt-10">
+          <div className="w-full flex mt-10 justify-center">
             <Carousel
               amIParticipating={amIParticipating}
               cancelScheduleHandler={cancelScheduleHandler}

@@ -134,7 +134,9 @@ const Display = () => {
       const updatedSchedule = { ...scheduleData[scheduleIndex] };
 
       try {
-        updatedSchedule.isMain ? false : true;
+        updatedSchedule.isMain
+          ? (updatedSchedule.isMain = false)
+          : (updatedSchedule.isMain = true);
         const updatedScheduleData = [...scheduleData];
         updatedScheduleData[scheduleIndex] = updatedSchedule;
 
