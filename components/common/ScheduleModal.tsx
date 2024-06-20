@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, StyledModal } from ".";
 import { ScheduleProps } from "./types";
 import { differenceInDays, formatDate } from "date-fns";
-import { format, toZonedTime } from "date-fns-tz";
+import { toZonedTime } from "date-fns-tz";
 import { ko } from "date-fns/locale";
 import { useSession } from "next-auth/react";
 
