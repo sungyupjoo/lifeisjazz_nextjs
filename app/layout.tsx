@@ -54,6 +54,7 @@ export default function RootLayout({
         integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01"
         crossOrigin="anonymous"
       ></Script>
+
       <AuthSession>
         <body className={pretendard.className}>{children}</body>
       </AuthSession>
