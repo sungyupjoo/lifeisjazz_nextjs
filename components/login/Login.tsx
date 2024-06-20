@@ -1,6 +1,6 @@
 import { Button } from "../common";
 import { useState, useEffect } from "react";
-import { getSession, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Profile from "../common/Profile";
 import ProfileModal from "../common/ProfileModal";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
@@ -97,7 +97,7 @@ const Login = () => {
       </div>
     );
   }
-  if (!isLoading && session?.user?.name) {
+  if (!isLoading && session?.user?.isManager !== undefined) {
     return (
       <>
         <Profile onClick={openProfileModal} session={session} />
@@ -107,6 +107,7 @@ const Login = () => {
             closeProfileModal={closeProfileModal}
             logoutHandler={logOutHandler}
             handleSubmit={saveProfileHandler}
+            session={session}
           />
         )}
       </>

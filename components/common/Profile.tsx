@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import React from "react";
 import { IconCrown } from "./icons";
 import { Session } from "next-auth";
@@ -9,7 +8,6 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ onClick, session }) => {
-  // const { data: session } = useSession();
   return (
     <div className="flex flex-col">
       <div

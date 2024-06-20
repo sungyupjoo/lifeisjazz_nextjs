@@ -3,6 +3,7 @@ import { ko } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import ScheduleModal from "./common/ScheduleModal";
 import { HeroProps } from "./screens/Hero";
+import { useSession } from "next-auth/react";
 
 const goToOtherImage = (
   index: number,
@@ -30,6 +31,7 @@ const Carousel: React.FC<HeroProps> = ({
   setDocToMain,
   jamday,
 }) => {
+  const { data: session } = useSession();
   const content = scheduleData
     .filter((schedule) => schedule.isMain === true)
     .map((schedule) => {

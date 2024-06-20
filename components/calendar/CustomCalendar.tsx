@@ -140,7 +140,7 @@ position: relative;
 /* 네비게이션 비활성화 됐을때 스타일 */
 .react-calendar__navigation button:disabled {
   background-color: white;
-  color: ${colors.main};
+  color: ${colors.black};
 }
 
 /* 년/월 상단 네비게이션 칸 크기 줄이기 */

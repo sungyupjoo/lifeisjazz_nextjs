@@ -218,7 +218,7 @@ const JamDayPortal = () => {
       });
       setRequestedSongs(updatedSongs);
       try {
-        const docRef = await setDoc(
+        await setDoc(
           doc(db, "jamday", formattedDate),
           {
             data: updatedSongs,
@@ -254,7 +254,7 @@ const JamDayPortal = () => {
     setAddSongModalVisible(false);
     setRequestedSongs((prev) => [...prev, data]);
     try {
-      const docRef = await setDoc(
+      await setDoc(
         doc(db, "jamday", formattedDate),
         {
           data: [...requestedSongs, data],
@@ -269,7 +269,7 @@ const JamDayPortal = () => {
   // 취소
   const cancelHandler = async (songId: string) => {
     const updatedData = requestedSongs.filter((song) => song.id !== songId);
-    const docRef = await setDoc(
+    await setDoc(
       doc(db, "jamday", formattedDate),
       {
         data: updatedData,
@@ -336,13 +336,13 @@ const JamDayPortal = () => {
     return () => unsubscribeSchedules();
   }, [selectedDate]);
 
+  // 잼데이 날짜 지정
   const setJamDayHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const selectedMonth = `${getYear(selectedDate)} ${
       getMonth(selectedDate) + 1
     }`;
     const fd = new FormData(event.currentTarget);
-    // 잼데이 날짜 지정 (잼데이 지정 모달 제출 시)
     const jamdayDocRef = doc(db, "jamday", selectedMonth);
     const data: ScheduleProps = {
       date: formattedDate,
@@ -361,8 +361,8 @@ const JamDayPortal = () => {
     try {
       // schedules db에 추가
       const docRef = doc(db, "schedules", selectedMonth);
-
       await setDoc(docRef, { data: [...scheduleData, data] }, { merge: true });
+
       // jamdays db에 추가
       const docSnap = await getDoc(jamdayDocRef);
       let currentJamdays = [];

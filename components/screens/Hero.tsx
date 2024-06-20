@@ -6,11 +6,11 @@ import {
   logo_white,
 } from "@/public/assets";
 import { Button, Container, LoginModal } from "../common";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Carousel from "../Carousel";
 import { ScheduleProps } from "../common/types";
 import { ScheduleModalProps } from "../common/ScheduleModal";
+import { useSession } from "next-auth/react";
 
 export interface HeroProps extends ScheduleModalProps {
   setSelectedDateSchedule: React.Dispatch<
@@ -32,8 +32,8 @@ const Hero: React.FC<HeroProps> = ({
   setDocToMain,
   jamday,
 }) => {
-  const { data: session, status } = useSession();
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
+  const { status } = useSession();
   const showLoginModal = () => setIsLoginModalVisible(true);
 
   return (

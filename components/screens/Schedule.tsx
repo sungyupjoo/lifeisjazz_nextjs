@@ -7,10 +7,10 @@ import { useSession } from "next-auth/react";
 import LoginModal from "../common/LoginModal";
 import AddScheduleModal from "../common/AddScheduleModal";
 import { ScheduleProps, categoryTypes } from "../common/types";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import useStorage from "@/hooks/useStorage";
-import { formatDate, getMonth, getYear, startOfDay } from "date-fns";
+import { formatDate, getMonth, getYear } from "date-fns";
 import ScheduleModal from "../common/ScheduleModal";
 
 interface ScheduleComponentProps {
@@ -65,7 +65,9 @@ const Schedule: React.FC<ScheduleComponentProps> = ({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
     event.preventDefault();
-
+    const selectedMonth = `${getYear(formattedDate)} ${
+      getMonth(formattedDate) + 1
+    }`;
     // 이미지 업로드
     const fd = new FormData(event.currentTarget);
     const image = fd.get("image") as File;
@@ -91,12 +93,29 @@ const Schedule: React.FC<ScheduleComponentProps> = ({
     };
     try {
       await setDoc(
-        doc(db, "schedules", `${getYear(formattedDate)} ${activeMonth + 1}`),
+        doc(db, "schedules", selectedMonth),
         {
           data: [...scheduleData, data],
         },
         { merge: true }
       );
+      // 잼데이일 경우 jamdays db에 추가
+      if (data.category === "jamday") {
+        const jamdayDocRef = doc(db, "jamday", selectedMonth);
+        const docSnap = await getDoc(jamdayDocRef);
+        let currentJamdays = [];
+        if (docSnap.exists()) {
+          currentJamdays = docSnap.data().jamday || [];
+        }
+        if (!currentJamdays.includes(formattedDate)) {
+          currentJamdays.push(formattedDate);
+          await setDoc(
+            jamdayDocRef,
+            { jamday: currentJamdays },
+            { merge: true }
+          );
+        }
+      }
     } catch (e) {
       console.error("에러메시지", e);
     }

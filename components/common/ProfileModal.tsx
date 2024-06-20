@@ -3,12 +3,14 @@ import { useDropzone } from "react-dropzone";
 import { StyledModal } from ".";
 import { useSession } from "next-auth/react";
 import useStorage from "@/hooks/useStorage";
+import { Session } from "next-auth";
 
 interface ProfileModalProps {
   isProfileModalVisible: boolean;
   closeProfileModal: () => void;
   logoutHandler: () => void;
   handleSubmit?: (event: { nickname: string; imageUrl: string }) => void;
+  session: Session;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -16,8 +18,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   closeProfileModal,
   logoutHandler,
   handleSubmit,
+  session,
 }) => {
-  const { data: session } = useSession();
   const { name, image } = session?.user!;
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
   const [nickname, setNickname] = useState(name!);
