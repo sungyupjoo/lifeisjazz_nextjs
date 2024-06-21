@@ -1,4 +1,4 @@
-import { differenceInDays, formatDate, startOfDay } from "date-fns";
+import { differenceInDays, formatDate, parseISO, startOfDay } from "date-fns";
 import { ko } from "date-fns/locale";
 import ScheduleModal from "./common/ScheduleModal";
 import { HeroProps } from "./screens/Hero";
@@ -28,6 +28,7 @@ const Carousel: React.FC<HeroProps> = ({
   ];
   const content = scheduleData
     .filter((schedule) => schedule.isMain === true)
+    .sort((a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime())
     .map((schedule) => {
       return {
         title: schedule.title,
