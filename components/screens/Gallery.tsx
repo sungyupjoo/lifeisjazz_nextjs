@@ -46,7 +46,7 @@ const Gallery = () => {
   }
 
   return (
-    <Container innerPadding>
+    <Container innerPadding key="Gallery">
       <Title titleText="사진첩" subTitle="라이재의 활동 내역" />
       {session?.user && (
         <div className="text-center mt-10">

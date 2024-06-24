@@ -37,7 +37,7 @@ const Hero: React.FC<HeroProps> = ({
   const showLoginModal = () => setIsLoginModalVisible(true);
 
   return (
-    <Container>
+    <Container key="Hero">
       <div
         className="h-screen w-full bg-black bg-cover bg-no-repeat bg-center relative"
         style={{
@@ -96,7 +96,7 @@ const Hero: React.FC<HeroProps> = ({
               />
             )}
           </div>
-          <div className="w-full flex mt-10 justify-center">
+          <div className="w-full flex mt-10 justify-center ">
             <Carousel
               amIParticipating={amIParticipating}
               cancelScheduleHandler={cancelScheduleHandler}

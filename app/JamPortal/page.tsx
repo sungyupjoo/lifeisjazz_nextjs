@@ -32,6 +32,7 @@ import Rules from "@/components/contents/Rules";
 import { jam_image } from "@/public/assets";
 import moment from "moment";
 import AddScheduleModal from "@/components/common/AddScheduleModal";
+import { AnimatePresence } from "framer-motion";
 
 const JamDayPortal = () => {
   const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
@@ -582,21 +583,24 @@ const JamDayPortal = () => {
               )}
             </div>
           )}
+
           <Song
             requestedSongs={requestedSongs}
             updateParticipant={updateSongParticipantHandler}
             selectedDate={selectedDate}
             onCancel={cancelHandler}
           />
-          {addSongModalVisible && (
-            <AddSongModal
-              isVisible={addSongModalVisible}
-              closeHandler={() => {
-                setAddSongModalVisible(false);
-              }}
-              handleSubmit={handleSubmit}
-            />
-          )}
+          <AnimatePresence>
+            {addSongModalVisible && (
+              <AddSongModal
+                isVisible={addSongModalVisible}
+                closeHandler={() => {
+                  setAddSongModalVisible(false);
+                }}
+                handleSubmit={handleSubmit}
+              />
+            )}
+          </AnimatePresence>
         </div>
       )}
       {currentState === "next" && (
@@ -612,55 +616,61 @@ const JamDayPortal = () => {
           />
         </div>
       )}
-      {ruleModalVisible && (
-        <StyledModal
-          isModalVisible={ruleModalVisible}
-          closeModal={() => setRuleModalVisible(false)}
-        >
-          <Rules />
-        </StyledModal>
-      )}
-      {addJamdayModalVisible && (
-        <AddScheduleModal
-          isVisible={addJamdayModalVisible}
-          selectedDate={selectedDate}
-          closeHandler={() => {
-            setAddJamdayModalVisible(false);
-          }}
-          handleSubmit={setJamDayHandler}
-          jamday={true}
-        />
-      )}
-      {cancelModalVisible && (
-        <StyledModal
-          isModalVisible={cancelModalVisible}
-          closeModal={() => {
-            setCancelModalVisible(false);
-          }}
-        >
-          <div>
-            <h3 className="mb-5">잼데이 취소</h3>
-            <p className="mb-5">
-              {moment(selectedDate).format("MM월 DD일")} 잼데이를
-              취소하겠습니까?
-            </p>
-            <div className="flex justify-between">
-              <Button
-                backgroundColor="sub"
-                text="네, 취소합니다"
-                onClick={cancelJamdayHandler}
-              />
-              <Button
-                backgroundColor="main"
-                text="아니오"
-                onClick={() => {
-                  setCancelModalVisible(false);
-                }}
-              />
+      <AnimatePresence>
+        {ruleModalVisible && (
+          <StyledModal
+            isModalVisible={ruleModalVisible}
+            closeModal={() => setRuleModalVisible(false)}
+          >
+            <Rules />
+          </StyledModal>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {addJamdayModalVisible && (
+          <AddScheduleModal
+            isVisible={addJamdayModalVisible}
+            selectedDate={selectedDate}
+            closeHandler={() => {
+              setAddJamdayModalVisible(false);
+            }}
+            handleSubmit={setJamDayHandler}
+            jamday={true}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {cancelModalVisible && (
+          <StyledModal
+            isModalVisible={cancelModalVisible}
+            closeModal={() => {
+              setCancelModalVisible(false);
+            }}
+          >
+            <div>
+              <h3 className="mb-5">잼데이 취소</h3>
+              <p className="mb-5">
+                {moment(selectedDate).format("MM월 DD일")} 잼데이를
+                취소하겠습니까?
+              </p>
+              <div className="flex justify-between">
+                <Button
+                  backgroundColor="sub"
+                  text="네, 취소합니다"
+                  onClick={cancelJamdayHandler}
+                />
+                <Button
+                  backgroundColor="main"
+                  text="아니오"
+                  onClick={() => {
+                    setCancelModalVisible(false);
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        </StyledModal>
-      )}
+          </StyledModal>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

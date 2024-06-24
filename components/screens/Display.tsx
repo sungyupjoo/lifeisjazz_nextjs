@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Hero, About, Gallery, Recruit, Schedule, Contact, Manager } from ".";
+import { motion, useScroll } from "framer-motion";
 import Navigation from "../Navigation";
 import { ScheduleProps } from "../common/types";
 import moment, { MomentInput } from "moment";
@@ -9,6 +10,7 @@ import { getMonth, getYear } from "date-fns";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { useSession } from "next-auth/react";
+import { about } from "../contents/about";
 
 const Display = () => {
   const { data: session, status } = useSession();
@@ -225,9 +227,14 @@ const Display = () => {
           setDocToMain={setDocToMain}
         />
       </div>
-      <div id="about" ref={aboutRef}>
+      <motion.div
+        id="about"
+        ref={aboutRef}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+      >
         <About />
-      </div>
+      </motion.div>
       <div id="manager" ref={managerRef}>
         <Manager />
       </div>

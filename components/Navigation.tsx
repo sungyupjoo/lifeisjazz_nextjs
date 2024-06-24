@@ -1,7 +1,7 @@
 "use client";
-
+import { AnimatePresence, motion } from "framer-motion";
 import { logo_white } from "../public/assets";
-import React, { RefObject, forwardRef, useState } from "react";
+import React, { RefObject, forwardRef, useEffect, useState } from "react";
 import Login from "./login/Login";
 
 interface NavigationProps {
@@ -49,14 +49,32 @@ const Navigation: React.FC<NavigationProps> = ({
   contactRef,
   activeSection,
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set the initial value
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   // NavBar 오픈/클로즈
   const [isNavOpen, setIsNavOpen] = useState(false);
   const toggleNav = () => {
-    setIsNavOpen((prev) => !prev);
+    if (isMobile) {
+      setIsNavOpen((prev) => !prev);
+    }
   };
 
   const scrollToRef = (ref: RefObject<HTMLDivElement>) => {
-    setIsNavOpen(false);
+    if (isMobile) {
+      setIsNavOpen(false);
+    }
     if (ref.current) {
       window.scrollTo({
         top: ref.current?.offsetTop,
@@ -79,85 +97,93 @@ const Navigation: React.FC<NavigationProps> = ({
           className="ml-4 lg:w-[156px] lg:h-[156px] w-[100px] h-[100px] justify-self-center lg:ml-0"
         />
       </a>
-      <section
-        className={`justify-between items-center lg:bg-main lg:p-16 p-6 flex-col gap-7 ${
-          isNavOpen ? "flex animate-fadeIn" : "hidden fade-out"
-        } lg:relative lg:flex
+      <AnimatePresence>
+        {(isNavOpen || !isMobile) && (
+          <motion.section
+            transition={{ type: "tween" }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={`justify-between items-center flex lg:bg-main lg:p-16 p-6 flex-col gap-7 lg:relative lg:flex
        top-20 bg-mainTint w-full absolute z-30 lg:top-0`}
-      >
-        <Anchor
-          label="홈"
-          labelEnglish="home"
-          activeSection={activeSection}
-          ref={homeRef}
-          scrollToRef={scrollToRef}
-        />
-        <Anchor
-          label="소개"
-          labelEnglish="about"
-          activeSection={activeSection}
-          ref={aboutRef}
-          scrollToRef={scrollToRef}
-        />
-        {/* <Anchor
+          >
+            <Anchor
+              label="홈"
+              labelEnglish="home"
+              activeSection={activeSection}
+              ref={homeRef}
+              scrollToRef={scrollToRef}
+            />
+            <Anchor
+              label="소개"
+              labelEnglish="about"
+              activeSection={activeSection}
+              ref={aboutRef}
+              scrollToRef={scrollToRef}
+            />
+            {/* <Anchor
           label="팀원모집"
           labelEnglish="recruit"
           activeSection={activeSection}
           ref={recruitRef}
           scrollToRef={scrollToRef}
         /> */}
-        <Anchor
-          label="운영진"
-          labelEnglish="manager"
-          activeSection={activeSection}
-          ref={managerRef}
-          scrollToRef={scrollToRef}
-        />
-        <Anchor
-          label="사진첩"
-          labelEnglish="gallery"
-          activeSection={activeSection}
-          ref={galleryRef}
-          scrollToRef={scrollToRef}
-        />
-        <Anchor
-          label="일정"
-          labelEnglish="schedule"
-          activeSection={activeSection}
-          ref={scheduleRef}
-          scrollToRef={scrollToRef}
-        />
-        <Anchor
-          label="연락"
-          labelEnglish="contact"
-          activeSection={activeSection}
-          ref={contactRef}
-          scrollToRef={scrollToRef}
-        />
-      </section>
+            <Anchor
+              label="운영진"
+              labelEnglish="manager"
+              activeSection={activeSection}
+              ref={managerRef}
+              scrollToRef={scrollToRef}
+            />
+            <Anchor
+              label="사진첩"
+              labelEnglish="gallery"
+              activeSection={activeSection}
+              ref={galleryRef}
+              scrollToRef={scrollToRef}
+            />
+            <Anchor
+              label="일정"
+              labelEnglish="schedule"
+              activeSection={activeSection}
+              ref={scheduleRef}
+              scrollToRef={scrollToRef}
+            />
+            <Anchor
+              label="연락"
+              labelEnglish="contact"
+              activeSection={activeSection}
+              ref={contactRef}
+              scrollToRef={scrollToRef}
+            />
+          </motion.section>
+        )}
+      </AnimatePresence>
       <div className="absolute items-center right-0 lg:relative flex justify-center mr-2 lg:mr-0 lg:mb-28">
         <Login />
-        <div
-          tabIndex={0}
-          role="button"
-          className="btn btn-ghost btn-circle lg:hidden"
-          onClick={toggleNav}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke={isNavOpen ? "#cf404d" : "white"}
+        {isMobile && (
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle lg:hidden"
+            onClick={toggleNav}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="3"
-              d="M4 6h16M4 12h16M4 18h7"
-            />
-          </svg>
-        </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke={isNavOpen ? "#cf404d" : "white"}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
+            </svg>
+          </div>
+        )}
       </div>
     </section>
   );
