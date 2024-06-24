@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { Button, StyledModal } from ".";
 import { ScheduleProps } from "./types";
@@ -102,7 +103,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         {expense}
       </p>
       {description.length > 0 && (
-        <div className="bg-backgroundGray mb-2 rounded-xl py-3 px-4 text-black border-none whitespace-pre-line break-keep">
+        <div className="bg-backgroundGray mb-2 rounded-xl py-3 px-4 text-gray border-none whitespace-pre-line break-keep text-sm">
           {description}
         </div>
       )}
@@ -112,30 +113,47 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
           <span className="text-sm ml-1">({participate.length}명)</span>
         </span>
       </p>
-      <div className={`grid ${participate.length > 0 && "grid-cols-2 gap-4"}`}>
-        {participate.length > 0 ? (
-          participate.map((member) => (
-            <div
-              className="flex bg-backgroundGray py-1 px-2 rounded-xl hover:bg-borderGray"
-              key={member.email}
-            >
-              <img
-                src={member.image!}
-                alt={`Profile of ${member.name}`}
-                className="h-6 w-6 rounded-md object-cover"
-              />
-              <p className="ml-2 text-black text-[1rem]">{member.name!}</p>
-            </div>
-          ))
-        ) : (
-          <div className="bg-backgroundGray py-3 px-4 rounded-xl">
+      <AnimatePresence>
+        <motion.div
+          initial={{ height: 0 }}
+          animate={{ height: "auto" }}
+          exit={{ height: 0 }}
+          className={`grid ${participate.length > 0 && "grid-cols-2 gap-4"}`}
+        >
+          {participate.length > 0 &&
+            participate.map((member) => (
+              <motion.div
+                className="flex bg-backgroundGray py-1 px-2 rounded-xl hover:bg-borderGray items-middle"
+                key={member.email}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 30 }}
+              >
+                <img
+                  src={member.image!}
+                  alt={`Profile of ${member.name}`}
+                  className="h-6 w-6 rounded-md object-cover"
+                />
+                <p className="ml-2 text-black text-[1rem]">{member.name!}</p>
+              </motion.div>
+            ))}
+        </motion.div>
+
+        {participate.length === 0 && (
+          <motion.div
+            key="fallback"
+            className="bg-backgroundGray py-3 px-4 rounded-xl"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30 }}
+          >
             <p className="font-light text-gray text-sm">
               아직 신청한 인원이 없습니다.
               <br /> 처음으로 신청해보세요!
             </p>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
       <div className="flex justify-center mt-4 gap-4 mb-4">
         {showCancelConfirmation ? (
           <div className="flex flex-col items-center">

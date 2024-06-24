@@ -22,7 +22,7 @@ const Contact = () => {
   };
 
   return (
-    <Container innerPadding>
+    <Container innerPadding key="Contact">
       <Title titleText="연락 및 문의" subTitle="행사 요청 및 기타 문의" />
       <div className="flex flex-col md:flex-row gap-4">
         <KakaoMap />

@@ -29,7 +29,7 @@ const Recruit = () => {
   }, [ref]);
 
   return (
-    <Container innerPadding backgroundGray>
+    <Container key="Recruit" innerPadding backgroundGray>
       <Title titleText="팀원 모집" subTitle="라이재를 함께 운영할 팀원" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6 ">
         {/* {manager.map((item, index) => (

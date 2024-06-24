@@ -30,7 +30,7 @@ const Manager = () => {
   }, [ref]);
 
   return (
-    <Container innerPadding backgroundGray>
+    <Container key="Manager" innerPadding backgroundGray>
       <Title titleText="운영진" subTitle="2024년 라이재를 이끌어가는 운영진" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6 ">
         {manager.map((item, index) => (

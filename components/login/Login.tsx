@@ -6,6 +6,7 @@ import ProfileModal from "../common/ProfileModal";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import LoginModal from "../common/LoginModal";
+import { AnimatePresence } from "framer-motion";
 
 declare global {
   interface Window {
@@ -101,15 +102,17 @@ const Login = () => {
     return (
       <>
         <Profile onClick={openProfileModal} session={session} />
-        {isProfileModalVisible && session.user && (
-          <ProfileModal
-            isProfileModalVisible={isProfileModalVisible}
-            closeProfileModal={closeProfileModal}
-            logoutHandler={logOutHandler}
-            handleSubmit={saveProfileHandler}
-            session={session}
-          />
-        )}
+        <AnimatePresence>
+          {isProfileModalVisible && session.user && (
+            <ProfileModal
+              isProfileModalVisible={isProfileModalVisible}
+              closeProfileModal={closeProfileModal}
+              logoutHandler={logOutHandler}
+              handleSubmit={saveProfileHandler}
+              session={session}
+            />
+          )}
+        </AnimatePresence>
       </>
     );
   }
@@ -125,10 +128,11 @@ const Login = () => {
           onClick={clickHandler}
         />
       )}
-
-      {isModalVisible && (
-        <LoginModal isModalVisible={isModalVisible} closeModal={closeModal} />
-      )}
+      <AnimatePresence>
+        {isModalVisible && (
+          <LoginModal isModalVisible={isModalVisible} closeModal={closeModal} />
+        )}
+      </AnimatePresence>
     </>
   );
 };

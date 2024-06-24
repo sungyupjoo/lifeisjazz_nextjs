@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { Button, Container, Title } from "../common";
 import "react-calendar/dist/Calendar.css";
 import CustomCalendar, { Value } from "../calendar/CustomCalendar";
@@ -153,7 +154,7 @@ const Schedule: React.FC<ScheduleComponentProps> = ({
   const showLoginModal = () => setIsLoginModalVisible(true);
 
   return (
-    <Container backgroundGray innerPadding>
+    <Container key="Schedule" backgroundGray innerPadding>
       <Title titleText="일정" subTitle="모임 일정 및 잼데이 신청" />
       <div className="flex justify-end">
         {status === "authenticated" ? (
@@ -184,36 +185,41 @@ const Schedule: React.FC<ScheduleComponentProps> = ({
         scheduleData={scheduleData}
         handleMonthChange={handleMonthChange}
       />
-
-      {isLoginModalVisible && (
-        <LoginModal
-          isModalVisible={isLoginModalVisible}
-          closeModal={() => setIsLoginModalVisible(false)}
-        />
-      )}
-      {isLoading ? (
-        <span className="absolute top-1/2 left-1/2 loading loading-spinner loading-lg"></span>
-      ) : (
-        <AddScheduleModal
-          isVisible={addScheduleModalVisible}
-          selectedDate={date}
-          closeHandler={() => {
-            setAddScheduleModalVisible(false);
-          }}
-          handleSubmit={handleSubmit}
-        />
-      )}
-      {isScheduleModalVisible && selectedDateSchedule && (
-        <ScheduleModal
-          isScheduleModalVisible={isScheduleModalVisible}
-          closeScheduleModal={() => setIsScheduleModalVisible(false)}
-          selectedDateSchedule={selectedDateSchedule}
-          participateHandler={participateHandler}
-          cancelScheduleHandler={cancelScheduleHandler}
-          amIParticipating={amIParticipating}
-          setDocToMain={setDocToMain}
-        />
-      )}
+      <AnimatePresence>
+        {isLoginModalVisible && (
+          <LoginModal
+            isModalVisible={isLoginModalVisible}
+            closeModal={() => setIsLoginModalVisible(false)}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isLoading ? (
+          <span className="absolute top-1/2 left-1/2 loading loading-spinner loading-lg"></span>
+        ) : (
+          <AddScheduleModal
+            isVisible={addScheduleModalVisible}
+            selectedDate={date}
+            closeHandler={() => {
+              setAddScheduleModalVisible(false);
+            }}
+            handleSubmit={handleSubmit}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence mode="sync">
+        {isScheduleModalVisible && selectedDateSchedule && (
+          <ScheduleModal
+            isScheduleModalVisible={isScheduleModalVisible}
+            closeScheduleModal={() => setIsScheduleModalVisible(false)}
+            selectedDateSchedule={selectedDateSchedule}
+            participateHandler={participateHandler}
+            cancelScheduleHandler={cancelScheduleHandler}
+            amIParticipating={amIParticipating}
+            setDocToMain={setDocToMain}
+          />
+        )}
+      </AnimatePresence>
     </Container>
   );
 };

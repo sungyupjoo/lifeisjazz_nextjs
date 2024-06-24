@@ -1,6 +1,5 @@
-import NextAuth, { Session, SessionStrategy } from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import KakaoProvider from "next-auth/providers/kakao";
-import { JWT } from "next-auth/jwt";
 import { FirestoreAdapter } from "@next-auth/firebase-adapter";
 import { cert } from "firebase-admin/app";
 import * as admin from "firebase-admin";
@@ -58,9 +57,6 @@ const authOptions = {
       return session;
     },
   },
-  // session: {
-  //   strategy: "jwt" as SessionStrategy,
-  // },
   adapter: FirestoreAdapter({
     credential: cert({
       projectId: process.env.FIREBASE_PROJECT_ID!,
